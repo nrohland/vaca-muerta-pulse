@@ -4,7 +4,8 @@
 #
 #   cp profiles.yml.example ~/.dbt/profiles.yml
 #
-# Parse/compile do not need a live warehouse. `dbt build` / `dbt test` do.
+# `dbt parse` does not need a live warehouse. compile / build / test / show
+# authenticate against BigQuery with dbt-bigquery 1.12.
 
 vaca_muerta_pulse:
   target: "{{ env_var('DBT_TARGET', 'dev') }}"

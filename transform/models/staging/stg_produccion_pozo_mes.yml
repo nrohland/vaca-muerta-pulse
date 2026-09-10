@@ -20,9 +20,10 @@ models:
       `DATE(anio, mes, 1)`. This is the business month. Do **not** filter
       Cap. IV month on `_sdc_batched_at` (raw partition).
 
-      **Caveats:** stg is a view over raw — `dbt build` of downstream tables
-      will scan `produccion_pozo_mes`. Prefer `--select` and do not `select *`
-      on raw from the Front. Injections (`iny_*`) stay in raw.
+      **Caveats:** stg is a view over **`raw_cap4_dev.produccion_pozo_mes`**
+      (`COUNT(*)` = 991844, full year 2025 — DE/Tutor handoff). `dbt build` of
+      `fct_well_month` will scan that table. Prefer `--select`. Prod twin is
+      `raw_cap4`. Injections (`iny_*`) stay in raw.
     columns:
       - name: idpozo
         description: Well id (productive formation). Part of the grain.

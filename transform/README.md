@@ -8,6 +8,19 @@ Contrato de granos: [data-model.md](../specs/001-vaca-muerta-pulse/data-model.md
 
 ---
 
+## Source raw (Hito 2)
+
+| | |
+| --- | --- |
+| **Primario (stg, target `dev`)** | `vaca-muerta-pulse.raw_cap4_dev.produccion_pozo_mes` |
+| **`COUNT(*)`** | **991844** (año 2025 completo). Handoff DE/Tutor. Este PR de AE **no** re-consultó `INFORMATION_SCHEMA` ni inventó más evidencia de warehouse. |
+| Twin prod | `raw_cap4.produccion_pozo_mes` (mismo grano / mismo nombre de tabla). `DBT_TARGET=prod` o `DBT_RAW_DATASET=raw_cap4`. |
+| Match source | Datastore 2025 resource `d774b5d7-0756-48fe-88f2-8729b57b22da` total 991 844 |
+
+`var('raw_dataset')` default = `raw_cap4_dev`. No apuntes stg a un dump local.
+
+---
+
 ## Contrato para Frontend (Hito 3)
 
 Leé **solo** marts. Headline = este mart, una fila.
@@ -81,8 +94,9 @@ Con credenciales de BigQuery (SA de **lectura** `raw_*` + **escritura** a `stg_c
 export BIGQUERY_PROJECT=vaca-muerta-pulse
 export GOOGLE_APPLICATION_CREDENTIALS=/absolute/path/to/sa.json
 dbt debug
-# Barato: el mart headline es 1 fila. El build de fct_well_month SÍ lee staging→raw.
-# Hoy el raw de smoke puede ser 500 filas; un año VM ~34k. Evitá select * de raw_*.
+# El mart headline es 1 fila. El build de fct_well_month lee stg (view) → raw.
+# raw_cap4_dev.produccion_pozo_mes COUNT(*) = 991844 (año 2025, handoff DE).
+# Evitá select * de raw_*. Preferí --select fct_barrilito_rate+ y dbt show --limit.
 dbt build --select fct_barrilito_rate+
 dbt show --select fct_barrilito_rate --limit 5
 ```
@@ -91,14 +105,14 @@ dbt show --select fct_barrilito_rate --limit 5
 
 Unit tests del mart (`test_type:unit`) también necesitan adapter BQ (tablas temporales). Están escritos; hay que correrlos con SA.
 
-Targets: `dev` → datasets `raw_cap4_dev` / `stg_cap4_dev` / `marts_dev`. `prod` → `raw_cap4` / `stg_cap4` / `marts`.
+Targets: `dev` (default) → source **`raw_cap4_dev`** / `stg_cap4_dev` / `marts_dev`. `prod` → twin **`raw_cap4`** / `stg_cap4` / `marts`.
 
 ---
 
 ## DAG
 
 ```text
-source raw_cap4.produccion_pozo_mes
+source raw_cap4.produccion_pozo_mes   (físico: raw_cap4_dev; twin prod: raw_cap4)
   → stg_produccion_pozo_mes     (cast, periodo, filtro VM, dedupe)
   → int_produccion_vm_noconv    (ephemeral: surrogate + days_in_month)
   → fct_well_month              (tabla, partition periodo)
@@ -134,10 +148,10 @@ Evaluator (caro; no es el `dbt build` default). Los modelos del paquete están `
 
 ## Costo BigQuery
 
-- Staging es **view**; el primer `dbt build` de `fct_well_month` lee raw.
-- Partición raw = `_sdc_batched_at` MONTH — **no** sirve para filtrar el mes Cap. IV.
-- Preferí `dbt show --limit`, `dbt build --select fct_barrilito_rate+`, nunca un `select *` de `raw_cap4`.
-- Smoke Hito 1: 500 filas en raw. Año 2025 completo (~991k) sigue bloqueado por costo de Nicolás.
+- Staging es **view**; el primer `dbt build` de `fct_well_month` lee **991844** filas de `raw_cap4_dev.produccion_pozo_mes` (año 2025). No hagas `select *` de raw.
+- Partición raw = `_sdc_batched_at` MONTH — **no** sirve para filtrar el mes Cap. IV (`periodo` vive en stg).
+- Preferí `dbt show --limit`, `dbt build --select fct_barrilito_rate+`.
+- Recorte VM en stg (~34k well-months en el sample DataStore 2025); el scan de raw sigue siendo el año entero si la view no predica partición.
 
 ---
 

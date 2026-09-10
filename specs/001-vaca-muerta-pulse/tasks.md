@@ -73,8 +73,9 @@ Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 5. Código: [`t
 - [x] Fórmula preferida: `rate_m3_dia = sum(prod_pet_m3) / nullif(sum(tef), 0)` cuando `tef_sum > 0` (`tef_weighted`).
 - [x] Fallback: `rate_m3_dia = sum(prod_pet_m3) / days_in_month(periodo)` (`calendar_days`). Unit tests con fixtures para `tef` = 0. Viabilidad de `tef` **en warehouse** = UNKNOWN (este PR no tuvo SA BQ; no se afirma `dbt test` verde contra raw).
 - [x] Conversión `rate_bbl_dia = rate_m3_dia × 6.28981077` en el modelo (`var('m3_to_bbl')` / macro).
-- [x] El **mismo** factor `6.28981077` en YAML de métricas (`models/marts/_metrics.yml`) y `dbt_project.yml`.
+- [x] El **mismo** factor `6.28981077` en YAML de métricas (`transform/metrics.yml` + `config.meta`) y `dbt_project.yml`.
 - [x] `stg` materializa `periodo` como grano de negocio; no filtrar el mes Cap. IV por `_sdc_batched_at`.
+- [x] Source primario: `raw_cap4_dev.produccion_pozo_mes`. **`COUNT(*)` = 991844** (año 2025) — handoff DE/Tutor. Twin prod: `raw_cap4`. Este PR no re-consultó `INFORMATION_SCHEMA`.
 - [x] Test de reconciliación SQL: `prod_pet_m3` Barrilito vs suma de `fct_well_month` del mismo `periodo` (corre con `dbt test` cuando hay warehouse).
 - [x] Actualizar [data-model.md](data-model.md): contrato `fct_barrilito_rate`; tef no promovido a CONFIRMED. Sin sensores ni grano intradía.
 - [ ] `dbt build` / `dbt test` contra BigQuery — **bloqueado** en este PR (sin credenciales en el agente). Instrucciones: [transform/README.md](../../transform/README.md). `dbt deps` + `dbt parse` sí.

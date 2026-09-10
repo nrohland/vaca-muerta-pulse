@@ -1,4 +1,5 @@
 {{ config(materialized="view") }}
+{# Primary source dataset: var raw_dataset (default raw_cap4_dev). Prod twin: raw_cap4. #}
 
 with
     source as (select * from {{ source("raw_cap4", "produccion_pozo_mes") }}),

@@ -2,7 +2,7 @@
 
 Vista C4-ish del data product. Stack y *por qué*: [ADR 0001](adrs/0001-stack-choices.md). Producto: [spec.md](../specs/001-vaca-muerta-pulse/spec.md).
 
-**Hoy (Hito 2):** dbt Core en `transform/` sobre raw Meltano. Datasets `raw_cap4` / `raw_cap4_dev`. Mart headline **`fct_barrilito_rate`**. Next: Hito 3.
+**Hoy (Hito 2):** dbt Core en `transform/` sobre raw Meltano. Source primario de stg: **`raw_cap4_dev`** (`produccion_pozo_mes` `COUNT(*)` = 991844, año 2025 — handoff DE/Tutor). Prod twin: `raw_cap4`. Mart headline **`fct_barrilito_rate`**. Next: Hito 3.
 
 ## 1. Contexto
 
@@ -87,13 +87,13 @@ Filtro de producto (CONFIRMED en sample 2025 DataStore; aplicar en `stg`/`int`, 
 
 ## 4. BigQuery — naming y físico (Hito 1)
 
-Nombres **confirmados como intención de DE**. El load live puede faltar; no afirmar DDL verificado en `INFORMATION_SCHEMA` hasta el smoke.
+Nombres **confirmados como intención de DE**. Handoff Hito 2: `raw_cap4_dev.produccion_pozo_mes` `COUNT(*)` = **991844** (año 2025). Este árbol de AE no afirma `INFORMATION_SCHEMA` extra (partition/cluster siguen la evidencia Hito 1).
 
 | Dataset | Contenido | Quién escribe |
 | --- | --- | --- |
-| `raw_cap4` | Tablas 1:1 con el tap (`produccion_pozo_mes`, …) | Meltano (prod) |
-| `raw_cap4_dev` | Idem, **append** (reload = TRUNCATE o DELETE year) | Meltano (dev) |
-| `analytics` o datasets dbt `stg_cap4` / `int_cap4` / `marts` (`*_dev` en target dev) | Modelos | dbt (Hito 2) |
+| `raw_cap4_dev` | **Primario Hito 2 / stg.** Tabla `produccion_pozo_mes`, `COUNT(*)` = 991844 (handoff DE/Tutor) | Meltano (dev) |
+| `raw_cap4` | Twin de prod (mismo patrón de tabla; no es otro grano) | Meltano (prod) |
+| `stg_cap4_dev` / `int_cap4_dev` / `marts_dev` (prod: sin `_dev`) | Modelos dbt | dbt (Hito 2) |
 
 Proyecto GCP: **`vaca-muerta-pulse`**. Location: **US**.
 

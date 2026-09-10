@@ -3,20 +3,32 @@ version: 2
 sources:
   - name: raw_cap4
     description: >
-      Capítulo IV producción pozo-mes landed by Meltano (Hito 1). Logical name
-      `raw_cap4`; physical dataset is var `raw_dataset` (`raw_cap4_dev` on
-      target dev, `raw_cap4` on prod). Partition of the loader is MONTH on
-      `_sdc_batched_at` — that is NOT the Cap. IV production month. Business
-      month is `periodo` (DATE first of month), materialized in staging.
+      Capítulo IV producción pozo-mes landed by Meltano (Hito 1).
+
+      **Primary for this Hito 2 project (target `dev`):** physical dataset
+      `raw_cap4_dev`. **Prod twin:** `raw_cap4` (same table name, same grain;
+      switch with target `prod` or env `DBT_RAW_DATASET`). Logical source
+      name stays `raw_cap4`.
+
+      Loader partition is MONTH on `_sdc_batched_at` — that is NOT the Cap. IV
+      production month. Business month is `periodo` (DATE first of month),
+      materialized in staging.
     database: "{{ env_var('BIGQUERY_PROJECT', 'vaca-muerta-pulse') }}"
     schema: "{{ var('raw_dataset') }}"
     tables:
       - name: produccion_pozo_mes
         description: >
           One row per well-month as loaded from CKAN DataStore (stream
-          `produccion_pozo_mes`). Grain CONFIRMED unique in 2025 on
-          idpozo+anio+mes; UNKNOWN other years — staging dedupes. Do not query
-          this table from the Front; use marts.
+          `produccion_pozo_mes`). Do not query from the Front; use marts.
+
+          **Row count (DE/Tutor handoff, not re-queried in this AE PR):**
+          `raw_cap4_dev.produccion_pozo_mes` `COUNT(*)` = **991844** (full
+          year 2025). Matches Datastore total for resource
+          `d774b5d7-0756-48fe-88f2-8729b57b22da`. No INFORMATION_SCHEMA
+          beyond that COUNT is claimed here.
+
+          Grain CONFIRMED unique in 2025 DataStore on idpozo+anio+mes;
+          UNKNOWN other years — staging dedupes.
         columns:
           - name: idpozo
             description: Well id by productive formation (integer in tap).
