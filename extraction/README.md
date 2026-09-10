@@ -153,6 +153,8 @@ IAM de la SA de Meltano (write-only a raw):
 - `roles/bigquery.dataEditor` **restringido al dataset** `raw_cap4` / `raw_cap4_dev` (no `Editor` de proyecto)
 - Sin `bigquery.dataViewer` sobre marts ajenos; sin keys en el repo
 
+**Hito 2 — SA dbt (distinta):** `vm-pulse-dbt`. Lee `raw_*` (`dataViewer`), escribe `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev` (`dataEditor`), `jobUser` en el proyecto. **No** reutilices `GCP_SA_KEY`. Secret: `GCP_SA_KEY_DBT`. Evidencia: [transform/docs/hito-2-bq-iam.md](../transform/docs/hito-2-bq-iam.md).
+
 Credenciales: `GOOGLE_APPLICATION_CREDENTIALS` (JSON path) o ADC. El target también lee `TARGET_BIGQUERY_CREDENTIALS_PATH`. **Nunca** `credentials_json` en `meltano.yml`.
 
 Dataset: este PR **no** lo crea si no hay SA. Cuando exista credencial:
