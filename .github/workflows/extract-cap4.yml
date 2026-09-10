@@ -8,7 +8,10 @@ name: extract-cap4 (Meltano → BigQuery)
 #                + bigquery.dataEditor on the raw dataset; + bigquery.user if this
 #                workflow should create the dataset).
 # Optional repository variables (fall back to meltano.yml defaults):
-#   BIGQUERY_PROJECT (default vaca-muerta-pulse), BIGQUERY_LOCATION (default US)
+#   BIGQUERY_PROJECT, BIGQUERY_LOCATION (default US)
+#   ALLOW_FULL_YEAR_LOAD=true — required for schedule / uncapped dispatch.
+#     Full-year Cap. IV (~991k, Storage Write API) is blocked until Nicolás
+#     sets this after a cost OK. Without it the job exits before any BQ write.
 
 on:
   workflow_dispatch:
@@ -26,29 +29,58 @@ on:
         description: "Optional cap for a cheap smoke run (blank = full year, ~992k rows)"
         type: string
         default: ""
-  # Capítulo IV publishes monthly; enable a schedule once a manual run is green.
-  # schedule:
-  #   - cron: "0 6 5 * *"
+      reemit:
+        description: "Before append: TRUNCATE (dev) or DELETE year (prod). Use for monthly snapshot reload. Leave false for smoke append."
+        type: boolean
+        default: false
+      delete_year:
+        description: "Year to DELETE when reemit=true and environment=prod (ignored in dev TRUNCATE)"
+        type: string
+        default: "2025"
+  # Capítulo IV is monthly (Barrilito UI simulates intra-month). No high-frequency polling.
+  # Day 5 06:00 UTC. GitHub only runs this on the default branch after merge.
+  # The job still no-ops (exit 1, zero BQ writes) until vars.ALLOW_FULL_YEAR_LOAD=true.
+  # When unblocked: Meltano env `dev` (raw_cap4_dev) + TRUNCATE + full year (no MAX_RECORDS).
+  # Prod monthly: workflow_dispatch environment=prod + reemit=true (DELETE year).
+  schedule:
+    - cron: "0 6 5 * *"
 
 permissions:
   contents: read
 
 concurrency:
-  group: extract-cap4-${{ github.ref }}-${{ github.event.inputs.environment }}
+  group: extract-cap4-${{ github.ref }}-${{ github.event.inputs.environment || 'dev' }}
   cancel-in-progress: false
 
 jobs:
   extract:
     runs-on: ubuntu-latest
+    timeout-minutes: 360
     defaults:
       run:
         working-directory: extraction
     env:
-      MELTANO_ENVIRONMENT: ${{ inputs.environment }}
+      # workflow_dispatch `inputs` is empty on schedule — default monthly run = dev.
+      MELTANO_ENVIRONMENT: ${{ github.event.inputs.environment || 'dev' }}
       BIGQUERY_PROJECT: ${{ vars.BIGQUERY_PROJECT || 'vaca-muerta-pulse' }}
       BIGQUERY_LOCATION: ${{ vars.BIGQUERY_LOCATION || 'US' }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Block full-year load until Nicolás cost OK
+        env:
+          MAX_RECORDS: ${{ github.event.inputs.max_records }}
+          ALLOW_FULL_YEAR_LOAD: ${{ vars.ALLOW_FULL_YEAR_LOAD }}
+        run: |
+          set -euo pipefail
+          # schedule always loads the full year. dispatch with blank max_records does too.
+          if [ "${{ github.event_name }}" = "schedule" ] || [ -z "${MAX_RECORDS:-}" ]; then
+            if [ "${ALLOW_FULL_YEAR_LOAD:-}" != "true" ]; then
+              echo "::error::Año completo Cap. IV (~991k filas, storage_write_api) bloqueado. Seteá la variable de repo ALLOW_FULL_YEAR_LOAD=true después del OK de costo de Nicolás. Este job no corre Meltano ni escribe en BigQuery."
+              exit 1
+            fi
+          fi
+          echo "full-year allowed or capped smoke (max_records=${MAX_RECORDS:-full})"
 
       - uses: actions/setup-python@v5
         with:
@@ -74,27 +106,53 @@ jobs:
           echo "GOOGLE_APPLICATION_CREDENTIALS=$(bash scripts/materialize-sa-key.sh)" >> "$GITHUB_ENV"
 
       - name: Ensure BigQuery dataset exists
+        id: dataset
         run: |
           if [ "$MELTANO_ENVIRONMENT" = "prod" ]; then
             export BIGQUERY_DATASET=raw_cap4
           else
             export BIGQUERY_DATASET=raw_cap4_dev
           fi
+          echo "BIGQUERY_DATASET=$BIGQUERY_DATASET" >> "$GITHUB_ENV"
           python scripts/ensure_dataset.py
+
+      - name: Prepare landing table (layout + optional monthly reemit)
+        env:
+          # schedule = monthly snapshot reload. dispatch uses the reemit checkbox.
+          REEMIT: ${{ github.event_name == 'schedule' && 'true' || github.event.inputs.reemit || 'false' }}
+          DELETE_YEAR: ${{ github.event.inputs.delete_year || '2025' }}
+        run: |
+          set -euo pipefail
+          args=(python scripts/prepare_year_load.py --dataset "$BIGQUERY_DATASET")
+          if [ "$REEMIT" = "true" ]; then
+            if [ "$MELTANO_ENVIRONMENT" = "prod" ]; then
+              echo "reemit=prod DELETE WHERE anio=$DELETE_YEAR (keeps partition+cluster + other years)"
+              "${args[@]}" --delete-year "$DELETE_YEAR"
+            else
+              echo "reemit=dev TRUNCATE (keeps MONTH(_sdc_batched_at)+CLUSTER; raw_cap4_dev is the one-year sandbox)"
+              "${args[@]}" --truncate
+            fi
+          else
+            echo "reemit=false: IF NOT EXISTS only (append; duplicates if the year is already loaded)"
+            "${args[@]}"
+          fi
 
       - name: Run Meltano job (cap4-produccion)
         env:
           # Pass inputs via env (not inline interpolation) to avoid shell injection.
-          YEAR_RESOURCE_ID: ${{ inputs.year_resource_id }}
-          MAX_RECORDS: ${{ inputs.max_records }}
+          YEAR_RESOURCE_ID: ${{ github.event.inputs.year_resource_id }}
+          MAX_RECORDS: ${{ github.event.inputs.max_records }}
         run: |
           # Only override tap defaults when inputs were provided (empty = keep meltano.yml).
-          if [ -n "$YEAR_RESOURCE_ID" ]; then
+          # Schedule never sets max_records → full year (~992k), no cap.
+          if [ -n "${YEAR_RESOURCE_ID:-}" ]; then
             export TAP_CKAN_DATASTORE_PRODUCCION_RESOURCE_ID="$YEAR_RESOURCE_ID"
           fi
-          if [ -n "$MAX_RECORDS" ]; then
+          if [ -n "${MAX_RECORDS:-}" ]; then
             export TAP_CKAN_DATASTORE_MAX_RECORDS="$MAX_RECORDS"
+          else
+            unset TAP_CKAN_DATASTORE_MAX_RECORDS || true
           fi
           meltano run cap4-produccion
           # Append-only (overwrite:true strips BQ partitioning on this pin).
-          # Re-runs duplicate unless the year was DELETE/TRUNCATEd first.
+          # Monthly schedule TRUNCATEs/DELETEs first; bare re-runs duplicate.
