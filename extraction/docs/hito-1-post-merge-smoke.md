@@ -2,8 +2,9 @@
 
 Corrida **2026-09-10** contra el HEAD que recibió el merge de PR #5
 (`30f6970` en `cursor/hito-1-bigquery-credentials-ci-8d0b`). Evidencia de esa
-corrida; **no** se re-ejecutó el load. `main` posterior (#4 credenciales CI,
-#8 cron/costo) no cambia estos números. **No se commitearon secretos.**
+corrida; **no** se re-ejecutó el load. Los números de **esta** página son el
+smoke 500. El año 2025 se cargó después: [hito-1-full-year-2025-load.md](hito-1-full-year-2025-load.md).
+**No se commitearon secretos.**
 
 ## Resultado
 
