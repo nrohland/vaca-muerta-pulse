@@ -91,11 +91,11 @@ Nombres **confirmados como intención de DE**. Handoff Hito 2: `raw_cap4_dev.pro
 
 | Dataset | Contenido | Quién escribe |
 | --- | --- | --- |
-| `raw_cap4_dev` | **Primario Hito 2 / stg.** Tabla `produccion_pozo_mes`, `COUNT(*)` = 991844 (handoff DE). Append. | Meltano (dev) |
-| `raw_cap4` | Twin prod (mismo patrón). **Aún no existe.** | Meltano (prod, cuando se cree) |
-| `stg_cap4_dev` | Staging dbt (dev) | dbt (`vm-pulse-dbt`) |
-| `int_cap4_dev` | Intermediate dbt (dev) | dbt (`vm-pulse-dbt`) |
-| `marts_cap4_dev` | Marts dbt (dev); Front lee `fct_barrilito_rate` | dbt (`vm-pulse-dbt`) |
+| `raw_cap4_dev` | **Primario Hito 2 / stg.** Tabla `produccion_pozo_mes`, `COUNT(*)` = 991844 (año 2025, handoff DE/Tutor). **append** (reload = TRUNCATE o DELETE year) | Meltano (dev) |
+| `raw_cap4` | Twin de prod (mismo patrón de tabla; no es otro grano). **No existe todavía** | Meltano (prod, cuando se cree) |
+| `stg_cap4_dev` | Staging dbt (dev). Prod twin: `stg_cap4` | dbt (`vm-pulse-dbt`) |
+| `int_cap4_dev` | Intermediate dbt (dev). Prod twin: `int_cap4` | dbt (`vm-pulse-dbt`) |
+| `marts_cap4_dev` | Marts dbt (dev), incl. `fct_barrilito_rate`. Prod twin: `marts_cap4` | dbt (`vm-pulse-dbt`) |
 
 Proyecto GCP: **`vaca-muerta-pulse`**. Location: **US**.
 

@@ -66,7 +66,7 @@ Tachá en el PR que complete el ítem. Año 2025 cargado 2026-09-10: `COUNT(*)` 
 
 ## Hito 2 — IAM + datasets BQ (DE, prereq de dbt)
 
-Evidencia: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.md) (PR #11, mergeado).
+Evidencia: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.md). Hecho en main (PR #11). Este PR agrega los modelos.
 
 - [x] Datasets US: `stg_cap4_dev`, `int_cap4_dev`, `marts_cap4_dev`.
 - [x] `raw_cap4_dev` existe; `raw_cap4` no.
