@@ -54,8 +54,12 @@ pnpm-debug.log*
 # --- Meltano ---
 .meltano/
 extract/output/
+extract/.meltano/
 output/
 *.singer.log
+*.jsonl
+*.singer
+meltano.db
 
 # --- dbt ---
 target/

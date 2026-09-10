@@ -1,0 +1,113 @@
+{
+  "stream": "capitulo_iv_pozos",
+  "resource_id": "cb5c0f04-7835-45cd-b982-3e25ca7d7751",
+  "datastore_total_at_discovery": 85611,
+  "discovered_at": "2026-09-10",
+  "source": "https://datos.energia.gob.ar/api/3/action/datastore_search",
+  "fields": [
+    {
+      "id": "sigla",
+      "type": "text"
+    },
+    {
+      "id": "idpozo",
+      "type": "numeric"
+    },
+    {
+      "id": "area",
+      "type": "text"
+    },
+    {
+      "id": "cod_area",
+      "type": "text"
+    },
+    {
+      "id": "empresa",
+      "type": "text"
+    },
+    {
+      "id": "yacimiento",
+      "type": "text"
+    },
+    {
+      "id": "cod_yacimiento",
+      "type": "text"
+    },
+    {
+      "id": "formacion",
+      "type": "text"
+    },
+    {
+      "id": "cuenca",
+      "type": "text"
+    },
+    {
+      "id": "provincia",
+      "type": "text"
+    },
+    {
+      "id": "cota",
+      "type": "numeric"
+    },
+    {
+      "id": "profundidad",
+      "type": "numeric"
+    },
+    {
+      "id": "clasificacion",
+      "type": "text"
+    },
+    {
+      "id": "subclasificacion",
+      "type": "text"
+    },
+    {
+      "id": "tipo_recurso",
+      "type": "text"
+    },
+    {
+      "id": "sub_tipo_recurso",
+      "type": "text"
+    },
+    {
+      "id": "gasplus",
+      "type": "text"
+    },
+    {
+      "id": "tipopozo",
+      "type": "text"
+    },
+    {
+      "id": "tipoextraccion",
+      "type": "text"
+    },
+    {
+      "id": "tipoestado",
+      "type": "text"
+    },
+    {
+      "id": "adjiv_fecha_inicio_perf",
+      "type": "timestamp"
+    },
+    {
+      "id": "adjiv_fecha_fin_perf",
+      "type": "timestamp"
+    },
+    {
+      "id": "adjiv_fecha_inicio_term",
+      "type": "timestamp"
+    },
+    {
+      "id": "adjiv_fecha_fin_term",
+      "type": "timestamp"
+    },
+    {
+      "id": "geojson",
+      "type": "text"
+    },
+    {
+      "id": "geom",
+      "type": "text"
+    }
+  ]
+}

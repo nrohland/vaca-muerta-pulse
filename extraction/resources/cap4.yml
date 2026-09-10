@@ -1,0 +1,108 @@
+# Capítulo IV / Adjunto IV — CKAN IDs (datos.energia.gob.ar)
+# Harvested 2026-09-10 via package_show. Not secrets.
+# Portal: https://datos.energia.gob.ar/dataset/produccion-de-petroleo-y-gas-por-pozo
+# datos.gob.ar mirror: https://datos.gob.ar/dataset/energia-produccion-petroleo-gas-por-pozo-capitulo-iv
+
+package:
+  name: produccion-de-petroleo-y-gas-por-pozo
+  id: c846e79c-026c-4040-897f-1ad3543b407c
+  api: https://datos.energia.gob.ar/api/3/action/package_show?id=produccion-de-petroleo-y-gas-por-pozo
+
+# Default Hito 1 extract: annual production 2025 (full Datastore total 991844).
+# Do NOT use "con identificador" clones when datastore_search total is ~90k.
+default_produccion_resource_id: d774b5d7-0756-48fe-88f2-8729b57b22da
+
+produccion_anual:
+  - year: 2026
+    resource_id: fb7a47a0-cba9-4667-a004-6f6c1c346c23
+    notes: YTD at discovery; not a closed year.
+  - year: 2025
+    resource_id: d774b5d7-0756-48fe-88f2-8729b57b22da
+    notes: Preferred full-year extract (Datastore total 991844 on 2026-09-10).
+  - year: 2025
+    resource_id: 6f9f63bd-3f7e-43ab-8743-85997ae1380c
+    notes: "Do not use as year extract — Datastore total ~90000 (truncated / con identificador)."
+  - year: 2024
+    resource_id: 43a09dce-1742-44d0-bc13-f193deaab563
+  - year: 2024
+    resource_id: 94d82d18-488b-434c-806d-ee5e053ce1cd
+    notes: Alternate 2024 listing ("con identificador"); verify Datastore total before use.
+  - year: 2023
+    resource_id: 231c39b3-e81e-4398-af8d-b115807f2c25
+  - year: 2022
+    resource_id: 876b3746-85e2-4039-adeb-b1354436159f
+  - year: 2021
+    resource_id: 465be754-a372-4c31-b855-81dc5fe3309f
+  - year: 2020
+    resource_id: c4a4a6a0-e75a-4e12-ae5c-54d53a70348c
+  - year: 2019
+    resource_id: 8bc0d61c-0408-43d4-a7bc-7178fcb5d37e
+  - year: 2018
+    resource_id: 333fd72a-9b83-4bc1-bc94-0f5940b52331
+  - year: 2017
+    resource_id: df4857e1-7c3f-4980-b5b5-184fe78bfcf0
+  - year: 2016
+    resource_id: d8539ae8-0a71-4339-a16c-139b21bd2cd0
+  - year: 2015
+    resource_id: e375aa35-fd8d-41d6-aa0c-e6879ca567a1
+  - year: 2014
+    resource_id: cd9813a7-1e19-4f60-a02a-7903dd81aff7
+  - year: 2013
+    resource_id: bc7ac8fe-2cec-4dab-acdd-322ea1ccc887
+  - year: 2012
+    resource_id: 0dce0e75-1556-47ee-8615-1955fbd54ade
+  - year: 2011
+    resource_id: 4817272c-7365-4bdd-b02d-75b118218b10
+  - year: 2010
+    resource_id: 364ca28e-d069-4bd6-8771-925f0db152a8
+  - year: 2009
+    resource_id: 48585038-055a-4437-bb1d-4fe36073f453
+  - year: 2008
+    resource_id: 3430b5a8-a516-42ca-a47d-2e1ce45925fb
+  - year: 2007
+    resource_id: be663a63-f020-4e28-8f31-c5f81d47554d
+  - year: 2006
+    resource_id: 4e1c55e5-1f1b-4fc8-aa37-2080d9795f29
+
+# Parallel annual files labelled "DDJJ abiertas y cerradas". Not the Hito 1 default.
+produccion_ddjj_abiertas_cerradas:
+  2006: 532e9b21-3826-4083-9e25-27147b003696
+  2007: 9310d724-a341-4740-be18-c87f03f8a462
+  2008: feac6698-5c88-49e8-aa8a-733e7c70d644
+  2009: 1cd8d21f-b420-4fba-a3c2-233ff57587f5
+  2010: 8ee68ba4-2715-467c-af6f-233555520483
+  2011: da9d4417-2be6-4585-8f35-f2e8078c20e5
+  2012: a6c391c5-4b88-4702-8080-72ba7106a02b
+  2013: 158e5054-0c3b-478a-bbb7-f2d91c522e49
+  2014: 443d7488-1614-41bd-8dbd-82506e37e853
+  2015: 36c4ca2b-8f9f-4bed-8ceb-ed9c8647f861
+  2016: 8a7f0dff-5a1d-4b1e-a8df-e566a85c3c69
+  2017: 97c81dbc-9db4-4a61-8e78-ee0a934fa620
+  2018: 13e30415-a2ac-46fe-a8ff-9810d8323ac9
+  2019: d7dd85a5-4268-43b3-9ce5-c713cbbec2dc
+  2020: 508ce39a-00d0-4164-a997-7ad25dda1c1a
+  2021: cc966108-e577-4043-b553-81173ef83816
+  2022: ae8d5a47-5181-4add-a836-ac19fb104fe1
+  2023: 4b31fa79-dc2d-4228-a6ac-7e804cb36d1d
+  2024: 0a352dee-8b4e-4e95-b01e-5b8082ce22ac
+  2025: 561279bf-1b7c-4fb1-9d39-9f3fb27ab237
+  2026: 85d6e021-a00d-4997-b74e-0b9b43c547fe
+
+dims_and_other:
+  capitulo_iv_pozos:
+    resource_id: cb5c0f04-7835-45cd-b982-3e25ca7d7751
+    notes: Well dimension + geojson coords. Not selected in default meltano run.
+  padron_primera_produccion:
+    resource_id: 5578dd48-d0dd-487e-8ddc-bd3ebb1afef0
+    notes: Only (idpozo, anio, mes) of first production — not a full dim.
+  no_convencional_extract:
+    resource_id: b5b58cdc-9e07-41f9-b392-fb9ec68b0725
+    notes: Pre-filtered no convencional; Hito 1 loads the full annual file instead.
+
+fracturas:
+  package: datos-de-fractura-de-pozos-adjunto-iv
+  package_id: 71fa2e84-0316-4a1b-af68-7f35e41f58d7
+  portal: https://datos.energia.gob.ar/dataset/datos-de-fractura-de-pozos-adjunto-iv
+  datos_gob_ar: https://datos.gob.ar/dataset/energia-datos-fractura-pozos-hidrocarburos-adjunto-iv
+  resource_id: 2280ad92-6ed3-403e-a095-50139863ab0d
+  notes: Adjunto IV daily CSV. Stream fracturas_adjunto_iv exists but is deselected in Hito 1 default job.

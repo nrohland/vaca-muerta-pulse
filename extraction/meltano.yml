@@ -1,0 +1,110 @@
+default_environment: dev
+project_id: 825bf0ab-3912-4bf6-9854-4705d54c7a54
+send_anonymous_usage_stats: false
+requires_meltano: ">=4.2.0"
+
+# Meltano project lives in extraction/ (not the git root).
+# Pins: tap-ckan-datastore is this repo (Singer SDK); target-bigquery is z3z1ma git SHA.
+
+environments:
+  - name: dev
+    config:
+      plugins:
+        loaders:
+          - name: target-bigquery
+            config:
+              dataset: raw_cap4_dev
+              overwrite: true
+  - name: prod
+    config:
+      plugins:
+        loaders:
+          - name: target-bigquery
+            config:
+              dataset: raw_cap4
+              overwrite: false
+
+plugins:
+  extractors:
+    - name: tap-ckan-datastore
+      namespace: tap_ckan_datastore
+      pip_url: -e ./plugins/tap-ckan-datastore
+      executable: tap-ckan-datastore
+      capabilities:
+        - catalog
+        - discover
+        - state
+      settings:
+        - name: api_url
+          kind: string
+        - name: produccion_resource_id
+          kind: string
+        - name: pozos_resource_id
+          kind: string
+        - name: fracturas_resource_id
+          kind: string
+        - name: page_size
+          kind: integer
+        - name: max_records
+          kind: integer
+      select:
+        - produccion_pozo_mes.*
+        - "!capitulo_iv_pozos.*"
+        - "!fracturas_adjunto_iv.*"
+      config:
+        api_url: https://datos.energia.gob.ar
+        # Public CKAN UUIDs (not secrets). Override with TAP_CKAN_DATASTORE_* env vars.
+        # 2025 annual production — full Datastore (~991_844 rows on 2026-09-10).
+        # Do not use 6f9f63bd-… (truncated ~90k "con identificador") as the year extract.
+        produccion_resource_id: d774b5d7-0756-48fe-88f2-8729b57b22da
+        pozos_resource_id: cb5c0f04-7835-45cd-b982-3e25ca7d7751
+        fracturas_resource_id: 2280ad92-6ed3-403e-a095-50139863ab0d
+        page_size: 32000
+  loaders:
+    - name: target-bigquery
+      variant: z3z1ma
+      pip_url: git+https://github.com/z3z1ma/target-bigquery.git@090dad0620711efae4b31031b10b0ea88744aef5
+      settings:
+        - name: clustering_fields
+          kind: array
+        - name: partition_granularity
+          kind: string
+        - name: schema_resolver_version
+          kind: integer
+        - name: method
+          kind: string
+        - name: denormalized
+          kind: boolean
+        - name: overwrite
+          kind: boolean
+        - name: credentials_path
+          kind: string
+        - name: location
+          kind: string
+        - name: batch_size
+          kind: integer
+      config:
+        project: vaca-muerta-pulse
+        dataset: raw_cap4
+        location: US
+        method: batch_job
+        denormalized: true
+        schema_resolver_version: 2
+        batch_size: 100000
+        # Native loader partition = MONTH on _sdc_batched_at (z3z1ma).
+        # Product intent = DATE periodo; see sql/intended_partition.sql.
+        partition_granularity: month
+        clustering_fields:
+          - empresa
+          - idpozo
+          - cuenca
+        column_name_transforms:
+          snake_case: false
+          lower: false
+        upsert: false
+        overwrite: false
+
+jobs:
+  - name: cap4-produccion
+    tasks:
+      - tap-ckan-datastore target-bigquery
