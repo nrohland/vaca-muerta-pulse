@@ -83,7 +83,7 @@ flowchart LR
 
 Filtro de producto (CONFIRMED en sample 2025 DataStore; aplicar en `stg`/`int`, no en el tap): `formacion = 'vaca muerta'` y `tipo_de_recurso = 'NO CONVENCIONAL'`. Detalle en [data-model.md](../specs/001-vaca-muerta-pulse/data-model.md).
 
-## 4. BigQuery — naming y físico (Hito 1)
+## 4. BigQuery — naming y físico (Hito 1 + datasets Hito 2)
 
 Nombres **confirmados como intención de DE**. El load live puede faltar; no afirmar DDL verificado en `INFORMATION_SCHEMA` hasta el smoke.
 
@@ -91,9 +91,13 @@ Nombres **confirmados como intención de DE**. El load live puede faltar; no afi
 | --- | --- | --- |
 | `raw_cap4` | Tablas 1:1 con el tap (`produccion_pozo_mes`, …) | Meltano (prod) |
 | `raw_cap4_dev` | Idem, **append** (reload = TRUNCATE o DELETE year) | Meltano (dev) |
-| `analytics` o datasets dbt `stg_cap4` / `int_cap4` / `marts` | Modelos | dbt (Hito 2) |
+| `stg_cap4_dev` | Staging dbt (dev) | dbt (`vm-pulse-dbt`) |
+| `int_cap4_dev` | Intermediate dbt (dev) | dbt (`vm-pulse-dbt`) |
+| `marts_cap4_dev` | Marts dbt (dev) | dbt (`vm-pulse-dbt`) |
 
 Proyecto GCP: **`vaca-muerta-pulse`**. Location: **US**.
+
+Twins prod (`stg_cap4` / `int_cap4` / `marts_cap4`) = follow-up. SA dbt: `vm-pulse-dbt` (**existe**; secret `GCP_SA_KEY_DBT`). Roles: `jobUser`, `dataViewer` en `raw_cap4_dev`, `dataEditor` en stg/int/marts. Detalle: [transform/docs/hito-2-bq-iam.md](../transform/docs/hito-2-bq-iam.md).
 
 Tablas raw de hechos de producción (`produccion_pozo_mes`):
 

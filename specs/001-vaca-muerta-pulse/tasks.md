@@ -64,9 +64,19 @@ Tachá Hito 1 en el PR que complete el ítem. Smoke 500 post-fix 2026-09-10: `CO
 
 ---
 
+## Hito 2 — IAM + datasets BQ (DE, prereq de dbt)
+
+Evidencia: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.md). **No** es el PR de modelos.
+
+- [x] Datasets US: `stg_cap4_dev`, `int_cap4_dev`, `marts_cap4_dev`.
+- [x] `raw_cap4_dev` existe; `raw_cap4` no.
+- [x] SA `vm-pulse-dbt` creada (Nico) + auth `GCP_SA_KEY_DBT`.
+- [x] Roles: `jobUser`; `dataViewer` en `raw_cap4_dev`; `dataEditor` en stg/int/marts.
+- [x] Docs + `.env.example` con nombres (`DBT_BIGQUERY_PROJECT`, `DBT_DATASET_*`, `GCP_SA_KEY_DBT`).
+
 ## Hito 2 — tasa Barrilito (AE, `transform/`) — sin tachar
 
-No implementar en un PR de Hito 1 ni en este PR de docs. Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 5.
+No implementar modelos dbt en el PR de IAM. Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 5.
 
 - [ ] Mart DRAFT `fct_barrilito_rate` (o el nombre único que Hito 2 publique; retirar el alias `mart_barrilito_headline` si no se usa).
 - [ ] Grano: **una fila** = snapshot del recorte VM no conv. para el **último mes Capítulo IV** (agregado **total** Pulse, no por empresa).

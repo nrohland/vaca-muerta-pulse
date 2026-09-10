@@ -10,6 +10,8 @@ Leyenda:
 
 Nombres de marts (`fct_*`, `dim_*`, `fct_barrilito_rate`) siguen **DRAFT**.
 
+Datasets físicos dbt (dev, US, Hito 2 IAM): `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev`. Source raw Hito 2: `raw_cap4_dev`. Detalle: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.md).
+
 ## Fuentes
 
 | Recurso | Uso | Estado |
