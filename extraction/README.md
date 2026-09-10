@@ -263,16 +263,40 @@ Hay una familia paralela **DDJJ abiertas y cerradas** (otro UUID por año) — n
 
 ## Smoke load (estado)
 
-Re-medido 2026-09-10 (metadata, **sin** año completo):
+Post-merge PR #5 (corrida 2026-09-10 contra `30f6970`). Evidencia: [docs/hito-1-post-merge-smoke.md](docs/hito-1-post-merge-smoke.md). Costo año completo: [docs/hito-1-full-year-cost.md](docs/hito-1-full-year-cost.md).
 
-| Check | Resultado |
+| Check | Resultado (2026-09-10) |
 | --- | --- |
-| `COUNT(*)` `raw_cap4_dev.produccion_pozo_mes` | **500** (en streaming buffer; `tables.get` `num_rows=0` / `num_bytes=0`) |
+| Auth SA | OK |
+| `meltano run cap4-produccion` (500/500) | exit 0; **504 s** |
+| `COUNT(*)` `raw_cap4_dev.produccion_pozo_mes` | **500** (pre-smoke era 0; en streaming buffer: `tables.get` `num_rows=0` / `num_bytes=0`) |
 | Buffer Write API | 500 filas / **37 257 bytes** (~74.5 B/fila) |
-| Layout | MONTH(`_sdc_batched_at`) + CLUSTER `empresa,idpozo,cuenca` |
-| Año completo | **no corrido** — bloqueado hasta OK de costo de Nicolás |
+| DDL | `PARTITION BY TIMESTAMP_TRUNC(_sdc_batched_at, MONTH)` + `CLUSTER BY empresa, idpozo, cuenca` |
+| Destino | tabla **final** (no staging `__*`) |
+| Año completo (991 844) | **no corrido** — bloqueado hasta OK de costo de Nicolás |
 
-Extrapolación lineal a 991 844 y cupos free: [docs/hito-1-full-year-cost.md](docs/hito-1-full-year-cost.md).
+Repro smoke (con SA; no commitear el JSON):
+
+```bash
+cd extraction
+source .venv/bin/activate
+export GOOGLE_APPLICATION_CREDENTIALS="$(bash scripts/materialize-sa-key.sh)"  # o path gitignored
+python scripts/ensure_dataset.py   # BIGQUERY_DATASET=raw_cap4_dev
+python scripts/prepare_year_load.py --dataset raw_cap4_dev
+TAP_CKAN_DATASTORE_PAGE_SIZE=500 TAP_CKAN_DATASTORE_MAX_RECORDS=500 \
+  MELTANO_ENVIRONMENT=dev meltano run cap4-produccion
+# evidencia: python scripts/prepare_year_load.py --dataset raw_cap4_dev
+# o las queries de sql/verify_layout.sql
+```
+
+Checklist:
+
+1. Datasets `raw_cap4` / `raw_cap4_dev` — **sí** (dev verificado)
+2. `prepare_year_load.py` (IF NOT EXISTS + layout) — **sí**
+3. Smoke 500 con `storage_write_api`; wall-clock — **504 s**
+4. `COUNT(*)` final **> 0** — **500**; staging `__*` leftover del Bug 1 no es producto
+5. `INFORMATION_SCHEMA.TABLES.ddl` MONTH `_sdc_batched_at` + CLUSTER — **sí**
+6. Año completo: sin `MAX_RECORDS`; Datastore `total` 991844 vs `COUNT(*)` BQ — **pendiente** (OK de costo de Nicolás)
 
 Cuando Nico OK:
 
