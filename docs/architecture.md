@@ -2,7 +2,7 @@
 
 Vista C4-ish del data product. Stack y *por qué*: [ADR 0001](adrs/0001-stack-choices.md). Producto: [spec.md](../specs/001-vaca-muerta-pulse/spec.md).
 
-**Hoy (Hito 1):** Meltano versionado en `extraction/` (tap CKAN DataStore → `target-bigquery`). Dataset propuesto **`raw_cap4`** (dev: `raw_cap4_dev`). El primer load live a BQ depende de SA en el proyecto `vaca-muerta-pulse`. dbt / Next: Hitos 2–3.
+**Hoy:** Meltano versionado en `extraction/` (tap CKAN DataStore → `target-bigquery`). Dataset raw **`raw_cap4_dev`** existe (prod `raw_cap4` aún no). Datasets dbt **`stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev`** existen (US, vacíos). SA `vm-pulse-dbt` **no** existe. Next: Hito 3.
 
 ## 1. Contexto
 
@@ -83,15 +83,15 @@ flowchart LR
 
 Filtro de producto (CONFIRMED en sample 2025 DataStore; aplicar en `stg`/`int`, no en el tap): `formacion = 'vaca muerta'` y `tipo_de_recurso = 'NO CONVENCIONAL'`. Detalle en [data-model.md](../specs/001-vaca-muerta-pulse/data-model.md).
 
-## 4. BigQuery — naming y físico (Hito 1)
+## 4. BigQuery — naming y físico (Hito 1–2)
 
-Nombres **confirmados como intención de DE**. El load live puede faltar; no afirmar DDL verificado en `INFORMATION_SCHEMA` hasta el smoke.
+Nombres **confirmados**. Datasets dbt `_dev` verificados 2026-09-10 (`INFORMATION_SCHEMA.SCHEMATA` + `datasets.get`). SA `vm-pulse-dbt` **no** existe (IAM API off para Meltano). Evidencia: [transform/docs/hito-2-bq-iam.md](../transform/docs/hito-2-bq-iam.md).
 
 | Dataset | Contenido | Quién escribe |
 | --- | --- | --- |
-| `raw_cap4` | Tablas 1:1 con el tap (`produccion_pozo_mes`, …) | Meltano (prod) |
-| `raw_cap4_dev` | Idem, **append** (reload = TRUNCATE o DELETE year) | Meltano (dev) |
-| `analytics` o datasets dbt `stg_cap4` / `int_cap4` / `marts` | Modelos | dbt (Hito 2) |
+| `raw_cap4` | Twin prod 1:1 con el tap. **No existe** al 2026-09-10 | Meltano (prod), cuando se cree |
+| `raw_cap4_dev` | Landing Hito 1. **Existe** (US, `2026-09-10T18:11:40Z`). Tabla `produccion_pozo_mes` | Meltano (`vm-pulse-meltano`) |
+| `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev` | Capas dbt Hito 2. **Existen** (US, `2026-09-10T21:09Z`), **0 tablas**. Twins prod `stg_cap4` / `int_cap4` / `marts_cap4` **no** existen | dbt (`vm-pulse-dbt`) **cuando Nico cree la SA** |
 
 Proyecto GCP: **`vaca-muerta-pulse`**. Location: **US**.
 
@@ -115,7 +115,7 @@ Completaciones (Adjunto IV): grano evento (`id_base_fractura_adjiv`); partición
 
 ## 6. Secretos
 
-Diagrama de confianza: el SA de Meltano escribe `raw_*`; el SA de dbt lee raw y escribe modelos; el runtime del front **solo lee marts** (idealmente vía vista o job de export). Ningún JSON de SA en el repo. Ver [AGENTS.md](../AGENTS.md).
+Diagrama de confianza: el SA de Meltano (`vm-pulse-meltano`) escribe `raw_*`; el SA de dbt (`vm-pulse-dbt`) **debe** leer `raw_cap4_dev` y escribir `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev`. **Hoy `vm-pulse-dbt` no existe** — Nico la crea con [transform/scripts/provision_hito2_bq.sh](../transform/scripts/provision_hito2_bq.sh). Key dbt = secret `GCP_SA_KEY_DBT` (distinto de Meltano `GCP_SA_KEY`); materializar con [transform/scripts/materialize-dbt-sa-key.sh](../transform/scripts/materialize-dbt-sa-key.sh). El runtime del front **solo lee marts**. Ningún JSON de SA en el repo. Ver [AGENTS.md](../AGENTS.md).
 
 ## 7. Lo que no está en v1
 

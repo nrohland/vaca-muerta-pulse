@@ -1,0 +1,11 @@
+# Local dbt / AE secrets (never commit)
+.env
+profiles.yml
+.user.yml
+.secrets/
+.venv/
+target/
+dbt_packages/
+dbt_modules/
+logs/
+vm-pulse-dbt.json

@@ -34,7 +34,7 @@ No busques `dbt_project.yml` ni la app Next todavía: no están. Meltano **sí**
 | `specs/` | todos (AE lidera granos) | 0+ | fuente de verdad de producto |
 | `docs/` | todos (DE lidera BQ/Meltano) | 0+ | arquitectura + ADRs |
 | `extraction/` | **DE** | 1 | Meltano + tap CKAN DataStore → target-bigquery |
-| `transform/` | **AE** | 2 | placeholder dbt |
+| `transform/` | **AE** | 2 | IAM/datasets docs + scripts; dbt models en el PR de Hito 2 AE (no acá) |
 | `apps/web/` | **Front** | 3 | placeholder Next + Tremor |
 
 No pongas modelos dbt en `extraction/`, ni taps Singer en `transform/`, ni queries a `raw_*` desde el front.

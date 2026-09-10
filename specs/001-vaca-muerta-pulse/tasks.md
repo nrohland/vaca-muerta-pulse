@@ -3,7 +3,7 @@
 Criterios de aceptación: [plan.md](plan.md). Marca UI: **Barrilito** (repo `vaca-muerta-pulse`).
 
 - **Hito 1** (abajo): owner **DE**, folder [`extraction/`](../../extraction/README.md). Cadencia extract **mensual**; no cambiar `meltano.yml` en un PR de marca/producto.
-- **Hito 2 / 3:** secciones al final, **sin tachar**. No implementar dbt ni Next en este PR de specs.
+- **Hito 2 IAM:** datasets `_dev` tildados con evidencia; SA `vm-pulse-dbt` **sin** tildar. Modelos Barrilito / Hito 3 siguen **sin tachar**.
 
 Tachá Hito 1 en el PR que complete el ítem. Smoke 500 post-fix 2026-09-10: `COUNT(*)` final **500** (streaming buffer). Layout MONTH(`_sdc_batched_at`)+CLUSTER en [extraction/docs/hito-1-post-merge-smoke.md](../../extraction/docs/hito-1-post-merge-smoke.md). Año completo (~991k) **bloqueado** hasta OK de costo de Nicolás — este PR no corre Meltano full-year.
 
@@ -64,9 +64,20 @@ Tachá Hito 1 en el PR que complete el ítem. Smoke 500 post-fix 2026-09-10: `CO
 
 ---
 
+## Hito 2 — IAM / datasets BQ (ops, `transform/`)
+
+Evidencia: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.md). Scripts: [transform/scripts/provision_hito2_bq.sh](../../transform/scripts/provision_hito2_bq.sh). **No** es el PR de modelos dbt.
+
+- [x] Datasets US `stg_cap4_dev`, `int_cap4_dev`, `marts_cap4_dev` existen (vacíos; created 2026-09-10T21:09Z). `INFORMATION_SCHEMA.SCHEMATA` + `datasets.get`.
+- [x] `raw_cap4_dev` existe (Hito 1). **`raw_cap4` no existe** — no se inventa ni se crea en este PR.
+- [ ] SA `vm-pulse-dbt` — **no existe.** IAM API deshabilitada / Meltano 403 al consultar. Bloqueado en Nicolás (`provision_hito2_bq.sh` con owner).
+- [ ] Grants mínimos (jobUser + READER `raw_cap4_dev` + WRITER stg/int/marts `_dev`) — dependen de la SA.
+- [ ] Key / secret `GCP_SA_KEY_DBT` (separado de Meltano `GCP_SA_KEY`) + [materialize-dbt-sa-key.sh](../../transform/scripts/materialize-dbt-sa-key.sh). JSON **fuera** de git.
+- [ ] Default table expiration 60d en datasets dbt — documentado; Nico puede `--unset-table-expiration`.
+
 ## Hito 2 — tasa Barrilito (AE, `transform/`) — sin tachar
 
-No implementar en un PR de Hito 1 ni en este PR de docs. Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 5.
+No implementar modelos dbt en un PR de Hito 1 ni en este PR de IAM. Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 5.
 
 - [ ] Mart DRAFT `fct_barrilito_rate` (o el nombre único que Hito 2 publique; retirar el alias `mart_barrilito_headline` si no se usa).
 - [ ] Grano: **una fila** = snapshot del recorte VM no conv. para el **último mes Capítulo IV** (agregado **total** Pulse, no por empresa).
