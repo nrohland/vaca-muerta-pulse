@@ -1,10 +1,12 @@
 # transform/ — dbt Core (Analytics Engineer)
 
-**Hito 2.** Owner: **AE**. Producto UI: **Barrilito**. Repo: `vaca-muerta-pulse`.
+**Hito 2.** Owner: **AE** (modelos). **DE** provisionó IAM + datasets. Producto UI: **Barrilito**. Repo: `vaca-muerta-pulse`.
 
 dbt **Core** (gratis) + paquetes Hub. No dbt Cloud, no paquetes pagos. Meltano no se toca acá; el Front no lee `raw_*`.
 
 Contrato de granos: [data-model.md](../specs/001-vaca-muerta-pulse/data-model.md) § Grano 5. El identificador publicado es **`fct_barrilito_rate`** (el alias `mart_barrilito_headline` no se usa).
+
+IAM + datasets (evidencia DE): [docs/hito-2-bq-iam.md](docs/hito-2-bq-iam.md).
 
 ---
 
@@ -13,8 +15,8 @@ Contrato de granos: [data-model.md](../specs/001-vaca-muerta-pulse/data-model.md
 | | |
 | --- | --- |
 | **Primario (stg, target `dev`)** | `vaca-muerta-pulse.raw_cap4_dev.produccion_pozo_mes` |
-| **`COUNT(*)`** | **991844** (año 2025 completo). Handoff DE/Tutor. Este PR de AE **no** re-consultó `INFORMATION_SCHEMA` ni inventó más evidencia de warehouse. |
-| Twin prod | `raw_cap4.produccion_pozo_mes` (mismo grano / mismo nombre de tabla). `DBT_TARGET=prod` o `DBT_RAW_DATASET=raw_cap4`. |
+| **`COUNT(*)`** | **991844** (año 2025 completo). Handoff DE/Tutor + [evidencia Hito 1](../extraction/docs/hito-1-full-year-2025-load.md). Este PR de AE **no** re-consultó `INFORMATION_SCHEMA` ni inventó más evidencia de warehouse. |
+| Twin prod | `raw_cap4.produccion_pozo_mes` (mismo grano / mismo nombre de tabla). **El dataset `raw_cap4` no existe todavía.** `DBT_TARGET=prod` o `DBT_DATASET_RAW=raw_cap4` cuando DE lo cree. |
 | Match source | Datastore 2025 resource `d774b5d7-0756-48fe-88f2-8729b57b22da` total 991 844 |
 
 `var('raw_dataset')` default = `raw_cap4_dev`. No apuntes stg a un dump local.
@@ -80,12 +82,88 @@ SA de dbt (nombre, **docs only**): **`vm-pulse-dbt`**. El JSON de la key **nunca
 
 | Capa | Dev (Hito 2, default) | Prod twin (futuro, `DBT_TARGET=prod`) |
 | --- | --- | --- |
-| Source (Meltano) | `raw_cap4_dev` | `raw_cap4` |
+| Source (Meltano) | `raw_cap4_dev` | `raw_cap4` (aún no existe) |
 | Staging | `stg_cap4_dev` | `stg_cap4` |
 | Intermediate | `int_cap4_dev` | `int_cap4` |
 | Marts (Front) | `marts_cap4_dev` | `marts_cap4` |
 
-`generate_schema_name` escribe esos datasets (no `{profile}_stg`). IAM sugerido: lectura `raw_*`; escritura `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev`.
+`generate_schema_name` escribe esos datasets (no `{profile}_stg`). IAM **verificado** 2026-09-10: [docs/hito-2-bq-iam.md](docs/hito-2-bq-iam.md).
+
+---
+
+## Warehouse IAM (confirmado 2026-09-10)
+
+**Sí hay que usar la SA `vm-pulse-dbt`.** No reutilices la SA ni la key de Meltano (`vm-pulse-meltano` / `GCP_SA_KEY`).
+
+| Por qué | Detalle |
+| --- | --- |
+| Least privilege | Meltano **escribe** `raw_*`. dbt **lee** raw y **escribe** `stg` / `int` / `marts`. Misma key = dbt con write a raw. |
+| Secretos | GitHub / Cursor: `GCP_SA_KEY_DBT` **aparte** de `GCP_SA_KEY`. |
+| Grants | BigQuery no deja colgar `dataViewer` / `dataEditor` a un email que no existe. |
+
+Proyecto: `$BIGQUERY_PROJECT` / `$DBT_BIGQUERY_PROJECT`. Location: **US**.
+
+| Dataset | Estado | Quién escribe |
+| --- | --- | --- |
+| `raw_cap4_dev` | existe (Hito 1; `COUNT(*)` = 991844) | Meltano |
+| `raw_cap4` | **no existe** todavía | Meltano (prod, cuando se cree) |
+| `stg_cap4_dev` | **creado** US | dbt |
+| `int_cap4_dev` | **creado** US | dbt |
+| `marts_cap4_dev` | **creado** US | dbt |
+
+Roles de `vm-pulse-dbt@$BIGQUERY_PROJECT.iam.gserviceaccount.com` (**verificados** 2026-09-10):
+
+- Proyecto: `roles/bigquery.jobUser` (job de `INFORMATION_SCHEMA.SCHEMATA` OK)
+- `raw_cap4_dev`: `roles/bigquery.dataViewer` (READER; `list_tables` sin scan)
+- `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev`: `roles/bigquery.dataEditor` (WRITER; create+drop tabla 0 filas)
+- `raw_cap4`: no existe todavía
+
+La SA de Meltano quedó **OWNER** de los datasets dbt porque los creó. No escribe modelos ahí.
+
+---
+
+## Env (nombres, cero keys)
+
+Copiá [`.env.example`](.env.example) a `transform/.env` (gitignored) o exportá las vars. **Solo nombres** en git.
+
+| Variable | Para qué |
+| --- | --- |
+| `DBT_BIGQUERY_PROJECT` | Proyecto BQ. Alias de `BIGQUERY_PROJECT` (el que lee `profiles.yml.example`). |
+| `BIGQUERY_LOCATION` | `US` |
+| `DBT_DATASET_RAW` | Source Hito 2: `raw_cap4_dev` |
+| `DBT_DATASET_STG` | `stg_cap4_dev` |
+| `DBT_DATASET_INT` | `int_cap4_dev` |
+| `DBT_DATASET_MARTS` | `marts_cap4_dev` |
+| `DBT_TARGET` | `dev` (default) o `prod` |
+| `GOOGLE_APPLICATION_CREDENTIALS` | Path a un JSON **gitignored** (p.ej. `./.secrets/vm-pulse-dbt.json`) |
+| `GCP_SA_KEY_DBT` | Secret de CI / Cloud: JSON **completo** de la key de `vm-pulse-dbt`. **No** es `GCP_SA_KEY` (Meltano). |
+
+Local, si Nico creó una key (opcional; preferible ADC / WIF):
+
+```bash
+cd transform
+mkdir -p .secrets                          # .secrets/ está gitignored
+# el JSON vive acá o en GH Secrets — nunca en el commit
+export GOOGLE_APPLICATION_CREDENTIALS="$PWD/.secrets/vm-pulse-dbt.json"
+# o, si el secret está en el entorno:
+export GCP_SA_KEY="$GCP_SA_KEY_DBT"
+export GCP_SA_CLIENT_EMAIL=vm-pulse-dbt@<project-id>.iam.gserviceaccount.com
+export SA_KEY_PATH="$PWD/.secrets/vm-pulse-dbt.json"
+export GOOGLE_APPLICATION_CREDENTIALS="$(bash scripts/materialize-dbt-sa-key.sh)"
+```
+
+### Cursor Cloud / GitHub (el menú de secrets)
+
+Mismo patrón que Meltano (`GCP_SA_KEY` → `scripts/materialize-sa-key.sh`):
+
+1. En el run del agente aparece el menú **Add secrets**.
+2. Pegá el JSON **entero** de la key (de `{` a `}`) en **`GCP_SA_KEY_DBT`**.
+3. Si solo tenés el PEM, pegá también **`GCP_SA_CLIENT_EMAIL_DBT`** = `vm-pulse-dbt@<project-id>.iam.gserviceaccount.com`.
+4. El script materializa a `transform/.secrets/vm-pulse-dbt.json` (gitignored).
+
+Si la SA todavía no existe, el mismo menú acepta el JSON de una SA **owner** (puede habilitar IAM y crear `vm-pulse-dbt`). No reutilices `GCP_SA_KEY` de Meltano.
+
+Este PR **no** descarga ni commitea un JSON de SA.
 
 ---
 
@@ -127,7 +205,7 @@ Targets: `dev` (default) → `raw_cap4_dev` / `stg_cap4_dev` / `int_cap4_dev` / 
 ## DAG
 
 ```text
-source raw_cap4.produccion_pozo_mes   (físico: raw_cap4_dev; twin prod: raw_cap4)
+source raw_cap4.produccion_pozo_mes   (físico: raw_cap4_dev; twin prod: raw_cap4 — aún no existe)
   → stg_produccion_pozo_mes     (view en stg_cap4_dev: cast, periodo, filtro VM, dedupe)
   → int_produccion_vm_noconv    (view en int_cap4_dev: surrogate + days_in_month)
   → fct_well_month              (tabla en marts_cap4_dev, partition periodo)
@@ -176,4 +254,6 @@ Evaluator (caro; no es el `dbt build` default). Los modelos del paquete están `
 - [plan.md](../specs/001-vaca-muerta-pulse/plan.md) Hito 2
 - [data-model.md](../specs/001-vaca-muerta-pulse/data-model.md)
 - [docs/architecture.md](../docs/architecture.md)
+- [docs/hito-2-bq-iam.md](docs/hito-2-bq-iam.md)
 - [extraction/README.md](../extraction/README.md) (raw, no transformar acá)
+- [extraction/docs/hito-1-full-year-2025-load.md](../extraction/docs/hito-1-full-year-2025-load.md)

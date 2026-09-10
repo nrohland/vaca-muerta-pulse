@@ -86,6 +86,44 @@ def main() -> int:
         f"partition_field={getattr(tp, 'field', None)} "
         f"clustering={list(table.clustering_fields or [])}"
     )
+    print(
+        f"[compare] tables.get num_rows={table.num_rows} num_bytes={table.num_bytes}"
+    )
+    buf = table.streaming_buffer
+    if buf is not None:
+        print(
+            f"[compare] streaming_buffer estimated_rows={buf.estimated_rows} "
+            f"estimated_bytes={buf.estimated_bytes}"
+        )
+    else:
+        print("[compare] streaming_buffer: none")
+
+    part_sql = f"""
+        SELECT partition_id, total_rows, total_logical_bytes
+        FROM `{args.project}.{args.dataset}.INFORMATION_SCHEMA.PARTITIONS`
+        WHERE table_name = @table
+        ORDER BY partition_id
+    """
+    try:
+        parts = list(client.query(part_sql, job_config=cfg).result())
+        if not parts:
+            print("[compare] INFORMATION_SCHEMA.PARTITIONS: (empty)")
+        for p in parts:
+            print(
+                f"[compare] partition_id={p.partition_id} total_rows={p.total_rows} "
+                f"total_logical_bytes={p.total_logical_bytes}"
+            )
+    except Exception as exc:
+        print(f"[compare] INFORMATION_SCHEMA.PARTITIONS unavailable: {exc}")
+
+    staging_sql = f"""
+        SELECT table_name
+        FROM `{args.project}.{args.dataset}.INFORMATION_SCHEMA.TABLES`
+        WHERE table_name LIKE 'produccion_pozo_mes__%'
+        ORDER BY table_name
+    """
+    staging = [r.table_name for r in client.query(staging_sql).result()]
+    print(f"[compare] staging_tables={staging or '(none)'}")
     return 0
 
 
