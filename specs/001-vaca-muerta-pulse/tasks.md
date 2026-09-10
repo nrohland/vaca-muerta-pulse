@@ -3,7 +3,7 @@
 Criterios de aceptación: [plan.md](plan.md). Marca UI: **Barrilito** (repo `vaca-muerta-pulse`).
 
 - **Hito 1** (abajo): owner **DE**, folder [`extraction/`](../../extraction/README.md). Cadencia extract **mensual**; no cambiar `meltano.yml` en un PR de marca/producto.
-- **Hito 2 / 3:** secciones al final, **sin tachar**. No implementar dbt ni Next en este PR de specs.
+- **Hito 2 / 3:** Hito 2 código en `transform/` (este árbol). Hito 3 Next **sin tachar**.
 
 Tachá en el PR que complete el ítem. Año 2025 cargado 2026-09-10: `COUNT(*)` **991 844** (delta 0 vs Datastore). Evidencia: [extraction/docs/hito-1-full-year-2025-load.md](../../extraction/docs/hito-1-full-year-2025-load.md). Smoke 500 previo: [extraction/docs/hito-1-post-merge-smoke.md](../../extraction/docs/hito-1-post-merge-smoke.md).
 
@@ -66,7 +66,7 @@ Tachá en el PR que complete el ítem. Año 2025 cargado 2026-09-10: `COUNT(*)` 
 
 ## Hito 2 — IAM + datasets BQ (DE, prereq de dbt)
 
-Evidencia: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.md). **No** es el PR de modelos.
+Evidencia: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.md). Hecho en main (PR #11). Este PR agrega los modelos.
 
 - [x] Datasets US: `stg_cap4_dev`, `int_cap4_dev`, `marts_cap4_dev`.
 - [x] `raw_cap4_dev` existe; `raw_cap4` no.
@@ -74,19 +74,21 @@ Evidencia: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.
 - [x] Roles: `jobUser`; `dataViewer` en `raw_cap4_dev`; `dataEditor` en stg/int/marts.
 - [x] Docs + `.env.example` con nombres (`DBT_BIGQUERY_PROJECT`, `DBT_DATASET_*`, `GCP_SA_KEY_DBT`).
 
-## Hito 2 — tasa Barrilito (AE, `transform/`) — sin tachar
+## Hito 2 — tasa Barrilito (AE, `transform/`)
 
-No implementar modelos dbt en el PR de IAM. Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 5.
+Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 5. Código: [`transform/`](../../transform/README.md).
 
-- [ ] Mart DRAFT `fct_barrilito_rate` (o el nombre único que Hito 2 publique; retirar el alias `mart_barrilito_headline` si no se usa).
-- [ ] Grano: **una fila** = snapshot del recorte VM no conv. para el **último mes Capítulo IV** (agregado **total** Pulse, no por empresa).
-- [ ] Fórmula preferida: `rate_m3_dia = sum(prod_pet_m3) / sum(tef)` cuando `tef` son días usables y `sum(tef) > 0`.
-- [ ] Fallback: `rate_m3_dia = sum(prod_pet_m3) / days_in_month(periodo)`. Tests para `tef` = 0 / nulo. Cerrar preferred vs UNKNOWN con evidencia.
-- [ ] Conversión `rate_bbl_dia = rate_m3_dia × 6.28981077` en el modelo.
-- [ ] El **mismo** factor `6.28981077` en YAML de métricas dbt (no un segundo número). Documentar en `transform/` README o `dbt_project.yml` / metrics YAML.
-- [ ] `stg` materializa `periodo` como grano de negocio; no filtrar el mes Cap. IV por `_sdc_batched_at`.
-- [ ] Test de reconciliación: `prod_pet_m3` del mart Barrilito = suma de `fct_well_month` del mismo `periodo` y recorte.
-- [ ] Actualizar [data-model.md](data-model.md) si la evidencia cambia preferred/fallback. No inventar sensores ni grano intradía.
+- [x] Mart `fct_barrilito_rate` (identificador único; alias `mart_barrilito_headline` retirado).
+- [x] Grano: **una fila** = snapshot del recorte VM no conv. para el **último mes Capítulo IV** (agregado **total** Pulse, no por empresa).
+- [x] Fórmula preferida: `rate_m3_dia = sum(prod_pet_m3) / nullif(sum(tef), 0)` cuando `tef_sum > 0` (`tef_weighted`).
+- [x] Fallback: `rate_m3_dia = sum(prod_pet_m3) / days_in_month(periodo)` (`calendar_days`). Unit tests con fixtures para `tef` = 0. Viabilidad de `tef` **en warehouse** = UNKNOWN (este PR no tuvo SA BQ; no se afirma `dbt test` verde contra raw).
+- [x] Conversión `rate_bbl_dia = rate_m3_dia × 6.28981077` en el modelo (`var('m3_to_bbl')` / macro).
+- [x] El **mismo** factor `6.28981077` en YAML de métricas (`transform/metrics.yml` + `config.meta`) y `dbt_project.yml`.
+- [x] `stg` materializa `periodo` como grano de negocio; no filtrar el mes Cap. IV por `_sdc_batched_at`.
+- [x] Source primario: `raw_cap4_dev.produccion_pozo_mes`. **`COUNT(*)` = 991844** (año 2025) — handoff DE/Tutor. Twin prod: `raw_cap4`. Este PR no re-consultó `INFORMATION_SCHEMA`.
+- [x] Test de reconciliación SQL: `prod_pet_m3` Barrilito vs suma de `fct_well_month` del mismo `periodo` (corre con `dbt test` cuando hay warehouse).
+- [x] Actualizar [data-model.md](data-model.md): contrato `fct_barrilito_rate`; tef no promovido a CONFIRMED. Sin sensores ni grano intradía.
+- [ ] `dbt build` / `dbt test` contra BigQuery — **bloqueado** en este PR (sin credenciales en el agente). Instrucciones: [transform/README.md](../../transform/README.md). `dbt deps` + `dbt parse` sí.
 
 ---
 

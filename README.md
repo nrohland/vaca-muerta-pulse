@@ -6,7 +6,7 @@ Dashboard público de **storytelling** sobre producción y completaciones no con
 
 Este repo es un **data product** de portfolio, **spec-driven**: primero specs y ADRs, después Meltano / dbt / Next.
 
-> **Hito 1 (este árbol):** Meltano en [`extraction/`](extraction/README.md) → BigQuery `raw_cap4_dev` (año 2025: `COUNT(*)` **991 844**, delta 0). dbt y Next siguen sin implementar. Esta docs setea el relato Barrilito **antes** del código de Hito 2/3.
+> **Hito 2 (este árbol):** dbt Core en [`transform/`](transform/README.md) (`fct_barrilito_rate`). Meltano en [`extraction/`](extraction/README.md) → BigQuery `raw_cap4_dev` (año 2025: `COUNT(*)` **991 844**, delta 0). Next sigue sin implementar. `dbt build` contra BQ pide SA (fuera de git).
 
 | Si sos… | Empezá por |
 | --- | --- |
@@ -107,9 +107,9 @@ flowchart TB
 | Capa | Tecnología | Dónde | Hito |
 | --- | --- | --- | --- |
 | Specs / docs | Markdown + Mermaid | `specs/`, `docs/` | 0 |
-| Ingesta | Meltano (schedule **mensual**) | `extraction/` | **1 (ahora)** |
+| Ingesta | Meltano (schedule **mensual**) | `extraction/` | 1 |
 | Warehouse | BigQuery, `PARTITION` + `CLUSTER` | GCP | 1 |
-| Transformación | dbt Core (`stg` → `int` → `marts` + tasa Barrilito) | `transform/` | 2 |
+| Transformación | dbt Core (`stg` → `int` → `marts` + tasa Barrilito) | `transform/` | **2 (ahora)** |
 | UI | Next.js + Tremor (marca Barrilito) | `apps/web/` | 3 |
 | Costo | GCP free/cheap-tier, on-demand, sin secretos en git | — | 1–3 |
 
@@ -126,7 +126,7 @@ Detalle y criterios de aceptación: [plan.md](specs/001-vaca-muerta-pulse/plan.m
 | **2** dbt | `stg` → `int` → `marts` + tests + tasa **bbl/día** | `transform/` |
 | **3** Dashboard Barrilito | Contador interpolado + disclaimer MUST; Next + Tremor | `apps/web/` |
 
-Checklist: [tasks.md](specs/001-vaca-muerta-pulse/tasks.md). Cómo correr Meltano: [extraction/README.md](extraction/README.md).
+Checklist: [tasks.md](specs/001-vaca-muerta-pulse/tasks.md). Meltano: [extraction/README.md](extraction/README.md). dbt: [transform/README.md](transform/README.md).
 
 ---
 
@@ -134,7 +134,7 @@ Checklist: [tasks.md](specs/001-vaca-muerta-pulse/tasks.md). Cómo correr Meltan
 
 1. Leé [AGENTS.md](AGENTS.md) (roles, DoD, secretos) y la spec activa.
 2. **SDD:** si el cambio es más que un typo, actualizá `specs/` y/o un ADR *antes* del código.
-3. No implementes dbt o Next fuera de su hito (Hito 2 / 3). Meltano ya vive en `extraction/`; no cambies su schedule a sub-diario en un PR de UI.
+3. No implementes Next fuera del Hito 3. Meltano ya vive en `extraction/`; dbt en `transform/`; no cambies el schedule Meltano a sub-diario en un PR de UI.
 4. Nunca commitees `.env`, JSON de service accounts, ni CSVs crudos pesados.
 5. Un PR = un hito o una historia acotada; el owner del folder (DE / AE / Front) debe poder revisar en aislamiento.
 6. QA: aceptar contra los criterios de [plan.md](specs/001-vaca-muerta-pulse/plan.md), no contra “el código corre”. El contador sin disclaimer **no** acepta.
@@ -145,8 +145,8 @@ Checklist: [tasks.md](specs/001-vaca-muerta-pulse/tasks.md). Cómo correr Meltan
 - [specs/001-vaca-muerta-pulse/spec.md](specs/001-vaca-muerta-pulse/spec.md) — problema, usuarios, requisitos (Barrilito)
 - [specs/001-vaca-muerta-pulse/plan.md](specs/001-vaca-muerta-pulse/plan.md) — hitos 0–3
 - [specs/001-vaca-muerta-pulse/data-model.md](specs/001-vaca-muerta-pulse/data-model.md) — granos + tasa Barrilito (DRAFT / UNKNOWN)
-- [specs/001-vaca-muerta-pulse/tasks.md](specs/001-vaca-muerta-pulse/tasks.md) — Hito 1 + notas Hito 2/3
+- [specs/001-vaca-muerta-pulse/tasks.md](specs/001-vaca-muerta-pulse/tasks.md) — Hito 1 (año 2025) + Hito 2 (IAM + dbt Barrilito) + notas Hito 3
 - [docs/architecture.md](docs/architecture.md)
 - [docs/adrs/0001-stack-choices.md](docs/adrs/0001-stack-choices.md)
 
-Placeholders de implementación: [extraction/](extraction/README.md) · [transform/](transform/README.md) · [apps/web/](apps/web/README.md)
+Placeholders de implementación: [extraction/](extraction/README.md) · [transform/](transform/README.md) (Hito 2, dbt) · [apps/web/](apps/web/README.md)

@@ -1,0 +1,29 @@
+# Barrilito metrics contract (dbt Core, free).
+# Not MetricFlow: a time spine would add BigQuery cost for a 1-row headline.
+# dbt reads the same numbers from dbt_project.yml `vars.m3_to_bbl` and from
+# models/marts/fct_barrilito_rate.yml `config.meta`. Do not introduce a second factor.
+
+m3_to_bbl: 6.28981077
+is_simulation: true
+not_telemetry: true
+disclaimer: simulación a partir de datos mensuales oficiales
+grain: one_row_latest_cap4_month_total_vm_noconv
+mart: fct_barrilito_rate
+
+metrics:
+  barrilito_rate_bbl_dia:
+    label: Barrilito rate bbl/día
+    column: rate_bbl_dia
+    unit: bbl/día
+    formula: rate_m3_dia * 6.28981077
+    m3_to_bbl: 6.28981077
+    description: >
+      Headline for the interpolated counter. Capítulo IV is monthly.
+      Front MUST show the disclaimer; do not recompute the factor in the browser.
+  barrilito_rate_m3_dia:
+    label: Barrilito rate m³/día
+    column: rate_m3_dia
+    unit: m3/día
+    formula: sum(prod_pet_m3) / nullif(sum(tef), 0); else / days_in_month
+    m3_to_bbl: 6.28981077
+    description: Same rate in cubic metres per day (tooltip / other views).

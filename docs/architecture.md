@@ -2,7 +2,7 @@
 
 Vista C4-ish del data product. Stack y *por qué*: [ADR 0001](adrs/0001-stack-choices.md). Producto: [spec.md](../specs/001-vaca-muerta-pulse/spec.md).
 
-**Hoy (Hito 1):** Meltano versionado en `extraction/` (tap CKAN DataStore → `target-bigquery`). Dataset propuesto **`raw_cap4`** (dev: `raw_cap4_dev`). El primer load live a BQ depende de SA en el proyecto `vaca-muerta-pulse`. dbt / Next: Hitos 2–3.
+**Hoy (Hito 2):** dbt Core en `transform/` sobre raw Meltano. Source primario de stg: **`raw_cap4_dev`** (`produccion_pozo_mes` `COUNT(*)` = 991844, año 2025 — handoff DE/Tutor). Prod twin: `raw_cap4`. Mart headline **`fct_barrilito_rate`**. Next: Hito 3.
 
 ## 1. Contexto
 
@@ -74,26 +74,28 @@ flowchart LR
   RAW --> STG["stg_*<br/>rename, types, filtros VM"]
   STG --> INT["int_*<br/>joins, claves, unidades"]
   INT --> M1["mart fct_well_month"]
-  INT --> M2["marts empresa / área"]
-  INT --> M3["mart completaciones"]
+  M1 --> M4["mart fct_barrilito_rate"]
+  INT --> M2["marts empresa / área (P1)"]
+  INT --> M3["mart completaciones (empty Hito 3)"]
   M1 --> WEB["Dashboard"]
   M2 --> WEB
   M3 --> WEB
+  M4 --> WEB
 ```
 
 Filtro de producto (CONFIRMED en sample 2025 DataStore; aplicar en `stg`/`int`, no en el tap): `formacion = 'vaca muerta'` y `tipo_de_recurso = 'NO CONVENCIONAL'`. Detalle en [data-model.md](../specs/001-vaca-muerta-pulse/data-model.md).
 
 ## 4. BigQuery — naming y físico (Hito 1 + datasets Hito 2)
 
-Nombres **confirmados como intención de DE**. El load live puede faltar; no afirmar DDL verificado en `INFORMATION_SCHEMA` hasta el smoke.
+Nombres **confirmados como intención de DE**. Handoff Hito 2: `raw_cap4_dev.produccion_pozo_mes` `COUNT(*)` = **991844** (año 2025). Este árbol de AE no afirma `INFORMATION_SCHEMA` extra (partition/cluster siguen la evidencia Hito 1).
 
 | Dataset | Contenido | Quién escribe |
 | --- | --- | --- |
-| `raw_cap4` | Tablas 1:1 con el tap (`produccion_pozo_mes`, …) | Meltano (prod) |
-| `raw_cap4_dev` | Idem, **append** (reload = TRUNCATE o DELETE year) | Meltano (dev) |
-| `stg_cap4_dev` | Staging dbt (dev) | dbt (`vm-pulse-dbt`) |
-| `int_cap4_dev` | Intermediate dbt (dev) | dbt (`vm-pulse-dbt`) |
-| `marts_cap4_dev` | Marts dbt (dev) | dbt (`vm-pulse-dbt`) |
+| `raw_cap4_dev` | **Primario Hito 2 / stg.** Tabla `produccion_pozo_mes`, `COUNT(*)` = 991844 (año 2025, handoff DE/Tutor). **append** (reload = TRUNCATE o DELETE year) | Meltano (dev) |
+| `raw_cap4` | Twin de prod (mismo patrón de tabla; no es otro grano). **No existe todavía** | Meltano (prod, cuando se cree) |
+| `stg_cap4_dev` | Staging dbt (dev). Prod twin: `stg_cap4` | dbt (`vm-pulse-dbt`) |
+| `int_cap4_dev` | Intermediate dbt (dev). Prod twin: `int_cap4` | dbt (`vm-pulse-dbt`) |
+| `marts_cap4_dev` | Marts dbt (dev), incl. `fct_barrilito_rate`. Prod twin: `marts_cap4` | dbt (`vm-pulse-dbt`) |
 
 Proyecto GCP: **`vaca-muerta-pulse`**. Location: **US**.
 
@@ -119,7 +121,7 @@ Completaciones (Adjunto IV): grano evento (`id_base_fractura_adjiv`); partición
 
 ## 6. Secretos
 
-Diagrama de confianza: el SA de Meltano escribe `raw_*`; el SA de dbt lee raw y escribe modelos; el runtime del front **solo lee marts** (idealmente vía vista o job de export). Ningún JSON de SA en el repo. Ver [AGENTS.md](../AGENTS.md).
+Diagrama de confianza: el SA de Meltano (`vm-pulse-meltano`) escribe `raw_*`; el SA de dbt (`vm-pulse-dbt`) lee raw y escribe `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev` (prod twins sin `_dev`). El runtime del front **solo lee marts**. Ningún JSON de SA en el repo. Ver [AGENTS.md](../AGENTS.md).
 
 ## 7. Lo que no está en v1
 

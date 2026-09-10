@@ -10,7 +10,7 @@ Acá va a vivir el dashboard público (Next.js App Router + Tremor).
 
 ## Headline (Hito 3 — no hay código en este folder todavía)
 
-- Leer del mart de tasa (Hito 2): `fct_barrilito_rate` / el nombre que publique el data-model — **`rate_bbl_dia`**.
+- Leer del mart **`fct_barrilito_rate`** en dataset **`marts_cap4_dev`** (prod futuro: `marts_cap4`): columna **`rate_bbl_dia`**. Contrato: [transform/README.md](../../transform/README.md).
 - Interpolar un contador de barriles “extrayéndose” (aspecto live). Capítulo IV es **mensual**; esto **no** es telemetría.
 - **MUST** disclaimer visible junto al contador: *simulación a partir de datos mensuales oficiales*.
 - Factor `bbl = m³ × 6.28981077`: lo aplica el mart, no el cliente. No inventar sensores ni queries a `raw_*`.

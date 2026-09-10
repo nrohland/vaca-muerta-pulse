@@ -1,0 +1,5 @@
+# dbt Core (free) + BigQuery adapter. No dbt Cloud.
+# Pin <2.0.0 so Hub packages that still declare require-dbt-version <2.0.0 resolve.
+# CI/this agent used dbt-core 1.12.x (still 1.x).
+dbt-core>=1.8.7,<2.0.0
+dbt-bigquery>=1.8.7,<2.0.0

@@ -1,0 +1,194 @@
+version: 2
+
+models:
+  - name: fct_barrilito_rate
+    description: >
+      **Barrilito headline contract.** One row = total Vaca Muerta
+      non-conventional oil rate for the **latest Capítulo IV month** in
+      `fct_well_month`. Not per company, not per well, not telemetry.
+
+      Preferred rate: `sum(prod_pet_m3) / nullif(sum(tef), 0)`
+      (`rate_method = tef_weighted`). Fallback when `sum(tef) = 0`:
+      `sum(prod_pet_m3) / days_in_month(periodo)` (`calendar_days`).
+      tef-as-days in the VM cut is **UNKNOWN** until a warehouse run; both
+      paths are implemented and unit-tested with fixtures.
+
+      Conversion: `rate_bbl_dia = rate_m3_dia × 6.28981077` via
+      `var('m3_to_bbl')` — the same number as `_metrics.yml`. Front MUST
+      interpolate from `rate_bbl_dia` and show *simulación a partir de
+      datos mensuales oficiales*. Alias `mart_barrilito_headline` is retired;
+      this is the only identifier.
+    config:
+      meta:
+        product: Barrilito
+        grain: one_row_latest_cap4_month_total_vm_noconv
+        m3_to_bbl: 6.28981077
+        is_simulation: true
+        not_telemetry: true
+        disclaimer: simulación a partir de datos mensuales oficiales
+        metrics:
+          barrilito_rate_bbl_dia:
+            column: rate_bbl_dia
+            formula: rate_m3_dia * 6.28981077
+            m3_to_bbl: 6.28981077
+            unit: bbl/día
+          barrilito_rate_m3_dia:
+            column: rate_m3_dia
+            unit: m3/día
+            m3_to_bbl: 6.28981077
+    columns:
+      - name: periodo
+        description: Latest Cap. IV business month (DATE YYYY-MM-01). Primary key.
+        data_tests:
+          - unique
+          - not_null
+      - name: anio
+        description: Year of that month.
+        data_tests:
+          - not_null
+      - name: mes
+        description: Month number of that month.
+        data_tests:
+          - not_null
+      - name: prod_pet_m3
+        description: Sum of well-month oil m³ for the Pulse cut in `periodo`.
+      - name: tef_sum
+        description: Sum of tef. If 0, rate_method is calendar_days.
+      - name: days_in_month
+        description: Calendar days of `periodo` (fallback denominator).
+      - name: well_month_row_count
+        description: Rows of fct_well_month in the latest month (QA / Front).
+      - name: rate_m3_dia
+        description: Daily oil rate in m³/día (preferred tef-weighted, else calendar).
+      - name: rate_m3_per_day
+        description: Alias of rate_m3_dia for Front/IA.
+      - name: rate_bbl_dia
+        description: >
+          Daily oil rate in barrels/day. Headline input for the Barrilito
+          counter. `rate_m3_dia × 6.28981077`. Do not recompute the factor
+          in the browser.
+        data_tests:
+          - not_null
+      - name: rate_bbl_per_day
+        description: Alias of rate_bbl_dia for Front/IA.
+      - name: rate_method
+        description: "`tef_weighted` or `calendar_days`."
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["tef_weighted", "calendar_days"]
+          - not_null
+      - name: source_batched_at_max
+        description: Max Singer batch timestamp in the latest month (freshness, not Cap. IV month).
+      - name: fecha_data_max
+        description: Max official `fecha_data` in the latest month.
+      - name: is_simulation
+        description: Always true. Capítulo IV is monthly; the UI counter is interpolated.
+      - name: disclaimer
+        description: Copy Front MUST show next to the counter.
+    data_tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          arguments:
+            min_value: 1
+            max_value: 1
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "abs(rate_bbl_dia - rate_m3_dia * {{ var('m3_to_bbl') }}) < 0.0000001"
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "rate_bbl_dia = rate_bbl_per_day and rate_m3_dia = rate_m3_per_day"
+
+unit_tests:
+  - name: barrilito_prefers_tef_when_sum_tef_positive
+    description: >
+      Preferred path: sum(prod_pet_m3)/sum(tef) when tef_sum > 0, including
+      wells with tef = 0 in the same month. Not telemetry.
+    model: fct_barrilito_rate
+    given:
+      - input: ref("fct_well_month")
+        rows:
+          - periodo: 2025-01-01
+            anio: 2025
+            mes: 1
+            prod_pet_m3: 31.0
+            tef: 31.0
+            days_in_month: 31
+            source_batched_at: 2026-02-01 00:00:00-0
+            fecha_data: 2025-02-01 00:00:00-0
+          - periodo: 2025-01-01
+            anio: 2025
+            mes: 1
+            prod_pet_m3: 0.0
+            tef: 0.0
+            days_in_month: 31
+            source_batched_at: 2026-02-01 00:00:00-0
+            fecha_data: 2025-02-01 00:00:00-0
+    expect:
+      rows:
+        - periodo: 2025-01-01
+          anio: 2025
+          mes: 1
+          prod_pet_m3: 31.0
+          tef_sum: 31.0
+          days_in_month: 31
+          well_month_row_count: 2
+          rate_m3_dia: 1.0
+          rate_method: tef_weighted
+          rate_bbl_dia: 6.28981077
+          is_simulation: true
+
+  - name: barrilito_falls_back_to_calendar_days_when_tef_sum_zero
+    description: >
+      Fallback when every well has tef 0 (or null summed to 0). Uses
+      days_in_month. Documents the UNKNOWN tef-quality gate without inventing
+      sensors.
+    model: fct_barrilito_rate
+    given:
+      - input: ref("fct_well_month")
+        rows:
+          - periodo: 2025-04-01
+            anio: 2025
+            mes: 4
+            prod_pet_m3: 60.0
+            tef: 0.0
+            days_in_month: 30
+            source_batched_at: 2026-05-01 00:00:00-0
+            fecha_data: 2025-05-01 00:00:00-0
+    expect:
+      rows:
+        - periodo: 2025-04-01
+          rate_m3_dia: 2.0
+          rate_method: calendar_days
+          rate_bbl_dia: 12.57962154
+
+  - name: barrilito_uses_latest_cap4_month_only
+    description: Grain is the latest Cap. IV month snapshot, not a rolling 30-day telemetry window.
+    model: fct_barrilito_rate
+    given:
+      - input: ref("fct_well_month")
+        rows:
+          - periodo: 2025-01-01
+            anio: 2025
+            mes: 1
+            prod_pet_m3: 100.0
+            tef: 31.0
+            days_in_month: 31
+            source_batched_at: 2026-02-01 00:00:00-0
+            fecha_data: 2025-02-01 00:00:00-0
+          - periodo: 2025-02-01
+            anio: 2025
+            mes: 2
+            prod_pet_m3: 56.0
+            tef: 28.0
+            days_in_month: 28
+            source_batched_at: 2026-03-01 00:00:00-0
+            fecha_data: 2025-03-01 00:00:00-0
+    expect:
+      rows:
+        - periodo: 2025-02-01
+          anio: 2025
+          mes: 2
+          prod_pet_m3: 56.0
+          rate_m3_dia: 2.0
+          rate_method: tef_weighted
+          rate_bbl_dia: 12.57962154

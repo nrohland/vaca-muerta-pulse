@@ -1,0 +1,13 @@
+# dbt artifacts (also ignored at repo root)
+target/
+dbt_packages/
+dbt_internal_packages/
+logs/
+.user.yml
+.venv/
+
+# Local profiles / env — never commit keys or a real profiles.yml
+profiles.yml
+.env
+*.json
+!package-lock.yml

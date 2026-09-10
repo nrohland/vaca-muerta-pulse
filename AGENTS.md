@@ -4,9 +4,9 @@ Instrucciones para **coding agents** (y humanos que implementan). El relato de p
 
 ## 0. Qué es este repo ahora
 
-Greenfield **spec-driven**. **Hito 1 en curso:** Meltano vive en [`extraction/`](extraction/README.md). **No** implementes dbt ni Next.js hasta el hito que lo pide ([plan.md](specs/001-vaca-muerta-pulse/plan.md)).
+Greenfield **spec-driven**. **Hito 2 en curso:** dbt Core vive en [`transform/`](transform/README.md). Meltano (Hito 1) está en [`extraction/`](extraction/README.md). **No** implementes Next.js hasta el Hito 3 ([plan.md](specs/001-vaca-muerta-pulse/plan.md)).
 
-`transform/` y `apps/web/` siguen con README de owner, vacíos de código a propósito.
+`apps/web/` sigue con README de owner, vacío de código a propósito.
 
 ## 1. Leé esto primero (en orden)
 
@@ -18,7 +18,7 @@ Greenfield **spec-driven**. **Hito 1 en curso:** Meltano vive en [`extraction/`]
 6. El README del folder que vas a tocar (`extraction/`, `transform/`, `apps/web/`).
 7. Si tocás granos o columnas: [data-model.md](specs/001-vaca-muerta-pulse/data-model.md). UNKNOWN no se inventan: se marcan o se confirman con evidencia (sample de source / `INFORMATION_SCHEMA`).
 
-No busques `dbt_project.yml` ni la app Next todavía: no están. Meltano **sí** está en `extraction/meltano.yml`.
+No busques la app Next todavía: no está. Meltano **sí** está en `extraction/meltano.yml`. dbt **sí** está en `transform/dbt_project.yml`.
 
 ## 2. Spec-Driven Development (obligatorio)
 
@@ -34,7 +34,7 @@ No busques `dbt_project.yml` ni la app Next todavía: no están. Meltano **sí**
 | `specs/` | todos (AE lidera granos) | 0+ | fuente de verdad de producto |
 | `docs/` | todos (DE lidera BQ/Meltano) | 0+ | arquitectura + ADRs |
 | `extraction/` | **DE** | 1 | Meltano + tap CKAN DataStore → target-bigquery |
-| `transform/` | **AE** | 2 | placeholder dbt |
+| `transform/` | **AE** | 2 | dbt Core `stg` → `int` → `marts` (Barrilito `fct_barrilito_rate`) |
 | `apps/web/` | **Front** | 3 | placeholder Next + Tremor |
 
 No pongas modelos dbt en `extraction/`, ni taps Singer en `transform/`, ni queries a `raw_*` desde el front.
@@ -81,8 +81,9 @@ Un agente que actúa en un rol **no cruza** de folder salvo un cambio de contrat
 
 1. Confirmá el hito en `plan.md`.
 2. Hito 1 → [tasks.md](specs/001-vaca-muerta-pulse/tasks.md) y `extraction/`.
-3. Preferí evidencia (una query, un `meltano run` de un año, un test dbt) sobre prosa.
-4. Si el source no coincide con el data-model, **actualizá el data-model** (UNKNOWN → confirmado) en el mismo PR o en uno previo, no dejes columnas fantasma.
+3. Hito 2 → [tasks.md](specs/001-vaca-muerta-pulse/tasks.md) (sección Hito 2) y `transform/`.
+4. Preferí evidencia (una query, un `meltano run` de un año, un `dbt parse` / `dbt test`) sobre prosa.
+5. Si el source no coincide con el data-model, **actualizá el data-model** (UNKNOWN → confirmado) en el mismo PR o en uno previo, no dejes columnas fantasma.
 
 ## 8. Estilo de código (cuando exista)
 
@@ -92,7 +93,7 @@ Un agente que actúa en un rol **no cruza** de folder salvo un cambio de contrat
 
 ## 9. Lo que no tenés que hacer
 
-- Scaffold de dbt/Next “para adelantar” el portfolio (Meltano es Hito 1, ya está).
+- Scaffold de Next “para adelantar” el portfolio (dbt es Hito 2, ya está).
 - Inventar granos de completaciones o IDs de empresa si el source no los confirma.
 - Apuntar el dashboard a CSVs locales como arquitectura final.
 - Snowflake, Airbyte, Streamlit u otro stack sin un ADR que reemplace el 0001.

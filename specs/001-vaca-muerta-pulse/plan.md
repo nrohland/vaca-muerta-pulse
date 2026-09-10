@@ -75,17 +75,17 @@ Producto UI: **Barrilito** (repo `vaca-muerta-pulse`). El contador “live” es
 
 ### Aceptación
 
-- [ ] `dbt_project.yml` + `stg` / `int` / `marts` (nombres alineados al data-model).
-- [ ] Tests `unique`/`not_null` en claves de `fct_well_month` (o nombre final).
-- [ ] Filtro VM no convencional aplicado en `stg` o `int` y documentado (strings confirmados).
-- [ ] Marts de empresa y área; grano de área ya no UNKNOWN (o P1 explícito).
-- [ ] Completaciones: mart **o** no-goal actualizado en spec.
-- [ ] **Mart Barrilito (DRAFT → contrato):** una fila = snapshot del recorte VM no conv. para el **último mes Capítulo IV** (agregado total Pulse, no por empresa). Tasa **bbl/día**.
-- [ ] **Fórmula** documentada en el modelo y en data-model: preferir `sum(prod_pet_m3) / sum(tef)` cuando `tef` son días usables; fallback `sum(prod_pet_m3) / days_in_month`. Tests cubren `tef` = 0 / nulos. Cerrar preferred vs UNKNOWN con evidencia; no inventar sensores.
-- [ ] Conversión `bbl = m³ × 6.28981077` en el mart **y** en YAML de métricas dbt (el mismo factor). Petróleo de headline UI default = **bbl**; m³ sigue disponible.
-- [ ] `stg` usa `periodo` (grano de negocio). No tratar `_sdc_batched_at` (partición del loader raw) como mes de producción.
-- [ ] `dbt test` verde en CI o instrucciones locales inequívocas.
-- [ ] Front puede basarse en nombres de marts documentados (contrato en data-model), incluida la tasa Barrilito.
+- [x] `dbt_project.yml` + `stg` / `int` / `marts` (nombres alineados al data-model). — `stg_produccion_pozo_mes`, `int_produccion_vm_noconv`, `fct_well_month`, `fct_barrilito_rate`
+- [x] Tests `unique`/`not_null` en claves de `fct_well_month` (YAML; corren con warehouse).
+- [x] Filtro VM no convencional aplicado en `stg` y documentado (strings confirmados).
+- [ ] Marts de empresa y área; grano de área ya no UNKNOWN (o P1 explícito). — **P1 explícito** este PR: no `fct_company_month` / `fct_area_month`. Área preferida sigue `areapermisoconcesion`.
+- [x] Completaciones: mart **o** no-goal actualizado en spec. — **sin mart** (Adjunto IV no está en el job Meltano default); Hito 3 empty state. Source documentado.
+- [x] **Mart Barrilito:** `fct_barrilito_rate`, una fila = snapshot VM no conv. último mes Cap. IV (total Pulse). Tasa **bbl/día**.
+- [x] **Fórmula** en modelo + data-model: preferred `sum(prod_pet_m3) / nullif(sum(tef), 0)`; fallback `days_in_month`. Unit tests fixtures `tef = 0`. Viabilidad tef en BQ = UNKNOWN (sin `dbt test` warehouse en este PR).
+- [x] Conversión `bbl = m³ × 6.28981077` en el mart **y** en YAML de métricas (mismo factor).
+- [x] `stg` usa `periodo`. No tratar `_sdc_batched_at` como mes de producción.
+- [ ] `dbt test` verde en CI o instrucciones locales inequívocas. — CI: `dbt deps` + `dbt parse` (`.github/workflows/dbt-transform.yml`). `dbt build`/`test` documentados en `transform/README.md`; **no** se afirmaron verdes sin SA.
+- [x] Front puede basarse en nombres de marts documentados (`transform/README.md` + data-model), incluida la tasa Barrilito.
 
 ---
 
