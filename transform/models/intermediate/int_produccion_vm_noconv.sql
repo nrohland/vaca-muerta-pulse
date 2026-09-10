@@ -1,4 +1,4 @@
-{{ config(materialized="ephemeral") }}
+{{ config(materialized="view") }}
 
 select
     {{ dbt_utils.generate_surrogate_key(["idpozo", "anio", "mes"]) }} as well_month_id,

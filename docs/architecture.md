@@ -93,7 +93,7 @@ Nombres **confirmados como intención de DE**. Handoff Hito 2: `raw_cap4_dev.pro
 | --- | --- | --- |
 | `raw_cap4_dev` | **Primario Hito 2 / stg.** Tabla `produccion_pozo_mes`, `COUNT(*)` = 991844 (handoff DE/Tutor) | Meltano (dev) |
 | `raw_cap4` | Twin de prod (mismo patrón de tabla; no es otro grano) | Meltano (prod) |
-| `stg_cap4_dev` / `int_cap4_dev` / `marts_dev` (prod: sin `_dev`) | Modelos dbt | dbt (Hito 2) |
+| `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev` | Modelos dbt Hito 2 (SA `vm-pulse-dbt`). Prod twin: `stg_cap4` / `int_cap4` / `marts_cap4` | dbt |
 
 Proyecto GCP: **`vaca-muerta-pulse`**. Location: **US**.
 
@@ -117,7 +117,7 @@ Completaciones (Adjunto IV): grano evento (`id_base_fractura_adjiv`); partición
 
 ## 6. Secretos
 
-Diagrama de confianza: el SA de Meltano escribe `raw_*`; el SA de dbt lee raw y escribe modelos; el runtime del front **solo lee marts** (idealmente vía vista o job de export). Ningún JSON de SA en el repo. Ver [AGENTS.md](../AGENTS.md).
+Diagrama de confianza: el SA de Meltano (`vm-pulse-meltano`) escribe `raw_*`; el SA de dbt (`vm-pulse-dbt`) lee raw y escribe `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev` (prod twins sin `_dev`). El runtime del front **solo lee marts**. Ningún JSON de SA en el repo. Ver [AGENTS.md](../AGENTS.md).
 
 ## 7. Lo que no está en v1
 

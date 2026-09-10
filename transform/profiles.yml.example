@@ -1,8 +1,16 @@
-# Copy to ~/.dbt/profiles.yml (or set DBT_PROFILES_DIR) and point
-# GOOGLE_APPLICATION_CREDENTIALS at a local SA JSON that is NOT in git.
-# This file has names and placeholders only — no keys, no project numbers.
+# Copy to transform/profiles.yml (gitignored) or ~/.dbt/profiles.yml.
+# Names and placeholders only — no keys, no SA JSON.
 #
-#   cp profiles.yml.example ~/.dbt/profiles.yml
+#   cp profiles.yml.example profiles.yml
+#   export GOOGLE_APPLICATION_CREDENTIALS=/absolute/path/to/vm-pulse-dbt.json
+#
+# SA name (documentation only; JSON lives outside git): vm-pulse-dbt
+# Expected IAM (ops): read raw_cap4_dev / raw_cap4; write stg_cap4_dev,
+# int_cap4_dev, marts_cap4_dev (prod twins without _dev).
+#
+# Project models do NOT land in the profile `dataset` below.
+# generate_schema_name maps +schema stg/int/marts → dedicated datasets.
+# The profile dataset is a fallback for package odds-and-ends.
 #
 # `dbt parse` does not need a live warehouse. compile / build / test / show
 # authenticate against BigQuery with dbt-bigquery 1.12.
@@ -14,9 +22,9 @@ vaca_muerta_pulse:
       type: bigquery
       method: service-account
       project: "{{ env_var('BIGQUERY_PROJECT', 'vaca-muerta-pulse') }}"
-      dataset: "{{ env_var('DBT_BQ_DATASET', 'analytics_dev') }}"
+      dataset: "{{ env_var('DBT_BQ_DATASET', 'stg_cap4_dev') }}"
       location: "{{ env_var('BIGQUERY_LOCATION', 'US') }}"
-      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS', 'REPLACE_ME.json') }}"
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS', '/absolute/path/to/vm-pulse-dbt.json') }}"
       threads: 4
       job_execution_timeout_seconds: 300
       job_retries: 1
@@ -24,9 +32,9 @@ vaca_muerta_pulse:
       type: bigquery
       method: service-account
       project: "{{ env_var('BIGQUERY_PROJECT', 'vaca-muerta-pulse') }}"
-      dataset: "{{ env_var('DBT_BQ_DATASET', 'analytics') }}"
+      dataset: "{{ env_var('DBT_BQ_DATASET', 'stg_cap4') }}"
       location: "{{ env_var('BIGQUERY_LOCATION', 'US') }}"
-      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS', 'REPLACE_ME.json') }}"
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS', '/absolute/path/to/vm-pulse-dbt.json') }}"
       threads: 4
       job_execution_timeout_seconds: 600
       job_retries: 1
@@ -36,7 +44,7 @@ vaca_muerta_pulse:
       type: bigquery
       method: oauth
       project: "{{ env_var('BIGQUERY_PROJECT', 'vaca-muerta-pulse') }}"
-      dataset: "{{ env_var('DBT_BQ_DATASET', 'analytics_dev') }}"
+      dataset: "{{ env_var('DBT_BQ_DATASET', 'stg_cap4_dev') }}"
       location: "{{ env_var('BIGQUERY_LOCATION', 'US') }}"
       threads: 4
       job_execution_timeout_seconds: 300

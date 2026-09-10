@@ -28,7 +28,8 @@ Leé **solo** marts. Headline = este mart, una fila.
 | | |
 | --- | --- |
 | Mart | `fct_barrilito_rate` |
-| Dataset BQ | `marts_dev` (target `dev`) / `marts` (target `prod`) |
+| Dataset BQ (dev) | **`marts_cap4_dev`** |
+| Dataset BQ (prod, futuro) | `marts_cap4` |
 | Proyecto | `vaca-muerta-pulse` |
 | Grano | **Una fila** = total Vaca Muerta **no convencional** del **último mes Capítulo IV** |
 | Qué no es | Telemetría, SCADA, grano horario, ranking por empresa |
@@ -66,10 +67,25 @@ select
   source_batched_at_max,
   fecha_data_max,
   disclaimer
-from `vaca-muerta-pulse.marts_dev.fct_barrilito_rate`;
+from `vaca-muerta-pulse.marts_cap4_dev.fct_barrilito_rate`;
 ```
 
 Análisis compilable: [analyses/sample_barrilito_headline.sql](analyses/sample_barrilito_headline.sql).
+
+---
+
+## Datasets dbt (ops)
+
+SA de dbt (nombre, **docs only**): **`vm-pulse-dbt`**. El JSON de la key **nunca** va al git. Copiá `profiles.yml.example` → `transform/profiles.yml` (gitignored) o `~/.dbt/profiles.yml` y apuntá `GOOGLE_APPLICATION_CREDENTIALS` a un path local.
+
+| Capa | Dev (Hito 2, default) | Prod twin (futuro, `DBT_TARGET=prod`) |
+| --- | --- | --- |
+| Source (Meltano) | `raw_cap4_dev` | `raw_cap4` |
+| Staging | `stg_cap4_dev` | `stg_cap4` |
+| Intermediate | `int_cap4_dev` | `int_cap4` |
+| Marts (Front) | `marts_cap4_dev` | `marts_cap4` |
+
+`generate_schema_name` escribe esos datasets (no `{profile}_stg`). IAM sugerido: lectura `raw_*`; escritura `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev`.
 
 ---
 
@@ -80,21 +96,20 @@ cd transform
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-cp profiles.yml.example ~/.dbt/profiles.yml   # o DBT_PROFILES_DIR
-# Editá GOOGLE_APPLICATION_CREDENTIALS hacia un JSON de SA *fuera* del repo.
+cp profiles.yml.example profiles.yml   # gitignored — no lo commitees
+# GOOGLE_APPLICATION_CREDENTIALS → JSON local de vm-pulse-dbt (fuera de git)
 dbt deps
 dbt parse          # no necesita warehouse (verificado en este PR con dbt 1.12)
 # dbt compile / build / test / show SÍ abren BigQuery con dbt-bigquery 1.12
-# (el adapter autentica al compilar). Sin SA no se afirma compile verde.
 ```
 
-Con credenciales de BigQuery (SA de **lectura** `raw_*` + **escritura** a `stg_cap4_*` / `int_*` / `marts_*`, no la key en git):
+Con credenciales (SA **`vm-pulse-dbt`**, key fuera de git):
 
 ```bash
 export BIGQUERY_PROJECT=vaca-muerta-pulse
-export GOOGLE_APPLICATION_CREDENTIALS=/absolute/path/to/sa.json
+export GOOGLE_APPLICATION_CREDENTIALS=/absolute/path/to/vm-pulse-dbt.json
 dbt debug
-# El mart headline es 1 fila. El build de fct_well_month lee stg (view) → raw.
+# El mart headline es 1 fila. El build de fct_well_month lee stg → raw.
 # raw_cap4_dev.produccion_pozo_mes COUNT(*) = 991844 (año 2025, handoff DE).
 # Evitá select * de raw_*. Preferí --select fct_barrilito_rate+ y dbt show --limit.
 dbt build --select fct_barrilito_rate+
@@ -105,7 +120,7 @@ dbt show --select fct_barrilito_rate --limit 5
 
 Unit tests del mart (`test_type:unit`) también necesitan adapter BQ (tablas temporales). Están escritos; hay que correrlos con SA.
 
-Targets: `dev` (default) → source **`raw_cap4_dev`** / `stg_cap4_dev` / `marts_dev`. `prod` → twin **`raw_cap4`** / `stg_cap4` / `marts`.
+Targets: `dev` (default) → `raw_cap4_dev` / `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev`. `prod` → twins sin `_dev`.
 
 ---
 
@@ -113,10 +128,10 @@ Targets: `dev` (default) → source **`raw_cap4_dev`** / `stg_cap4_dev` / `marts
 
 ```text
 source raw_cap4.produccion_pozo_mes   (físico: raw_cap4_dev; twin prod: raw_cap4)
-  → stg_produccion_pozo_mes     (cast, periodo, filtro VM, dedupe)
-  → int_produccion_vm_noconv    (ephemeral: surrogate + days_in_month)
-  → fct_well_month              (tabla, partition periodo)
-  → fct_barrilito_rate          (1 fila, último periodo)
+  → stg_produccion_pozo_mes     (view en stg_cap4_dev: cast, periodo, filtro VM, dedupe)
+  → int_produccion_vm_noconv    (view en int_cap4_dev: surrogate + days_in_month)
+  → fct_well_month              (tabla en marts_cap4_dev, partition periodo)
+  → fct_barrilito_rate          (1 fila en marts_cap4_dev)
 ```
 
 Filtro de producto en **stg** (strings CONFIRMED): `formacion = 'vaca muerta'` y `tipo_de_recurso = 'NO CONVENCIONAL'`.

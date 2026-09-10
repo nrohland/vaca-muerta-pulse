@@ -3,7 +3,8 @@ version: 2
 models:
   - name: int_produccion_vm_noconv
     description: >
-      Ephemeral well-month grain of the Pulse cut (already filtered in stg).
+      Well-month grain of the Pulse cut (already filtered in stg). Lands in
+      BigQuery dataset `int_cap4_dev` (prod twin `int_cap4`) as a view.
       Adds `well_month_id` (dbt_utils surrogate of idpozo+anio+mes) and
       `days_in_month` (calendar days of `periodo`) for Barrilito fallback and
       for `fct_well_month`. Not a public contract — Front reads marts.

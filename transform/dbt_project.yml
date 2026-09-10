@@ -42,7 +42,7 @@ models:
       +schema: stg
       +tags: ["staging", "cap4"]
     intermediate:
-      +materialized: ephemeral
+      +materialized: view
       +schema: int
       +tags: ["intermediate", "cap4"]
     marts:

@@ -6,13 +6,7 @@ logs/
 .user.yml
 .venv/
 
-# Local profiles / env (never commit keys)
-profiles.yml
-.env
-*.json
-!package-lock.yml
-
-# Local profiles / env (never commit keys)
+# Local profiles / env — never commit keys or a real profiles.yml
 profiles.yml
 .env
 *.json
