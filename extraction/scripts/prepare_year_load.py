@@ -60,9 +60,16 @@ def _print_layout(client: bigquery.Client, project: str, dataset: str) -> None:
         print(f"[prepare_year_load] {table_id} not found after create", file=sys.stderr)
         return
     print(f"[prepare_year_load] ddl:\n{ddl_rows[0].ddl}")
-    cluster_rows = list(client.query(q_cluster, job_config=cfg).result())
-    cluster = ", ".join(r.column_name for r in cluster_rows) or "(none)"
-    print(f"[prepare_year_load] cluster: {cluster}")
+    try:
+        cluster_rows = list(client.query(q_cluster, job_config=cfg).result())
+        cluster = ", ".join(r.column_name for r in cluster_rows) or "(none)"
+        print(f"[prepare_year_load] cluster: {cluster}")
+    except NotFound as exc:
+        # Some projects expose TABLES.ddl but not CLUSTERING_COLUMNS.
+        print(f"[prepare_year_load] cluster INFORMATION_SCHEMA unavailable: {exc}")
+        ddl = ddl_rows[0].ddl
+        if "CLUSTER BY empresa, idpozo, cuenca" in ddl:
+            print("[prepare_year_load] cluster (from ddl): empresa, idpozo, cuenca")
     count = list(client.query(q_count).result())[0].row_count
     print(f"[prepare_year_load] row_count: {count}")
 
