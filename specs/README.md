@@ -11,7 +11,7 @@ Una carpeta `specs/NNN-slug/` describe **un producto o un cambio de producto**, 
 | `spec.md` | Problema, usuarios, requisitos, no-goals, éxito |
 | `plan.md` | Hitos y aceptación |
 | `data-model.md` | Granos, claves, UNKNOWNs |
-| `tasks.md` | Checklist del hito de implementación en curso (Hito 1; smoke BQ pendiente) |
+| `tasks.md` | Checklist Hito 1 (smoke BQ pendiente) + notas Hito 2/3 (Barrilito) |
 
 Opcional más adelante: `research.md`, `contracts.md` (APIs). No inventar archivos vacíos.
 
@@ -38,7 +38,7 @@ flowchart LR
 
 | ID | Producto | Estado |
 | --- | --- | --- |
-| [001-vaca-muerta-pulse](001-vaca-muerta-pulse/spec.md) | Dashboard Capítulo IV / Vaca Muerta | Activa · Hito 1 (Meltano scaffold; load BQ pendiente) |
+| [001-vaca-muerta-pulse](001-vaca-muerta-pulse/spec.md) | **Barrilito** (repo `vaca-muerta-pulse`) — Cap. IV, simulación mensual | Activa · Hito 1 (Meltano; load BQ pendiente) |
 
 ## Convenciones
 

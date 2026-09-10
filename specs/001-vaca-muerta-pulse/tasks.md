@@ -1,8 +1,11 @@
-# Tasks — Hito 1 (raw BigQuery + Meltano)
+# Tasks — Hito 1 + notas Hito 2/3
 
-Solo **Hito 1**. Hitos 2–3 no se tachan acá. Criterios de aceptación: [plan.md](plan.md). Owner: **DE**. Folder: [`extraction/`](../../extraction/README.md).
+Criterios de aceptación: [plan.md](plan.md). Marca UI: **Barrilito** (repo `vaca-muerta-pulse`).
 
-Tachá en el PR que complete el ítem. Smoke 500 re-medido 2026-09-10: `COUNT(*)` final **500** (streaming buffer). Año completo (~991k) **bloqueado** hasta OK de costo de Nicolás — este PR no corre Meltano full-year.
+- **Hito 1** (abajo): owner **DE**, folder [`extraction/`](../../extraction/README.md). Cadencia extract **mensual**; no cambiar `meltano.yml` en un PR de marca/producto.
+- **Hito 2 / 3:** secciones al final, **sin tachar**. No implementar dbt ni Next en este PR de specs.
+
+Tachá Hito 1 en el PR que complete el ítem. Smoke 500 re-medido 2026-09-10: `COUNT(*)` final **500** (streaming buffer). Año completo (~991k) **bloqueado** hasta OK de costo de Nicolás — este PR no corre Meltano full-year.
 
 ## GCP y BigQuery
 
@@ -52,8 +55,37 @@ Tachá en el PR que complete el ítem. Smoke 500 re-medido 2026-09-10: `COUNT(*)
 - [ ] [plan.md](plan.md) Hito 1: casillas de aceptación revisadas (se tildan cuando QA/DE cierran el hito). — smoke 500 + layout OK; año completo pendiente de OK de costo
 - [x] No hay `dbt_project.yml` ni app Next en este hito (rechazar scope creep).
 
-## Fuera de este checklist
+## Fuera del checklist Hito 1
 
 - Modelos `stg`/`int`/`marts`, tests dbt, Tremor, hosting del front.
-- Convertir m³ → bbl en el tap.
+- Convertir m³ → bbl en el tap (la conversión vive en Hito 2 + YAML).
+- Schedule Meltano sub-diario / sensores.
 - Airflow/Composer.
+
+---
+
+## Hito 2 — tasa Barrilito (AE, `transform/`) — sin tachar
+
+No implementar en un PR de Hito 1 ni en este PR de docs. Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 5.
+
+- [ ] Mart DRAFT `fct_barrilito_rate` (o el nombre único que Hito 2 publique; retirar el alias `mart_barrilito_headline` si no se usa).
+- [ ] Grano: **una fila** = snapshot del recorte VM no conv. para el **último mes Capítulo IV** (agregado **total** Pulse, no por empresa).
+- [ ] Fórmula preferida: `rate_m3_dia = sum(prod_pet_m3) / sum(tef)` cuando `tef` son días usables y `sum(tef) > 0`.
+- [ ] Fallback: `rate_m3_dia = sum(prod_pet_m3) / days_in_month(periodo)`. Tests para `tef` = 0 / nulo. Cerrar preferred vs UNKNOWN con evidencia.
+- [ ] Conversión `rate_bbl_dia = rate_m3_dia × 6.28981077` en el modelo.
+- [ ] El **mismo** factor `6.28981077` en YAML de métricas dbt (no un segundo número). Documentar en `transform/` README o `dbt_project.yml` / metrics YAML.
+- [ ] `stg` materializa `periodo` como grano de negocio; no filtrar el mes Cap. IV por `_sdc_batched_at`.
+- [ ] Test de reconciliación: `prod_pet_m3` del mart Barrilito = suma de `fct_well_month` del mismo `periodo` y recorte.
+- [ ] Actualizar [data-model.md](data-model.md) si la evidencia cambia preferred/fallback. No inventar sensores ni grano intradía.
+
+---
+
+## Hito 3 — contador + disclaimer (Front, `apps/web/`) — nota only
+
+No implementar Next/Tremor acá ni en Hito 2. Owner: **Front**. Spec: R6 / R6b.
+
+- [ ] Headline = contador de barriles interpolado desde `rate_bbl_dia` del mart (aspecto “extrayéndose” en vivo).
+- [ ] Disclaimer **MUST** visible junto al contador: *simulación a partir de datos mensuales oficiales*.
+- [ ] Copy: no afirmar telemetría, SCADA, ni que Capítulo IV sea tiempo real / alta frecuencia.
+- [ ] Petróleo de headline en **bbl**; m³ disponible en otras vistas si el mart lo expone.
+- [ ] README de `apps/web/` documenta mart de tasa + disclaimer (sin secretos en el cliente).
