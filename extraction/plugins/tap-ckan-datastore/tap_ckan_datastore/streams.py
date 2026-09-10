@@ -99,8 +99,7 @@ class CkanDatastoreStream(Stream):
             raise RuntimeError(f"CKAN datastore_search failed for {self.resource_id}: {payload}")
         return payload["result"]
 
-    @property
-    def schema(self) -> dict[str, Any]:
+    def _schema_from_datastore(self) -> dict[str, Any]:
         result = self._datastore_search(limit=0)
         properties: dict[str, Any] = {}
         for field in result.get("fields", []):
@@ -120,6 +119,14 @@ class CkanDatastoreStream(Stream):
             "type": "object",
             "properties": properties,
         }
+
+    @property
+    def schema(self) -> dict[str, Any]:
+        # Singer SDK reads `schema` on every RECORD (mask + type conformance).
+        # Hitting datastore_search per row is ~1 rec/s and cannot load ~991k.
+        if self._schema is None:
+            self._schema = self._schema_from_datastore()
+        return self._schema
 
     def _normalize(self, row: dict[str, Any]) -> dict[str, Any]:
         out = {k: v for k, v in row.items() if k not in SKIP_FIELDS}
