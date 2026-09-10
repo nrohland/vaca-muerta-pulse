@@ -77,9 +77,10 @@ MELTANO_ENVIRONMENT=dev meltano run cap4-produccion
 ### 2. Desde un secret (GitHub Actions o Cursor Cloud)
 No copiás un archivo: ponés el **JSON como secreto** y un script lo materializa en `.secrets/` en runtime.
 ```bash
-export GCP_SA_KEY='<contenido JSON de la key>'      # o GCP_SA_KEY_BASE64=<base64>
+export GCP_SA_KEY='<contenido COMPLETO del .json de la key>'   # o GCP_SA_KEY_BASE64=<base64>
 export GOOGLE_APPLICATION_CREDENTIALS="$(bash scripts/materialize-sa-key.sh)"
 ```
+> **Ojo (error común):** `GCP_SA_KEY` tiene que ser el **JSON entero** (de `{` a `}`), no solo el bloque `-----BEGIN PRIVATE KEY-----`. Si por lo que sea solo tenés la private key, seteá además `GCP_SA_CLIENT_EMAIL` (el email de la SA, `vm-pulse-meltano@<project-id>.iam.gserviceaccount.com`) y el script reconstruye el JSON.
 
 ### 3. GitHub Actions (todo el pipeline en CI)
 Workflow: [`.github/workflows/extract-cap4.yml`](../.github/workflows/extract-cap4.yml) (trigger manual `workflow_dispatch`, inputs `environment` / `year_resource_id` / `max_records`). Requisitos en el repo (Settings → Secrets and variables → Actions):
@@ -89,6 +90,7 @@ Workflow: [`.github/workflows/extract-cap4.yml`](../.github/workflows/extract-ca
 | **Secret** | `GCP_SA_KEY` | JSON completo de la key de la SA |
 | Variable (opcional) | `BIGQUERY_PROJECT` | default `vaca-muerta-pulse` |
 | Variable (opcional) | `BIGQUERY_LOCATION` | default `US` |
+| Variable (opcional) | `GCP_SA_CLIENT_EMAIL` | solo si `GCP_SA_KEY` trae únicamente la private key |
 
 El workflow instala Meltano, materializa la key con `scripts/materialize-sa-key.sh`, asegura el dataset (`scripts/ensure_dataset.py`) y corre `cap4-produccion`. Habilitá el `schedule` (comentado) recién cuando un run manual quede verde.
 

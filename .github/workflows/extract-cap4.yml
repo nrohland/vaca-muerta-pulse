@@ -64,6 +64,8 @@ jobs:
       - name: Materialize GCP service-account key
         env:
           GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+          # Only needed if GCP_SA_KEY holds just the PEM private key (not the full JSON).
+          GCP_SA_CLIENT_EMAIL: ${{ vars.GCP_SA_CLIENT_EMAIL }}
         run: |
           if [ -z "$GCP_SA_KEY" ]; then
             echo "::error::Repository secret GCP_SA_KEY is not set. Add it in Settings → Secrets and variables → Actions."

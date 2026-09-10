@@ -9,6 +9,7 @@ secrets/
 .secrets/
 credentials/
 meltano-raw-writer.json
+vm-pulse-meltano.json
 
 # GCP service-account keys (any filename pattern)
 *service-account*.json
