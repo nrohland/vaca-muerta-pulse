@@ -6,7 +6,9 @@
 *.key
 *.p12
 secrets/
+.secrets/
 credentials/
+meltano-raw-writer.json
 
 # GCP service-account keys (any filename pattern)
 *service-account*.json
