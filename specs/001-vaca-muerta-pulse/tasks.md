@@ -71,7 +71,7 @@ Evidencia: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.
 - [x] Datasets US `stg_cap4_dev`, `int_cap4_dev`, `marts_cap4_dev` existen (vacíos; created 2026-09-10T21:09Z). `INFORMATION_SCHEMA.SCHEMATA` + `datasets.get`.
 - [x] `raw_cap4_dev` existe (Hito 1). **`raw_cap4` no existe** — no se inventa ni se crea en este PR.
 - [ ] SA `vm-pulse-dbt` — **no existe.** IAM API deshabilitada / Meltano 403 al consultar. Bloqueado en Nicolás (`provision_hito2_bq.sh` con owner).
-- [ ] Grants mínimos (jobUser + READER `raw_cap4_dev` + WRITER stg/int/marts `_dev`) — dependen de la SA.
+- [ ] Grants mínimos — ACL de dataset **menciona** el email `vm-pulse-dbt` (READER raw / WRITER stg-int-marts) en re-verify; **no** se confirma `jobUser` ni que la SA exista (IAM 403).
 - [ ] Key / secret `GCP_SA_KEY_DBT` (separado de Meltano `GCP_SA_KEY`) + [materialize-dbt-sa-key.sh](../../transform/scripts/materialize-dbt-sa-key.sh). JSON **fuera** de git.
 - [ ] Default table expiration 60d en datasets dbt — documentado; Nico puede `--unset-table-expiration`.
 

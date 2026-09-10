@@ -34,16 +34,14 @@ stg_cap4_dev     US        2026-09-10T21:08:59.464000+00:00
 
 ## ACL observada (legacy access entries)
 
-Los cuatro datasets listados tienen el mismo patrón:
+**Primera lectura (~21:16Z):** solo Meltano OWNER + specialGroups. **Re-verify con `provision_hito2_bq.sh --verify-only` (mismo día, Meltano SA):** el email `vm-pulse-dbt@<project-id>.iam.gserviceaccount.com` ya aparece en el ACL de dataset, **sin** que `iam.serviceAccounts.get` pueda confirmar que la SA exista (HTTP 403, IAM API off). Un miembro de ACL no es una SA. Estado honesto: **datasets sí; grants de dataset posiblemente adelantados; SA no confirmada.**
 
-| role | entity |
+| Dataset | Extra respecto del ACL default |
 | --- | --- |
-| WRITER | `projectWriters` |
-| OWNER | `projectOwners` |
-| OWNER | `vm-pulse-meltano@<project-id>.iam.gserviceaccount.com` |
-| READER | `projectReaders` |
+| `raw_cap4_dev` | READER `vm-pulse-dbt@…` |
+| `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev` | WRITER `vm-pulse-dbt@…` |
 
-`vm-pulse-dbt` **no** está en el ACL. Meltano quedó OWNER de `stg_*` / `int_*` / `marts_*` porque esa SA creó los datasets; **no** debería escribir ahí. Nico puede sacar ese OWNER con `--tighten-acl` **después** de crear `vm-pulse-dbt`.
+En los cuatro, Meltano sigue OWNER (los creó). Nico: `--tighten-acl` **después** de crear la SA de verdad. `roles/bigquery.jobUser` a nivel proyecto **no** se verificó (hace falta IAM/Resource Manager).
 
 ## Default table expiration
 
