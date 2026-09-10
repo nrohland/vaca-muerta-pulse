@@ -1,0 +1,16 @@
+-- One-shot recovery if overwrite:true already landed rows in staging
+-- (produccion_pozo_mes__<timestamp>__<uuid>) and the final table is 0 rows.
+-- Prefer a fresh meltano run with overwrite:false after this PR; use this
+-- only if you do not want to re-extract from CKAN.
+--
+-- 1. List staging tables:
+--    SELECT table_name
+--    FROM `vaca-muerta-pulse.raw_cap4_dev.INFORMATION_SCHEMA.TABLES`
+--    WHERE table_name LIKE 'produccion_pozo_mes__%';
+-- 2. Replace the staging name below, then run INSERT + DROP.
+-- 3. Confirm COUNT(*) on the final table.
+
+-- INSERT INTO `vaca-muerta-pulse.raw_cap4_dev.produccion_pozo_mes`
+-- SELECT * FROM `vaca-muerta-pulse.raw_cap4_dev.produccion_pozo_mes__REPLACE_ME`;
+--
+-- DROP TABLE `vaca-muerta-pulse.raw_cap4_dev.produccion_pozo_mes__REPLACE_ME`;

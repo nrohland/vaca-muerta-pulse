@@ -51,10 +51,10 @@ Código por hito: `docs/specs` → `extraction/` → `transform/` → `apps/web/
 
 ### Aceptación
 
-- [ ] `extraction/` tiene Meltano versionado (`meltano.yml`); README explica `meltano run` y env vars (nombres, no valores). — scaffold en este PR; QA cierra el hito cuando el smoke BQ exista
-- [ ] Existe tabla raw de producción pozo-mes en BQ; **partition** y **cluster** verificables (`INFORMATION_SCHEMA` o console). — **bloqueado: SA / BQ enable en `vaca-muerta-pulse`**
-- [ ] Load reproducible contra un resource público documentado (URL + id CKAN o patrón de CSV anual). — resource documentado; load BQ pendiente
-- [ ] Conteos de smoke: filas del sample vs source (tolerancia y duplicados documentados). — total Datastore 2025 documentado; falta COUNT BQ
+- [ ] `extraction/` tiene Meltano versionado (`meltano.yml`); README explica `meltano run` y env vars (nombres, no valores). — Meltano + fix Bug 1/2 en repo; QA cierra el hito cuando el smoke BQ (COUNT final > 0) exista
+- [ ] Existe tabla raw de producción pozo-mes en BQ; **partition** y **cluster** verificables (`INFORMATION_SCHEMA` o console). — **handoff:** layout MONTH(`_sdc_batched_at`)+CLUSTER ok; final 0 filas por overwrite. Falta COUNT>0 post-append
+- [ ] Load reproducible contra un resource público documentado (URL + id CKAN o patrón de CSV anual). — resource documentado; load a tabla **final** pendiente de repro con `overwrite:false`
+- [ ] Conteos de smoke: filas del sample vs source (tolerancia y duplicados documentados). — total Datastore 2025 documentado; falta COUNT BQ en tabla final
 - [ ] Completaciones: **o** tabla raw + source documentado, **o** `data-model.md` actualizado a “sin source en v1” (no silenciar el UNKNOWN). — source Adjunto IV documentado; tabla raw no cargada (job default + mismo bloqueo SA)
 - [ ] Ningún secreto en el PR; presupuesto/alerta GCP mencionada en `extraction/README.md`. — docs sí; secretos no (revisar en el PR)
 - [ ] `data-model.md`: columnas reales del tap reemplazan la lista draft donde haya evidencia. — hecho vía DataStore, no vía BQ
