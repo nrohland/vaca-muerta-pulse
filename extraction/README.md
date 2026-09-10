@@ -256,17 +256,18 @@ Hay una familia paralela **DDJJ abiertas y cerradas** (otro UUID por año) — n
 
 ## Smoke load (estado)
 
-Handoff humano/Tutor (confiar; este agente **no** re-ejecutó BQ en la VM — no hay `GCP_SA_KEY` acá):
+Post-merge PR #5 (HEAD `30f6970` en `cursor/hito-1-bigquery-credentials-ci-8d0b`; **no** está en `main`). Evidencia completa: [docs/hito-1-post-merge-smoke.md](docs/hito-1-post-merge-smoke.md).
 
-- SA `vm-pulse-meltano` autentica.
-- Dataset `raw_cap4_dev` existe.
-- 500 filas Cap. IV llegaron a staging `produccion_pozo_mes__*`.
-- Diseño físico de la tabla final existente: MONTH(`_sdc_batched_at`) + CLUSTER `empresa`,`idpozo`,`cuenca` — **correcto**.
-- Tabla final `produccion_pozo_mes`: **0 filas** por Bug 1 (`overwrite:true` + CREATE OR REPLACE).
+| Check | Resultado (2026-09-10) |
+| --- | --- |
+| Auth SA | OK |
+| `meltano run cap4-produccion` (500/500) | exit 0; **504 s** |
+| `COUNT(*)` `raw_cap4_dev.produccion_pozo_mes` | **500** (pre-smoke era 0) |
+| DDL | `PARTITION BY TIMESTAMP_TRUNC(_sdc_batched_at, MONTH)` + `CLUSTER BY empresa, idpozo, cuenca` |
+| Destino | tabla **final** (no staging `__*`) |
+| Año completo (991 844) | pendiente |
 
-Este PR corrige config/SQL. **No se afirma un load exitoso post-fix** hasta que alguien con credenciales corra el repro y pegue `COUNT(*)` + `INFORMATION_SCHEMA` (ver [sql/verify_layout.sql](sql/verify_layout.sql)).
-
-Cuando haya SA en el entorno:
+Repro (con SA; no commitear el JSON):
 
 ```bash
 cd extraction
@@ -282,12 +283,12 @@ TAP_CKAN_DATASTORE_PAGE_SIZE=500 TAP_CKAN_DATASTORE_MAX_RECORDS=500 \
 
 Checklist:
 
-1. Datasets `raw_cap4` / `raw_cap4_dev` (ya existen en el handoff)
-2. `prepare_year_load.py` (IF NOT EXISTS + layout)
-3. Smoke 500 (y opcional 5000) con `storage_write_api`; anotar wall-clock
-4. `COUNT(*)` final **> 0**; staging `__*` no es la tabla de producto
-5. `INFORMATION_SCHEMA.TABLES.ddl` muestra MONTH `_sdc_batched_at` + CLUSTER
-6. Año completo: sin `MAX_RECORDS`; Datastore `total` 991844 vs `COUNT(*)` BQ (delta = 0 esperado)
+1. Datasets `raw_cap4` / `raw_cap4_dev` — **sí** (dev verificado)
+2. `prepare_year_load.py` (IF NOT EXISTS + layout) — **sí**
+3. Smoke 500 con `storage_write_api`; wall-clock — **504 s**
+4. `COUNT(*)` final **> 0** — **500**; staging `__*` leftover del Bug 1 no es producto
+5. `INFORMATION_SCHEMA.TABLES.ddl` MONTH `_sdc_batched_at` + CLUSTER — **sí**
+6. Año completo: sin `MAX_RECORDS`; Datastore `total` 991844 vs `COUNT(*)` BQ — **pendiente**
 
 ---
 

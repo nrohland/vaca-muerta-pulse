@@ -31,9 +31,9 @@ Tachá en el PR que complete el ítem. Smoke BQ post-fix de overwrite/throughput
 
 ## Loads de smoke
 
-- [ ] Load de **al menos un año** de producción pozo-mes a BQ. — **pendiente post-fix.** Handoff: 500 filas en staging `produccion_pozo_mes__*`; final 0 filas (Bug 1). Este PR: `overwrite:false` + Storage Write API. Repro en `extraction/README.md`.
-- [ ] Verificación: tabla **particionada** y **clustered** (screenshot o query a `INFORMATION_SCHEMA` en el PR, sin datos sensibles). — **handoff (tabla existente, 0 filas):** MONTH(`_sdc_batched_at`) + CLUSTER `empresa`,`idpozo`,`cuenca`. Falta evidencia **después** del append que deje COUNT>0. Queries: `extraction/sql/verify_layout.sql`.
-- [ ] Conteo de filas vs source (delta explicado: header, duplicados, filtro). — Datastore 2025 `total=991844` documentado; falta `COUNT(*)` BQ en la tabla **final**
+- [ ] Load de **al menos un año** de producción pozo-mes a BQ. — smoke 500 post-fix OK; año completo (991 844) **pendiente**.
+- [x] Verificación: tabla **particionada** y **clustered** (screenshot o query a `INFORMATION_SCHEMA` en el PR, sin datos sensibles). — [extraction/docs/hito-1-post-merge-smoke.md](../../extraction/docs/hito-1-post-merge-smoke.md): MONTH(`_sdc_batched_at`) + CLUSTER `empresa`,`idpozo`,`cuenca` con `COUNT(*)=500`.
+- [ ] Conteo de filas vs source (delta explicado: header, duplicados, filtro). — smoke 500 vs `MAX_RECORDS=500` (delta 0) documentado; año completo 991 844 vs BQ **pendiente**.
 - [x] Sample de columnas reales vs lista draft: PR actualiza [data-model.md](data-model.md) (CONFIRMED / UNKNOWN). — evidencia DataStore, no INFORMATION_SCHEMA
 
 ## Padrón y completaciones (descubrimiento, no dbt)
