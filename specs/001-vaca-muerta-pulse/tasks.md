@@ -2,14 +2,14 @@
 
 Solo **Hito 1**. Hitos 2–3 no se tachan acá. Criterios de aceptación: [plan.md](plan.md). Owner: **DE**. Folder: [`extraction/`](../../extraction/README.md).
 
-Tachá en el PR que complete el ítem. Load live a BQ: **bloqueado** sin SA en el proyecto `vaca-muerta-pulse` — esas casillas quedan abiertas a propósito.
+Tachá en el PR que complete el ítem. Smoke BQ post-fix de overwrite/throughput: **falta evidencia en este PR** (la VM del agente no tiene `GCP_SA_KEY`). Handoff humano: dataset `raw_cap4_dev` existe; 500 filas en staging; final 0 filas por Bug 1.
 
 ## GCP y BigQuery
 
 - [x] Proyecto GCP del Pulse documentado (id del proyecto, región, **sin** keys).
 - [x] APIs: BigQuery (+ IAM lo mínimo). Billing/alerta de presupuesto mencionadas en `extraction/README.md`.
-- [ ] Dataset raw creado (nombre propuesto `raw_cap4`; si cambia, update [architecture.md](../../docs/architecture.md)). — **nombre confirmado `raw_cap4` / `raw_cap4_dev`; creación BQ bloqueada sin SA**
-- [x] Service account de Meltano: rol mínimo de **escritura** a `raw_*`; JSON **fuera** del repo (`GOOGLE_APPLICATION_CREDENTIALS` o Secret Manager). — documentado; JSON no commiteado
+- [x] Dataset raw creado (nombre propuesto `raw_cap4`; si cambia, update [architecture.md](../../docs/architecture.md)). — **handoff: `raw_cap4_dev` existe**; prod `raw_cap4` mismo patrón
+- [x] Service account de Meltano: rol mínimo de **escritura** a `raw_*`; JSON **fuera** del repo (`GOOGLE_APPLICATION_CREDENTIALS` o Secret Manager). — documentado; JSON no commiteado; handoff: SA `vm-pulse-meltano` autentica
 - [x] `.env.example` (opcional) con **nombres** de variables, cero secretos.
 
 ## Diseño físico de la tabla de producción
@@ -31,9 +31,9 @@ Tachá en el PR que complete el ítem. Load live a BQ: **bloqueado** sin SA en e
 
 ## Loads de smoke
 
-- [ ] Load de **al menos un año** de producción pozo-mes a BQ. — **bloqueado: SA / BQ enable en `vaca-muerta-pulse`**
-- [ ] Verificación: tabla **particionada** y **clustered** (screenshot o query a `INFORMATION_SCHEMA` en el PR, sin datos sensibles).
-- [ ] Conteo de filas vs source (delta explicado: header, duplicados, filtro). — Datastore 2025 `total=991844` documentado; falta `COUNT(*)` BQ
+- [ ] Load de **al menos un año** de producción pozo-mes a BQ. — **pendiente post-fix.** Handoff: 500 filas en staging `produccion_pozo_mes__*`; final 0 filas (Bug 1). Este PR: `overwrite:false` + Storage Write API. Repro en `extraction/README.md`.
+- [ ] Verificación: tabla **particionada** y **clustered** (screenshot o query a `INFORMATION_SCHEMA` en el PR, sin datos sensibles). — **handoff (tabla existente, 0 filas):** MONTH(`_sdc_batched_at`) + CLUSTER `empresa`,`idpozo`,`cuenca`. Falta evidencia **después** del append que deje COUNT>0. Queries: `extraction/sql/verify_layout.sql`.
+- [ ] Conteo de filas vs source (delta explicado: header, duplicados, filtro). — Datastore 2025 `total=991844` documentado; falta `COUNT(*)` BQ en la tabla **final**
 - [x] Sample de columnas reales vs lista draft: PR actualiza [data-model.md](data-model.md) (CONFIRMED / UNKNOWN). — evidencia DataStore, no INFORMATION_SCHEMA
 
 ## Padrón y completaciones (descubrimiento, no dbt)
@@ -41,7 +41,7 @@ Tachá en el PR que complete el ítem. Load live a BQ: **bloqueado** sin SA en e
 - [x] ¿El CSV de producción ya trae dims de pozo suficientes? Documentar sí/no.
 - [x] Si hace falta padrón/pozos aparte: tap extra **o** tarea explícita “no en Hito 1” con motivo.
 - [x] Completaciones/fracturas: encontrar resource **o** escribir en data-model + spec que v1 no tiene source (empty state Hito 3).
-- [x] Si hay source de completaciones: load raw smoke **o** issue/task residual linkeada; no silenciar. — stream en el tap, deseleccionado; load residual post-SA (mismo bloqueo GCP)
+- [x] Si hay source de completaciones: load raw smoke **o** issue/task residual linkeada; no silenciar. — stream en el tap, deseleccionado; load residual (mismo job pattern, no en default)
 
 ## Higiene y DoD Hito 1
 
@@ -49,7 +49,7 @@ Tachá en el PR que complete el ítem. Load live a BQ: **bloqueado** sin SA en e
 - [x] `.gitignore` cubre `.meltano/`, outputs, keys (ajustar si el init crea paths nuevos).
 - [x] Ningún CSV pesado commiteado.
 - [x] Ningún JSON de SA, ningún `.env` real.
-- [ ] [plan.md](plan.md) Hito 1: casillas de aceptación revisadas (se tildan cuando QA/DE cierran el hito). — scaffold sí; smoke BQ no
+- [ ] [plan.md](plan.md) Hito 1: casillas de aceptación revisadas (se tildan cuando QA/DE cierran el hito). — scaffold + fix overwrite/throughput en repo; smoke BQ COUNT>0 aún no verificado en este PR
 - [x] No hay `dbt_project.yml` ni app Next en este hito (rechazar scope creep).
 
 ## Fuera de este checklist

@@ -35,10 +35,18 @@ cd extraction
 source .venv/bin/activate
 export GOOGLE_APPLICATION_CREDENTIALS=/absolute/path/to/meltano-raw-writer.json
 
-# Dev: dataset raw_cap4_dev, overwrite=true (humo de un año)
+# Pre-create partitioned table (IF NOT EXISTS) + print INFORMATION_SCHEMA
+python scripts/prepare_year_load.py --dataset raw_cap4_dev
+
+# Dev: dataset raw_cap4_dev, append (overwrite:true está prohibido — ver Bug 1)
 MELTANO_ENVIRONMENT=dev meltano run cap4-produccion
 
-# Prod: dataset raw_cap4, append; re-emití el año con sql/reemit_year.sql
+# Dev reload de un año: TRUNCATE (conserva partition+cluster) y append
+python scripts/prepare_year_load.py --dataset raw_cap4_dev --truncate
+MELTANO_ENVIRONMENT=dev meltano run cap4-produccion
+
+# Prod: dataset raw_cap4, append; re-emití el año con DELETE + append
+python scripts/prepare_year_load.py --dataset raw_cap4 --delete-year 2025
 MELTANO_ENVIRONMENT=prod meltano run cap4-produccion
 ```
 
@@ -123,7 +131,8 @@ Default de Hito 1: **producción pozo-mes 2025**, resource `d774b5d7-0756-48fe-8
 APIs mínimas a habilitar en el proyecto:
 
 1. **BigQuery API** (`bigquery.googleapis.com`)
-2. IAM (ya está en todo proyecto GCP) — no hace falta Cloud Composer ni GCS para `method: batch_job`
+2. **BigQuery Storage API** (`bigquerystorage.googleapis.com`) — hace falta para `method: storage_write_api`
+3. IAM (ya está en todo proyecto GCP) — no hace falta Cloud Composer ni GCS
 
 **Billing / presupuesto:** Hito 1 asume free/cheap-tier. Creá un **budget alert** en Billing (p.ej. umbral 1 USD y 5 USD) para no sorprenderte si alguien hace un full scan. Load jobs batch a BQ son baratos; lo que come cuota es **query** sin predicado de partición. No dejes el dashboard (Hito 3) leyendo `raw_*`.
 
@@ -159,19 +168,38 @@ El tap agrega `periodo` (`YYYY-MM-01`) desde `anio`+`mes`. No convierte m³→bb
 ### PARTITION
 
 - **Intento de producto:** `PARTITION BY DATE(periodo)` — queries de “último año” sin scan 2006–hoy. Ver [sql/intended_partition.sql](sql/intended_partition.sql).
-- **Lo que el loader cablea hoy:** `partition_granularity: month` sobre **`_sdc_batched_at`** (limitación de z3z1ma/target-bigquery). No inventamos que BQ quedó particionado por `periodo` hasta ver `INFORMATION_SCHEMA` después del primer load.
+- **Lo que el loader cablea hoy:** `partition_granularity: month` sobre **`_sdc_batched_at`** (limitación de z3z1ma/target-bigquery). Handoff: la tabla existente ya tiene ese layout. Pre-create: [sql/create_produccion_pozo_mes.sql](sql/create_produccion_pozo_mes.sql). **No** afirmamos partición por `periodo`.
 
 ### CLUSTER BY (orden)
 
 `empresa`, `idpozo`, `cuenca` — cableado en `meltano.yml` (`clustering_fields`). Coincide con filtros de storytelling (empresa / pozo / cuenca Neuquina). Máximo 4 columnas en BQ; `sigla` queda afuera a propósito (`idpozo` ya identifica formación productiva).
 
-### Re-emit del CSV anual
+### Re-emit del CSV anual (Bug 1 — no usar overwrite)
 
 El archivo del año es un **snapshot**. `rectificado` existe (`t`/`f`) pero en 2025 casi todo es `f`.
 
-- **dev (un año):** `overwrite: true` reemplaza la tabla.
-- **prod (histórico multi-año):** `overwrite: false` + `DELETE WHERE anio = @year` y volver a correr el job con el resource de ese año ([sql/reemit_year.sql](sql/reemit_year.sql)).
+**Bug 1 (z3z1ma @090dad06):** `overwrite: true` escribe staging `produccion_pozo_mes__*` y al cerrar hace `CREATE OR REPLACE TABLE final AS SELECT *`. BigQuery responde `400 Cannot replace a table with a different partitioning spec (new=none, existing=month+_sdc_batched_at+cluster)`. Las filas quedan en staging; la tabla final queda en **0 filas**. El pin no se bumpa: el issue upstream es [z3z1ma/target-bigquery#134](https://github.com/z3z1ma/target-bigquery/issues/134) (fix #139 sin mergear). `0.7.2` hace DROP+CREATE (destruye el layout a menos que el CREATE lo recablee); acá se elige append + truncate/delete, que es además la semántica correcta de un CSV anual.
+
+- **Siempre** `overwrite: false` (dev y prod). Pre-crear la tabla con [sql/create_produccion_pozo_mes.sql](sql/create_produccion_pozo_mes.sql) / `scripts/prepare_year_load.py`.
+- **dev (un año):** `TRUNCATE TABLE` (conserva MONTH + CLUSTER) y volver a correr Meltano. Equiv: `--truncate`.
+- **prod (histórico multi-año):** `DELETE WHERE anio = @year` y volver a correr el job con el resource de ese año ([sql/reemit_year.sql](sql/reemit_year.sql) / `--delete-year`).
 - No `MERGE`/`upsert` en Hito 1: la clave `idpozo+anio+mes` es única en el sample 2025, falta repetir el test en otros años (Hito 2).
+- Si un run viejo dejó staging llena y final en 0: [sql/promote_staging.sql](sql/promote_staging.sql) (one-shot). Preferí un meltano run nuevo con este PR.
+
+### Throughput (Bug 2)
+
+500 filas con `method: batch_job` + `denormalized: true` tardaron ≈ 8.5 min (~1 rec/s). Un año (~992k) no es viable a esa tasa.
+
+| Setting | Antes (roto) | Ahora |
+| --- | --- | --- |
+| `method` | `batch_job` (LoadJob por batch, latencia alta) | `storage_write_api` (default stream; soportado en este pin) |
+| `batch_size` / `batch_size_rows` | 100000 (y el SDK igual podía flushar batches chicos) | **500** (límite de protobuf del Storage Write API) |
+| `denormalized` | `true` | `true` (columnas tipadas para Hito 2; no JSON blob) |
+| `overwrite` | `true` en dev | `false` |
+
+Smoke 500–5000 filas: debería terminar en **minutos**, no en ~1 rec/s. Año completo: CKAN pagina a 32k (≈31 requests) y el loader manda batches de 500 por el Storage Write API; esperable **decenas de minutos**, no ~10 días. Si Storage API no está habilitada, el job falla al autenticar el write stream — habilitala; no vuelvas a `batch_job` sin medir.
+
+Overrides puntuales (sin tocar el yaml): `TARGET_BIGQUERY_METHOD`, `TARGET_BIGQUERY_BATCH_SIZE`, `TAP_CKAN_DATASTORE_MAX_RECORDS`.
 
 ---
 
@@ -228,15 +256,38 @@ Hay una familia paralela **DDJJ abiertas y cerradas** (otro UUID por año) — n
 
 ## Smoke load (estado)
 
-El load a BigQuery de este entorno de agente **está bloqueado**: no hay service account ni BigQuery habilitado/autenticado hacia el proyecto `vaca-muerta-pulse`. No se afirma un load exitoso.
+Handoff humano/Tutor (confiar; este agente **no** re-ejecutó BQ en la VM — no hay `GCP_SA_KEY` acá):
 
-Cuando haya SA, checklist:
+- SA `vm-pulse-meltano` autentica.
+- Dataset `raw_cap4_dev` existe.
+- 500 filas Cap. IV llegaron a staging `produccion_pozo_mes__*`.
+- Diseño físico de la tabla final existente: MONTH(`_sdc_batched_at`) + CLUSTER `empresa`,`idpozo`,`cuenca` — **correcto**.
+- Tabla final `produccion_pozo_mes`: **0 filas** por Bug 1 (`overwrite:true` + CREATE OR REPLACE).
 
-1. `bq mk` datasets `raw_cap4` / `raw_cap4_dev`
-2. `MELTANO_ENVIRONMENT=dev meltano run cap4-produccion` (año 2025)
-3. `INFORMATION_SCHEMA` / DDL: partition + cluster
-4. Conteo: Datastore `total` 991844 vs `COUNT(*)` BQ (delta = 0 esperado; header no aplica a DataStore)
-5. Tildar las casillas de load en `tasks.md`
+Este PR corrige config/SQL. **No se afirma un load exitoso post-fix** hasta que alguien con credenciales corra el repro y pegue `COUNT(*)` + `INFORMATION_SCHEMA` (ver [sql/verify_layout.sql](sql/verify_layout.sql)).
+
+Cuando haya SA en el entorno:
+
+```bash
+cd extraction
+source .venv/bin/activate
+export GOOGLE_APPLICATION_CREDENTIALS="$(bash scripts/materialize-sa-key.sh)"  # o path gitignored
+python scripts/ensure_dataset.py   # BIGQUERY_DATASET=raw_cap4_dev
+python scripts/prepare_year_load.py --dataset raw_cap4_dev
+TAP_CKAN_DATASTORE_PAGE_SIZE=500 TAP_CKAN_DATASTORE_MAX_RECORDS=500 \
+  MELTANO_ENVIRONMENT=dev meltano run cap4-produccion
+# evidencia: python scripts/prepare_year_load.py --dataset raw_cap4_dev
+# o las queries de sql/verify_layout.sql
+```
+
+Checklist:
+
+1. Datasets `raw_cap4` / `raw_cap4_dev` (ya existen en el handoff)
+2. `prepare_year_load.py` (IF NOT EXISTS + layout)
+3. Smoke 500 (y opcional 5000) con `storage_write_api`; anotar wall-clock
+4. `COUNT(*)` final **> 0**; staging `__*` no es la tabla de producto
+5. `INFORMATION_SCHEMA.TABLES.ddl` muestra MONTH `_sdc_batched_at` + CLUSTER
+6. Año completo: sin `MAX_RECORDS`; Datastore `total` 991844 vs `COUNT(*)` BQ (delta = 0 esperado)
 
 ---
 
@@ -244,4 +295,4 @@ Cuando haya SA, checklist:
 
 - `.meltano/`, `.venv/`, `.env`, JSON de SA, CSV crudos: gitignore
 - Env vars: [.env.example](.env.example) (nombres; IDs CKAN son públicos)
-- Plugins pinned: Meltano **4.2.2** en el Makefile; tap editable; target `z3z1ma/target-bigquery@090dad06`
+- Plugins pinned: Meltano **4.2.2** en el Makefile; tap editable; target `z3z1ma/target-bigquery@090dad06` (no bump: el workaround de Bug 1 es append, no el DROP+CREATE de 0.7.2 ni el PR #139 sin mergear)

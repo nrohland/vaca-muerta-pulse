@@ -6,6 +6,10 @@ requires_meltano: ">=4.2.0"
 # Meltano project lives in extraction/ (not the git root).
 # Pins: tap-ckan-datastore is this repo (Singer SDK); target-bigquery is z3z1ma git SHA.
 
+# Both envs APPEND. Do not set overwrite:true — z3z1ma @090dad06 does
+# CREATE OR REPLACE TABLE AS SELECT * and BQ rejects it on a partitioned
+# table (new=none vs month+_sdc_batched_at+cluster). Reload = TRUNCATE or
+# DELETE WHERE anio=… (sql/reemit_year.sql / scripts/prepare_year_load.py).
 environments:
   - name: dev
     config:
@@ -14,7 +18,7 @@ environments:
           - name: target-bigquery
             config:
               dataset: raw_cap4_dev
-              overwrite: true
+              overwrite: false
   - name: prod
     config:
       plugins:
@@ -83,16 +87,24 @@ plugins:
           kind: string
         - name: batch_size
           kind: integer
+        - name: batch_size_rows
+          kind: integer
       config:
         project: vaca-muerta-pulse
         dataset: raw_cap4
         location: US
-        method: batch_job
+        # Bug 2: batch_job + denormalized was ~1 rec/s (500 rows ≈ 8.5 min).
+        # storage_write_api is this pin's default/fast path (default stream).
+        # batch_size <= 500 is required for Storage Write protobuf requests;
+        # also set batch_size_rows so Singer SDK does not flush 1-row batches.
+        method: storage_write_api
         denormalized: true
         schema_resolver_version: 2
-        batch_size: 100000
+        batch_size: 500
+        batch_size_rows: 500
         # Native loader partition = MONTH on _sdc_batched_at (z3z1ma).
         # Product intent = DATE periodo; see sql/intended_partition.sql.
+        # Do not invent a successful periodo partition on this pin.
         partition_granularity: month
         clustering_fields:
           - empresa
@@ -101,6 +113,7 @@ plugins:
         column_name_transforms:
           snake_case: false
           lower: false
+        # Upsert needs unique key_properties on every year; not assumed in Hito 1.
         upsert: false
         overwrite: false
 

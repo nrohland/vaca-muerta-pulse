@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: Meltano environment (dev = raw_cap4_dev/overwrite, prod = raw_cap4/append)
+        description: Meltano environment (dev = raw_cap4_dev, prod = raw_cap4; both append)
         type: choice
         options: [dev, prod]
         default: dev
@@ -96,3 +96,5 @@ jobs:
             export TAP_CKAN_DATASTORE_MAX_RECORDS="$MAX_RECORDS"
           fi
           meltano run cap4-produccion
+          # Append-only (overwrite:true strips BQ partitioning on this pin).
+          # Re-runs duplicate unless the year was DELETE/TRUNCATEd first.

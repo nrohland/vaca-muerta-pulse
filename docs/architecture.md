@@ -90,7 +90,7 @@ Nombres **confirmados como intención de DE**. El load live puede faltar; no afi
 | Dataset | Contenido | Quién escribe |
 | --- | --- | --- |
 | `raw_cap4` | Tablas 1:1 con el tap (`produccion_pozo_mes`, …) | Meltano (prod) |
-| `raw_cap4_dev` | Idem, overwrite de un año | Meltano (dev) |
+| `raw_cap4_dev` | Idem, **append** (reload = TRUNCATE o DELETE year) | Meltano (dev) |
 | `analytics` o datasets dbt `stg_cap4` / `int_cap4` / `marts` | Modelos | dbt (Hito 2) |
 
 Proyecto GCP: **`vaca-muerta-pulse`**. Location: **US**.
@@ -99,7 +99,8 @@ Tablas raw de hechos de producción (`produccion_pozo_mes`):
 
 - Columna de período: `periodo` DATE `YYYY-MM-01` (la arma el tap desde `anio`+`mes`).
 - **PARTITION intento de producto:** `PARTITION BY DATE(periodo)`.
-- **PARTITION que cablea z3z1ma hoy:** MONTH sobre `_sdc_batched_at`. Post-load: [extraction/sql/intended_partition.sql](../extraction/sql/intended_partition.sql).
+- **PARTITION que cablea z3z1ma hoy:** MONTH sobre `_sdc_batched_at`. Pre-create: [extraction/sql/create_produccion_pozo_mes.sql](../extraction/sql/create_produccion_pozo_mes.sql). Intento producto (`periodo`): [extraction/sql/intended_partition.sql](../extraction/sql/intended_partition.sql).
+- **No overwrite:** `CREATE OR REPLACE TABLE AS SELECT *` de z3z1ma @090dad06 deja `new=none` y BQ rechaza reemplazar la tabla particionada. Dev y prod hacen **append**.
 - **CLUSTER BY** (orden cableado en `meltano.yml`): `empresa`, `idpozo`, `cuenca`.
 
 Completaciones (Adjunto IV): grano evento (`id_base_fractura_adjiv`); partición candidata `fecha_inicio_fractura`. Stream en el tap, **no** seleccionado en el job default de Hito 1.

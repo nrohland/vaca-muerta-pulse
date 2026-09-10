@@ -72,6 +72,11 @@ Un agente que actúa en un rol **no cruza** de folder salvo un cambio de contrat
 - No subas dumps de Capítulo IV. Documentá URL + resource id (`extraction/resources/cap4.yml`).
 - Si un comando imprime una key, no la dejes en logs del PR.
 
+### MUST de Nicolás (no negociable)
+
+- **Nunca** commitear `.env`, JSON de service account, tokens ni keys — ni en el diff, ni en el body del PR, ni en logs/chat.
+- Flujo de merge: **author → QA → Security Analyst → solo Nicolás mergea**. Bots y agentes **nunca** aprueban ni mergean.
+
 ## 7. Cómo trabajar un hito
 
 1. Confirmá el hito en `plan.md`.
