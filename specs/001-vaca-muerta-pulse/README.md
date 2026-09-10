@@ -7,4 +7,4 @@
 | [spec.md](spec.md) | Problema, usuarios, requisitos, simulación, no-goals, éxito |
 | [plan.md](plan.md) | Hitos 0–3 y aceptación (tasa bbl/día + disclaimer) |
 | [data-model.md](data-model.md) | Granos + Barrilito headline rate (DRAFT / UNKNOWN) |
-| [tasks.md](tasks.md) | Hito 1 (Meltano) + notas Hito 2/3; load BQ aún abierto |
+| [tasks.md](tasks.md) | Hito 1 (Meltano) + Hito 2 (dbt Barrilito) + notas Hito 3 |

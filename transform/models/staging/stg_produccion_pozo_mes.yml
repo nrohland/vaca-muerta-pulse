@@ -1,0 +1,66 @@
+version: 2
+
+models:
+  - name: stg_produccion_pozo_mes
+    description: >
+      Staging of Capítulo IV well-month production for Barrilito / Pulse.
+
+      **Grain after this model:** one row = `idpozo` × `anio` × `mes` inside
+      the product cut. 2025 DataStore had 0 duplicates on that key; other
+      years are UNKNOWN — if duplicates appear we keep `rectificado = t`
+      first, then latest Singer batch.
+
+      **Product filter (CONFIRMED strings, applied here not in Meltano):**
+      `formacion = 'vaca muerta'` AND `tipo_de_recurso = 'NO CONVENCIONAL'`.
+      Literal lowercase formation; `VACA MUERTA` is 0 rows in the 2025 sample.
+      2774 conventional Vaca Muerta rows in that sample are **out**. Tight
+      non-VM is a spec no-goal.
+
+      **`periodo`:** DATE first-of-month, coalesced from tap `periodo` or
+      `DATE(anio, mes, 1)`. This is the business month. Do **not** filter
+      Cap. IV month on `_sdc_batched_at` (raw partition).
+
+      **Caveats:** stg is a view over raw — `dbt build` of downstream tables
+      will scan `produccion_pozo_mes`. Prefer `--select` and do not `select *`
+      on raw from the Front. Injections (`iny_*`) stay in raw.
+    columns:
+      - name: idpozo
+        description: Well id (productive formation). Part of the grain.
+        data_tests:
+          - not_null
+      - name: anio
+        description: DDJJ year. Part of the grain.
+        data_tests:
+          - not_null
+      - name: mes
+        description: DDJJ month 1–12. Part of the grain.
+        data_tests:
+          - not_null
+      - name: periodo
+        description: Business month (DATE YYYY-MM-01). Materialized here.
+        data_tests:
+          - not_null
+      - name: prod_pet_m3
+        description: Oil for the well-month, m³ (source `prod_pet`).
+      - name: tef
+        description: >
+          Effective time, cast to FLOAT64. Plausible days in 2025 sample;
+          quality as Barrilito denominator remains UNKNOWN.
+      - name: formacion
+        description: After the product filter this is `vaca muerta`.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["vaca muerta"]
+      - name: tipo_de_recurso
+        description: After the product filter this is `NO CONVENCIONAL`.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["NO CONVENCIONAL"]
+      - name: source_batched_at
+        description: Singer batch time. Freshness / debug only — not Cap. IV month.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [idpozo, anio, mes]

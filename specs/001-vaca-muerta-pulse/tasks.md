@@ -3,7 +3,7 @@
 Criterios de aceptación: [plan.md](plan.md). Marca UI: **Barrilito** (repo `vaca-muerta-pulse`).
 
 - **Hito 1** (abajo): owner **DE**, folder [`extraction/`](../../extraction/README.md). Cadencia extract **mensual**; no cambiar `meltano.yml` en un PR de marca/producto.
-- **Hito 2 / 3:** secciones al final, **sin tachar**. No implementar dbt ni Next en este PR de specs.
+- **Hito 2 / 3:** Hito 2 código en `transform/` (este árbol). Hito 3 Next **sin tachar**.
 
 Tachá Hito 1 en el PR que complete el ítem. Smoke 500 re-medido 2026-09-10: `COUNT(*)` final **500** (streaming buffer). Año completo (~991k) **bloqueado** hasta OK de costo de Nicolás — este PR no corre Meltano full-year.
 
@@ -64,19 +64,20 @@ Tachá Hito 1 en el PR que complete el ítem. Smoke 500 re-medido 2026-09-10: `C
 
 ---
 
-## Hito 2 — tasa Barrilito (AE, `transform/`) — sin tachar
+## Hito 2 — tasa Barrilito (AE, `transform/`)
 
-No implementar en un PR de Hito 1 ni en este PR de docs. Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 5.
+Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 5. Código: [`transform/`](../../transform/README.md).
 
-- [ ] Mart DRAFT `fct_barrilito_rate` (o el nombre único que Hito 2 publique; retirar el alias `mart_barrilito_headline` si no se usa).
-- [ ] Grano: **una fila** = snapshot del recorte VM no conv. para el **último mes Capítulo IV** (agregado **total** Pulse, no por empresa).
-- [ ] Fórmula preferida: `rate_m3_dia = sum(prod_pet_m3) / sum(tef)` cuando `tef` son días usables y `sum(tef) > 0`.
-- [ ] Fallback: `rate_m3_dia = sum(prod_pet_m3) / days_in_month(periodo)`. Tests para `tef` = 0 / nulo. Cerrar preferred vs UNKNOWN con evidencia.
-- [ ] Conversión `rate_bbl_dia = rate_m3_dia × 6.28981077` en el modelo.
-- [ ] El **mismo** factor `6.28981077` en YAML de métricas dbt (no un segundo número). Documentar en `transform/` README o `dbt_project.yml` / metrics YAML.
-- [ ] `stg` materializa `periodo` como grano de negocio; no filtrar el mes Cap. IV por `_sdc_batched_at`.
-- [ ] Test de reconciliación: `prod_pet_m3` del mart Barrilito = suma de `fct_well_month` del mismo `periodo` y recorte.
-- [ ] Actualizar [data-model.md](data-model.md) si la evidencia cambia preferred/fallback. No inventar sensores ni grano intradía.
+- [x] Mart `fct_barrilito_rate` (identificador único; alias `mart_barrilito_headline` retirado).
+- [x] Grano: **una fila** = snapshot del recorte VM no conv. para el **último mes Capítulo IV** (agregado **total** Pulse, no por empresa).
+- [x] Fórmula preferida: `rate_m3_dia = sum(prod_pet_m3) / nullif(sum(tef), 0)` cuando `tef_sum > 0` (`tef_weighted`).
+- [x] Fallback: `rate_m3_dia = sum(prod_pet_m3) / days_in_month(periodo)` (`calendar_days`). Unit tests con fixtures para `tef` = 0. Viabilidad de `tef` **en warehouse** = UNKNOWN (este PR no tuvo SA BQ; no se afirma `dbt test` verde contra raw).
+- [x] Conversión `rate_bbl_dia = rate_m3_dia × 6.28981077` en el modelo (`var('m3_to_bbl')` / macro).
+- [x] El **mismo** factor `6.28981077` en YAML de métricas (`models/marts/_metrics.yml`) y `dbt_project.yml`.
+- [x] `stg` materializa `periodo` como grano de negocio; no filtrar el mes Cap. IV por `_sdc_batched_at`.
+- [x] Test de reconciliación SQL: `prod_pet_m3` Barrilito vs suma de `fct_well_month` del mismo `periodo` (corre con `dbt test` cuando hay warehouse).
+- [x] Actualizar [data-model.md](data-model.md): contrato `fct_barrilito_rate`; tef no promovido a CONFIRMED. Sin sensores ni grano intradía.
+- [ ] `dbt build` / `dbt test` contra BigQuery — **bloqueado** en este PR (sin credenciales en el agente). Instrucciones: [transform/README.md](../../transform/README.md). `dbt deps` + `dbt parse` sí.
 
 ---
 

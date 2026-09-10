@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: int_produccion_vm_noconv
+    description: >
+      Ephemeral well-month grain of the Pulse cut (already filtered in stg).
+      Adds `well_month_id` (dbt_utils surrogate of idpozo+anio+mes) and
+      `days_in_month` (calendar days of `periodo`) for Barrilito fallback and
+      for `fct_well_month`. Not a public contract — Front reads marts.
+    columns:
+      - name: well_month_id
+        description: Surrogate of idpozo + anio + mes.
+      - name: days_in_month
+        description: Calendar days of `periodo` (e.g. 31 for January). Fallback Barrilito denominator.
+      - name: periodo
+        description: Business month DATE YYYY-MM-01.

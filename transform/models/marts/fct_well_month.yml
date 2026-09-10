@@ -1,0 +1,57 @@
+version: 2
+
+models:
+  - name: fct_well_month
+    description: >
+      Public well-month fact for the Pulse cut (Vaca Muerta, no convencional).
+
+      **Grain:** one row = `idpozo` × `anio` × `mes` (CONFIRMED unique in 2025
+      DataStore; staging dedupes if other years differ). Partitioned by
+      `periodo` (business month), clustered by idempresa, idpozo.
+
+      Barrilito headline (`fct_barrilito_rate`) must reconcile `prod_pet_m3`
+      to the sum of this table for the same `periodo`. Company / area marts
+      are P1 (not in this Hito 2 PR). Completions are not here — Adjunto IV
+      is not in the default Meltano job.
+    columns:
+      - name: well_month_id
+        description: Surrogate of idpozo + anio + mes.
+        data_tests:
+          - unique
+          - not_null
+      - name: idpozo
+        description: Well id. Grain key with anio, mes.
+        data_tests:
+          - not_null
+      - name: anio
+        description: DDJJ year. Grain key.
+        data_tests:
+          - not_null
+      - name: mes
+        description: DDJJ month. Grain key.
+        data_tests:
+          - not_null
+      - name: periodo
+        description: Business month DATE YYYY-MM-01. Use this, not source_batched_at.
+        data_tests:
+          - not_null
+      - name: prod_pet_m3
+        description: Oil m³ for the well-month.
+      - name: tef
+        description: >
+          Effective time. Preferred Barrilito denominator when the monthly
+          SUM over the Pulse cut is > 0. Values of 0 (abandoned / off) are
+          expected. Whether tef is always "days" in the VM cut remains UNKNOWN
+          (no warehouse `dbt test` in the PR that added this model).
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+                max_value: 31.5
+                row_condition: "tef is not null"
+              config:
+                severity: warn
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [idpozo, anio, mes]

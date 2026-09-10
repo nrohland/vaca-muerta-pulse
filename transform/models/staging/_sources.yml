@@ -1,0 +1,46 @@
+version: 2
+
+sources:
+  - name: raw_cap4
+    description: >
+      Capítulo IV producción pozo-mes landed by Meltano (Hito 1). Logical name
+      `raw_cap4`; physical dataset is var `raw_dataset` (`raw_cap4_dev` on
+      target dev, `raw_cap4` on prod). Partition of the loader is MONTH on
+      `_sdc_batched_at` — that is NOT the Cap. IV production month. Business
+      month is `periodo` (DATE first of month), materialized in staging.
+    database: "{{ env_var('BIGQUERY_PROJECT', 'vaca-muerta-pulse') }}"
+    schema: "{{ var('raw_dataset') }}"
+    tables:
+      - name: produccion_pozo_mes
+        description: >
+          One row per well-month as loaded from CKAN DataStore (stream
+          `produccion_pozo_mes`). Grain CONFIRMED unique in 2025 on
+          idpozo+anio+mes; UNKNOWN other years — staging dedupes. Do not query
+          this table from the Front; use marts.
+        columns:
+          - name: idpozo
+            description: Well id by productive formation (integer in tap).
+          - name: anio
+            description: DDJJ year.
+          - name: mes
+            description: DDJJ month (1–12).
+          - name: periodo
+            description: >
+              First day of the DDJJ month. Added by the tap from anio+mes.
+              Staging coalesces this if null. Never treat `_sdc_batched_at` as
+              this value.
+          - name: prod_pet
+            description: Oil volume in cubic metres (m³) for the month.
+          - name: tef
+            description: >
+              Effective time. Sample 2025 suggests days (31.0 in January
+              non-conventional). Usable as Barrilito denominator = UNKNOWN
+              until warehouse tests; staging casts, does not assume.
+          - name: formacion
+            description: "Formation name; Pulse filter uses literal `vaca muerta`."
+          - name: tipo_de_recurso
+            description: "Resource type; Pulse filter uses `NO CONVENCIONAL`."
+          - name: _sdc_batched_at
+            description: Meltano/Singer batch timestamp. Raw partition column. Not Cap. IV month.
+          - name: rectificado
+            description: "`t`/`f` rectificativa flag. Rare `t` in 2025 sample."

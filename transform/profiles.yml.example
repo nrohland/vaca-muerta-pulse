@@ -1,0 +1,42 @@
+# Copy to ~/.dbt/profiles.yml (or set DBT_PROFILES_DIR) and point
+# GOOGLE_APPLICATION_CREDENTIALS at a local SA JSON that is NOT in git.
+# This file has names and placeholders only — no keys, no project numbers.
+#
+#   cp profiles.yml.example ~/.dbt/profiles.yml
+#
+# Parse/compile do not need a live warehouse. `dbt build` / `dbt test` do.
+
+vaca_muerta_pulse:
+  target: "{{ env_var('DBT_TARGET', 'dev') }}"
+  outputs:
+    dev:
+      type: bigquery
+      method: service-account
+      project: "{{ env_var('BIGQUERY_PROJECT', 'vaca-muerta-pulse') }}"
+      dataset: "{{ env_var('DBT_BQ_DATASET', 'analytics_dev') }}"
+      location: "{{ env_var('BIGQUERY_LOCATION', 'US') }}"
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS', 'REPLACE_ME.json') }}"
+      threads: 4
+      job_execution_timeout_seconds: 300
+      job_retries: 1
+    prod:
+      type: bigquery
+      method: service-account
+      project: "{{ env_var('BIGQUERY_PROJECT', 'vaca-muerta-pulse') }}"
+      dataset: "{{ env_var('DBT_BQ_DATASET', 'analytics') }}"
+      location: "{{ env_var('BIGQUERY_LOCATION', 'US') }}"
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS', 'REPLACE_ME.json') }}"
+      threads: 4
+      job_execution_timeout_seconds: 600
+      job_retries: 1
+    # Application Default Credentials (gcloud auth application-default login).
+    # Same placeholders; still no secrets in git.
+    dev_oauth:
+      type: bigquery
+      method: oauth
+      project: "{{ env_var('BIGQUERY_PROJECT', 'vaca-muerta-pulse') }}"
+      dataset: "{{ env_var('DBT_BQ_DATASET', 'analytics_dev') }}"
+      location: "{{ env_var('BIGQUERY_LOCATION', 'US') }}"
+      threads: 4
+      job_execution_timeout_seconds: 300
+      job_retries: 1

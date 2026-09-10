@@ -2,7 +2,7 @@
 
 Vista C4-ish del data product. Stack y *por qué*: [ADR 0001](adrs/0001-stack-choices.md). Producto: [spec.md](../specs/001-vaca-muerta-pulse/spec.md).
 
-**Hoy (Hito 1):** Meltano versionado en `extraction/` (tap CKAN DataStore → `target-bigquery`). Dataset propuesto **`raw_cap4`** (dev: `raw_cap4_dev`). El primer load live a BQ depende de SA en el proyecto `vaca-muerta-pulse`. dbt / Next: Hitos 2–3.
+**Hoy (Hito 2):** dbt Core en `transform/` sobre raw Meltano. Datasets `raw_cap4` / `raw_cap4_dev`. Mart headline **`fct_barrilito_rate`**. Next: Hito 3.
 
 ## 1. Contexto
 
@@ -74,11 +74,13 @@ flowchart LR
   RAW --> STG["stg_*<br/>rename, types, filtros VM"]
   STG --> INT["int_*<br/>joins, claves, unidades"]
   INT --> M1["mart fct_well_month"]
-  INT --> M2["marts empresa / área"]
-  INT --> M3["mart completaciones"]
+  M1 --> M4["mart fct_barrilito_rate"]
+  INT --> M2["marts empresa / área (P1)"]
+  INT --> M3["mart completaciones (empty Hito 3)"]
   M1 --> WEB["Dashboard"]
   M2 --> WEB
   M3 --> WEB
+  M4 --> WEB
 ```
 
 Filtro de producto (CONFIRMED en sample 2025 DataStore; aplicar en `stg`/`int`, no en el tap): `formacion = 'vaca muerta'` y `tipo_de_recurso = 'NO CONVENCIONAL'`. Detalle en [data-model.md](../specs/001-vaca-muerta-pulse/data-model.md).
@@ -91,7 +93,7 @@ Nombres **confirmados como intención de DE**. El load live puede faltar; no afi
 | --- | --- | --- |
 | `raw_cap4` | Tablas 1:1 con el tap (`produccion_pozo_mes`, …) | Meltano (prod) |
 | `raw_cap4_dev` | Idem, **append** (reload = TRUNCATE o DELETE year) | Meltano (dev) |
-| `analytics` o datasets dbt `stg_cap4` / `int_cap4` / `marts` | Modelos | dbt (Hito 2) |
+| `analytics` o datasets dbt `stg_cap4` / `int_cap4` / `marts` (`*_dev` en target dev) | Modelos | dbt (Hito 2) |
 
 Proyecto GCP: **`vaca-muerta-pulse`**. Location: **US**.
 

@@ -11,7 +11,7 @@ Una carpeta `specs/NNN-slug/` describe **un producto o un cambio de producto**, 
 | `spec.md` | Problema, usuarios, requisitos, no-goals, éxito |
 | `plan.md` | Hitos y aceptación |
 | `data-model.md` | Granos, claves, UNKNOWNs |
-| `tasks.md` | Checklist Hito 1 (smoke BQ pendiente) + notas Hito 2/3 (Barrilito) |
+| `tasks.md` | Checklist Hito 1 + Hito 2 (dbt Barrilito) + notas Hito 3 |
 
 Opcional más adelante: `research.md`, `contracts.md` (APIs). No inventar archivos vacíos.
 
@@ -31,14 +31,14 @@ flowchart LR
 1. Si el trabajo **cambia** usuarios, alcance o métricas → `spec.md`.
 2. Si cambia grano, fuente o columnas → `data-model.md` (cerrar UNKNOWN con evidencia).
 3. Si cambia el corte de hitos → `plan.md`.
-4. Implementación: tachar `tasks.md`; no agregar Meltano/dbt/Next fuera de hito.
+4. Implementación: tachar `tasks.md`; no agregar Next fuera del Hito 3.
 5. Stack → [docs/adrs/](../docs/adrs/README.md), no un párrafo suelto en un modelo.
 
 ## Specs activas
 
 | ID | Producto | Estado |
 | --- | --- | --- |
-| [001-vaca-muerta-pulse](001-vaca-muerta-pulse/spec.md) | **Barrilito** (repo `vaca-muerta-pulse`) — Cap. IV, simulación mensual | Activa · Hito 1 (Meltano; load BQ pendiente) |
+| [001-vaca-muerta-pulse](001-vaca-muerta-pulse/spec.md) | **Barrilito** (repo `vaca-muerta-pulse`) — Cap. IV, simulación mensual | Activa · Hito 2 (dbt; `dbt build` BQ pide SA) |
 
 ## Convenciones
 
