@@ -11,6 +11,8 @@ flowchart LR
 
 Código por hito: `docs/specs` → `extraction/` → `transform/` → `apps/web/`. No adelantar el siguiente folder.
 
+Producto UI: **Barrilito** (repo `vaca-muerta-pulse`). El contador “live” es simulación interpolada desde un mart **bbl/día** mensual — ver [spec.md](spec.md) y [data-model.md](data-model.md).
+
 ---
 
 ## Hito 0 — Fundación SDD
@@ -45,9 +47,9 @@ Código por hito: `docs/specs` → `extraction/` → `transform/` → `apps/web/
 
 **Owner:** DE. **Folder:** `extraction/`. **Tasks:** [tasks.md](tasks.md).
 
-**Incluye:** GCP project, dataset raw, Meltano tap(s) → `target-bigquery`, PARTITION + CLUSTER, env/SA fuera de git, smoke de al menos un año de producción, documentar resource IDs.
+**Incluye:** GCP project, dataset raw, Meltano tap(s) → `target-bigquery`, PARTITION + CLUSTER, env/SA fuera de git, smoke de al menos un año de producción, documentar resource IDs. Cadencia de extract **mensual** (publicación Capítulo IV).
 
-**No incluye:** modelos dbt, dashboard, transformación de unidades de negocio (salvo casts del loader).
+**No incluye:** modelos dbt, dashboard, conversión m³ → bbl (eso es Hito 2), schedule sub-diario o taps de sensores. **No cambiar** `meltano.yml` en un PR de producto/marca.
 
 ### Aceptación
 
@@ -63,13 +65,13 @@ Código por hito: `docs/specs` → `extraction/` → `transform/` → `apps/web/
 
 ## Hito 2 — dbt `stg` → `int` → `marts`
 
-**Objetivo:** granos de producto testeados, listos para UI.
+**Objetivo:** granos de producto testeados, listos para UI — incluida la tasa Barrilito en **bbl/día**.
 
 **Owner:** AE. **Folder:** `transform/`.
 
-**Incluye:** sources sobre raw, staging (rename, types, filtro VM), intermediate (claves, unidades), marts de [data-model.md](data-model.md), tests.
+**Incluye:** sources sobre raw, staging (rename, types, filtro VM; materializar `periodo` como grano de negocio), intermediate (claves, unidades), marts de [data-model.md](data-model.md) **incluido** el mart DRAFT de headline (`fct_barrilito_rate` / `mart_barrilito_headline`), tests, factor `bbl = m³ × 6.28981077` en SQL **y** en YAML de métricas.
 
-**No incluye:** Meltano nuevo salvo un bug de contrato; UI.
+**No incluye:** Meltano nuevo salvo un bug de contrato; UI; sensores ni grano intradía; convertir en el tap.
 
 ### Aceptación
 
@@ -78,30 +80,37 @@ Código por hito: `docs/specs` → `extraction/` → `transform/` → `apps/web/
 - [ ] Filtro VM no convencional aplicado en `stg` o `int` y documentado (strings confirmados).
 - [ ] Marts de empresa y área; grano de área ya no UNKNOWN (o P1 explícito).
 - [ ] Completaciones: mart **o** no-goal actualizado en spec.
+- [ ] **Mart Barrilito (DRAFT → contrato):** una fila = snapshot del recorte VM no conv. para el **último mes Capítulo IV** (agregado total Pulse, no por empresa). Tasa **bbl/día**.
+- [ ] **Fórmula** documentada en el modelo y en data-model: preferir `sum(prod_pet_m3) / sum(tef)` cuando `tef` son días usables; fallback `sum(prod_pet_m3) / days_in_month`. Tests cubren `tef` = 0 / nulos. Cerrar preferred vs UNKNOWN con evidencia; no inventar sensores.
+- [ ] Conversión `bbl = m³ × 6.28981077` en el mart **y** en YAML de métricas dbt (el mismo factor). Petróleo de headline UI default = **bbl**; m³ sigue disponible.
+- [ ] `stg` usa `periodo` (grano de negocio). No tratar `_sdc_batched_at` (partición del loader raw) como mes de producción.
 - [ ] `dbt test` verde en CI o instrucciones locales inequívocas.
-- [ ] Front puede basarse en nombres de marts documentados (contrato en data-model).
+- [ ] Front puede basarse en nombres de marts documentados (contrato en data-model), incluida la tasa Barrilito.
 
 ---
 
 ## Hito 3 — Dashboard Next.js + Tremor
 
-**Objetivo:** storytelling público que cumple R6–R10 de la spec.
+**Objetivo:** storytelling público **Barrilito** que cumple R6–R10 de la spec.
 
 **Owner:** Front. **Folder:** `apps/web/`.
 
-**Incluye:** app Next, Tremor, lectura de marts (server / cache), copy en español.
+**Incluye:** app Next, Tremor, lectura de marts (server / cache), copy en español, contador interpolado + disclaimer MUST.
 
-**No incluye:** redefinir granos en el cliente; queries a `raw_*`.
+**No incluye:** redefinir granos en el cliente; queries a `raw_*`; telemetría; afirmar alta frecuencia.
 
 ### Aceptación
 
-- [ ] Portada con KPIs y serie temporal del recorte VM.
+- [ ] Portada **Barrilito:** headline = contador de barriles interpolado desde `bbl/día` del mart (último mes Cap. IV), con aspecto “extrayéndose” en vivo.
+- [ ] Disclaimer **MUST** visible junto al contador: *simulación a partir de datos mensuales oficiales*. Sin ese texto, la portada no acepta.
+- [ ] Copy no afirma sensores, SCADA ni que Capítulo IV sea tiempo real / intradía.
+- [ ] KPIs y serie temporal del recorte VM además del headline.
 - [ ] Ranking de empresas y al menos una vista de área.
 - [ ] Completaciones visibles **o** empty state honesto.
-- [ ] Unidades en UI; no números huérfanos.
+- [ ] Unidades en UI; headline petróleo en **bbl**; no números huérfanos.
 - [ ] Sin credenciales en el bundle del cliente.
-- [ ] README de `apps/web/` con cómo correr y de qué marts depende.
-- [ ] Recorrido manual (o e2e mínimo) cubre portada + un filtro.
+- [ ] README de `apps/web/` con cómo correr, de qué marts depende (incl. tasa Barrilito) y el disclaimer.
+- [ ] Recorrido manual (o e2e mínimo) cubre portada (contador + disclaimer) + un filtro.
 
 ---
 
@@ -111,7 +120,9 @@ Código por hito: `docs/specs` → `extraction/` → `transform/` → `apps/web/
 | --- | --- | --- |
 | CKAN/CSV cambia de schema | 1 | Staging flexible; data-model se actualiza en el PR |
 | Grano pozo ≠ formación | 1–2 | UNKNOWN en data-model; no forzar unique(sigla, mes) si es falso |
-| Fracturas incruzables | 2–3 | UI empty + spec; no interpolar |
+| `tef` no usable (ceros, no-días) | 2 | Fallback `days_in_month`; tests; no promover UNKNOWN a CONFIRMED |
+| Contador se lee como telemetría | 3 | Disclaimer MUST; no-goal de alta frecuencia |
+| Fracturas incruzables | 2–3 | UI empty + spec; no interpolar completaciones |
 | Costo BQ | 1–3 | Partition + cluster + lecturas de marts chicos |
 | Scope creep GIS/auth | 3 | No-goals |
 

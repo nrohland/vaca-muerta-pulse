@@ -1,10 +1,10 @@
-# Spec 001 — Vaca Muerta Pulse
+# Spec 001 — Barrilito
 
-Índice de la spec activa. Cómo funciona SDD: [../README.md](../README.md).
+Índice de la spec activa (marca **Barrilito**; repo `vaca-muerta-pulse`). Cómo funciona SDD: [../README.md](../README.md).
 
 | Archivo | |
 | --- | --- |
-| [spec.md](spec.md) | Problema, usuarios, requisitos, no-goals, éxito |
-| [plan.md](plan.md) | Hitos 0–3 y aceptación |
-| [data-model.md](data-model.md) | Granos draft + UNKNOWN |
-| [tasks.md](tasks.md) | Checklist Hito 1 (Meltano + BQ raw); load BQ aún abierto |
+| [spec.md](spec.md) | Problema, usuarios, requisitos, simulación, no-goals, éxito |
+| [plan.md](plan.md) | Hitos 0–3 y aceptación (tasa bbl/día + disclaimer) |
+| [data-model.md](data-model.md) | Granos + Barrilito headline rate (DRAFT / UNKNOWN) |
+| [tasks.md](tasks.md) | Hito 1 (Meltano) + notas Hito 2/3; load BQ aún abierto |
