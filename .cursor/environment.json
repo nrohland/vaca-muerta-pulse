@@ -1,0 +1,4 @@
+{
+  "name": "Vaca Muerta Pulse",
+  "install": "bash .cursor/install.sh"
+}
