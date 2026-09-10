@@ -60,6 +60,42 @@ TAP_CKAN_DATASTORE_MAX_RECORDS=50 meltano invoke tap-ckan-datastore
 
 ---
 
+## Credenciales (SA) y ejecución en CI
+
+El load a BigQuery necesita la **service account** de Meltano (roles: `bigquery.jobUser` + `bigquery.dataEditor` sobre el dataset raw; `+ bigquery.user` si querés que CI cree el dataset). La key JSON **nunca** va al repo. Hay tres formas de proveerla, todas terminan en `GOOGLE_APPLICATION_CREDENTIALS` apuntando a un archivo:
+
+### 1. Local (tu laptop)
+```bash
+cd extraction
+mkdir -p .secrets                                   # .secrets/ está gitignored
+cp /ruta/descargada/meltano-raw-writer.json .secrets/
+cp .env.example .env                                # ya apunta a ./.secrets/meltano-raw-writer.json
+source .venv/bin/activate
+MELTANO_ENVIRONMENT=dev meltano run cap4-produccion
+```
+
+### 2. Desde un secret (GitHub Actions o Cursor Cloud)
+No copiás un archivo: ponés el **JSON como secreto** y un script lo materializa en `.secrets/` en runtime.
+```bash
+export GCP_SA_KEY='<contenido JSON de la key>'      # o GCP_SA_KEY_BASE64=<base64>
+export GOOGLE_APPLICATION_CREDENTIALS="$(bash scripts/materialize-sa-key.sh)"
+```
+
+### 3. GitHub Actions (todo el pipeline en CI)
+Workflow: [`.github/workflows/extract-cap4.yml`](../.github/workflows/extract-cap4.yml) (trigger manual `workflow_dispatch`, inputs `environment` / `year_resource_id` / `max_records`). Requisitos en el repo (Settings → Secrets and variables → Actions):
+
+| Tipo | Nombre | Valor |
+| --- | --- | --- |
+| **Secret** | `GCP_SA_KEY` | JSON completo de la key de la SA |
+| Variable (opcional) | `BIGQUERY_PROJECT` | default `vaca-muerta-pulse` |
+| Variable (opcional) | `BIGQUERY_LOCATION` | default `US` |
+
+El workflow instala Meltano, materializa la key con `scripts/materialize-sa-key.sh`, asegura el dataset (`scripts/ensure_dataset.py`) y corre `cap4-produccion`. Habilitá el `schedule` (comentado) recién cuando un run manual quede verde.
+
+> **Alternativa sin key de larga vida:** Workload Identity Federation (`google-github-actions/auth` con `workload_identity_provider` + `service_account`, sin `GCP_SA_KEY`). Más seguro; pide configurar un WIF pool en GCP. Se puede migrar sin tocar Meltano.
+
+---
+
 ## Por qué este tap (y no un scraper)
 
 | Opción | Decisión |
