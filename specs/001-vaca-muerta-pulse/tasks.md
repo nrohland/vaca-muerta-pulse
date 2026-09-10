@@ -3,9 +3,9 @@
 Criterios de aceptación: [plan.md](plan.md). Marca UI: **Barrilito** (repo `vaca-muerta-pulse`).
 
 - **Hito 1** (abajo): owner **DE**, folder [`extraction/`](../../extraction/README.md). Cadencia extract **mensual**; no cambiar `meltano.yml` en un PR de marca/producto.
-- **Hito 2 IAM:** datasets `_dev` tildados con evidencia; SA `vm-pulse-dbt` **sin** tildar. Modelos Barrilito / Hito 3 siguen **sin tachar**.
+- **Hito 2 / 3:** Hito 2 código en `transform/` (modelos Barrilito + IAM/datasets). Hito 3 Next **sin tachar**.
 
-Tachá Hito 1 en el PR que complete el ítem. Smoke 500 post-fix 2026-09-10: `COUNT(*)` final **500** (streaming buffer). Layout MONTH(`_sdc_batched_at`)+CLUSTER en [extraction/docs/hito-1-post-merge-smoke.md](../../extraction/docs/hito-1-post-merge-smoke.md). Año completo (~991k) **bloqueado** hasta OK de costo de Nicolás — este PR no corre Meltano full-year.
+Tachá en el PR que complete el ítem. Año 2025 cargado 2026-09-10: `COUNT(*)` **991 844** (delta 0 vs Datastore). Evidencia: [extraction/docs/hito-1-full-year-2025-load.md](../../extraction/docs/hito-1-full-year-2025-load.md). Smoke 500 previo: [extraction/docs/hito-1-post-merge-smoke.md](../../extraction/docs/hito-1-post-merge-smoke.md).
 
 ## GCP y BigQuery
 
@@ -34,9 +34,9 @@ Tachá Hito 1 en el PR que complete el ítem. Smoke 500 post-fix 2026-09-10: `CO
 
 ## Loads de smoke
 
-- [ ] Load de **al menos un año** de producción pozo-mes a BQ. — **bloqueado (costo).** Smoke 500 post-fix OK en tabla final (Write API). Año 2025 (~991 844) no se carga hasta OK de Nicolás. Bytes: [extraction/docs/hito-1-full-year-cost.md](../../extraction/docs/hito-1-full-year-cost.md). Evidencia smoke: [extraction/docs/hito-1-post-merge-smoke.md](../../extraction/docs/hito-1-post-merge-smoke.md).
-- [x] Verificación: tabla **particionada** y **clustered** (screenshot o query a `INFORMATION_SCHEMA` en el PR, sin datos sensibles). — [extraction/docs/hito-1-post-merge-smoke.md](../../extraction/docs/hito-1-post-merge-smoke.md): MONTH(`_sdc_batched_at`) + CLUSTER `empresa`,`idpozo`,`cuenca` con `COUNT(*)=500`. `tables.get` + DDL; queries: `extraction/sql/verify_layout.sql`.
-- [ ] Conteo de filas vs source (delta explicado: header, duplicados, filtro). — smoke 500 vs `MAX_RECORDS=500` (delta 0) documentado; Datastore 2025 `total=991844`; falta COUNT del año completo.
+- [x] Load de **al menos un año** de producción pozo-mes a BQ. — 2025 completo en `raw_cap4_dev.produccion_pozo_mes`: `COUNT(*)` = **991 844**. Wall-clock 13 min 35 s. [evidencia](../../extraction/docs/hito-1-full-year-2025-load.md).
+- [x] Verificación: tabla **particionada** y **clustered**. — DDL + `tables.get`: MONTH(`_sdc_batched_at`) + CLUSTER `empresa`,`idpozo`,`cuenca`. Write API deja filas en streaming buffer / `__UNPARTITIONED__` al cierre.
+- [x] Conteo de filas vs source (delta explicado: header, duplicados, filtro). — Datastore 2025 `total=991844`; BQ final **991844**; delta **0**; grano `idpozo+anio+mes` único.
 - [x] Sample de columnas reales vs lista draft: PR actualiza [data-model.md](data-model.md) (CONFIRMED / UNKNOWN). — evidencia DataStore, no INFORMATION_SCHEMA
 
 ## Padrón y completaciones (descubrimiento, no dbt)
@@ -52,7 +52,7 @@ Tachá Hito 1 en el PR que complete el ítem. Smoke 500 post-fix 2026-09-10: `CO
 - [x] `.gitignore` cubre `.meltano/`, outputs, keys (ajustar si el init crea paths nuevos).
 - [x] Ningún CSV pesado commiteado.
 - [x] Ningún JSON de SA, ningún `.env` real.
-- [ ] [plan.md](plan.md) Hito 1: casillas de aceptación revisadas (se tildan cuando QA/DE cierran el hito). — smoke 500 + layout OK; año completo pendiente de OK de costo
+- [x] [plan.md](plan.md) Hito 1: casillas de aceptación revisadas (se tildan cuando QA/DE cierran el hito). — año 2025 en `raw_cap4_dev` con COUNT=source; QA sigue siendo quien cierra el hito. Completaciones raw siguen residuales.
 - [x] No hay `dbt_project.yml` ni app Next en este hito (rechazar scope creep).
 
 ## Fuera del checklist Hito 1
@@ -64,30 +64,32 @@ Tachá Hito 1 en el PR que complete el ítem. Smoke 500 post-fix 2026-09-10: `CO
 
 ---
 
-## Hito 2 — IAM / datasets BQ (ops, `transform/`)
+## Hito 2 — IAM + datasets BQ (DE, prereq de dbt)
 
-Evidencia: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.md). Scripts: [transform/scripts/provision_hito2_bq.sh](../../transform/scripts/provision_hito2_bq.sh). **No** es el PR de modelos dbt.
+Evidencia: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.md). Scripts: [provision_hito2_bq.sh](../../transform/scripts/provision_hito2_bq.sh), [materialize-dbt-sa-key.sh](../../transform/scripts/materialize-dbt-sa-key.sh). SA + bindings: Nico (PR #11). Modelos Barrilito: PR #10.
 
-- [x] Datasets US `stg_cap4_dev`, `int_cap4_dev`, `marts_cap4_dev` existen (vacíos; created 2026-09-10T21:09Z). `INFORMATION_SCHEMA.SCHEMATA` + `datasets.get`.
-- [x] `raw_cap4_dev` existe (Hito 1). **`raw_cap4` no existe** — no se inventa ni se crea en este PR.
-- [ ] SA `vm-pulse-dbt` — **no existe.** IAM API deshabilitada / Meltano 403 al consultar. Bloqueado en Nicolás (`provision_hito2_bq.sh` con owner).
-- [ ] Grants mínimos — ACL de dataset **menciona** el email `vm-pulse-dbt` (READER raw / WRITER stg-int-marts) en re-verify; **no** se confirma `jobUser` ni que la SA exista (IAM 403).
-- [ ] Key / secret `GCP_SA_KEY_DBT` (separado de Meltano `GCP_SA_KEY`) + [materialize-dbt-sa-key.sh](../../transform/scripts/materialize-dbt-sa-key.sh). JSON **fuera** de git.
-- [ ] Default table expiration 60d en datasets dbt — documentado; Nico puede `--unset-table-expiration`.
+- [x] Datasets US: `stg_cap4_dev`, `int_cap4_dev`, `marts_cap4_dev`.
+- [x] `raw_cap4_dev` existe; `raw_cap4` no.
+- [x] SA `vm-pulse-dbt` **creada por Nico** + auth `GCP_SA_KEY_DBT` (distinto de Meltano `GCP_SA_KEY`).
+- [x] Roles: `jobUser`; `dataViewer` (READER) en `raw_cap4_dev`; `dataEditor` (WRITER) en stg/int/marts.
+- [x] Docs + `.env.example` con nombres (`DBT_BIGQUERY_PROJECT`, `DBT_DATASET_*`, `GCP_SA_KEY_DBT`).
+- [x] Default table expiration 60d en datasets dbt — documentado; Nico puede `--unset-table-expiration`.
 
-## Hito 2 — tasa Barrilito (AE, `transform/`) — sin tachar
+## Hito 2 — tasa Barrilito (AE, `transform/`)
 
-No implementar modelos dbt en un PR de Hito 1 ni en este PR de IAM. Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 5.
+Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 5. Código: [`transform/`](../../transform/README.md).
 
-- [ ] Mart DRAFT `fct_barrilito_rate` (o el nombre único que Hito 2 publique; retirar el alias `mart_barrilito_headline` si no se usa).
-- [ ] Grano: **una fila** = snapshot del recorte VM no conv. para el **último mes Capítulo IV** (agregado **total** Pulse, no por empresa).
-- [ ] Fórmula preferida: `rate_m3_dia = sum(prod_pet_m3) / sum(tef)` cuando `tef` son días usables y `sum(tef) > 0`.
-- [ ] Fallback: `rate_m3_dia = sum(prod_pet_m3) / days_in_month(periodo)`. Tests para `tef` = 0 / nulo. Cerrar preferred vs UNKNOWN con evidencia.
-- [ ] Conversión `rate_bbl_dia = rate_m3_dia × 6.28981077` en el modelo.
-- [ ] El **mismo** factor `6.28981077` en YAML de métricas dbt (no un segundo número). Documentar en `transform/` README o `dbt_project.yml` / metrics YAML.
-- [ ] `stg` materializa `periodo` como grano de negocio; no filtrar el mes Cap. IV por `_sdc_batched_at`.
-- [ ] Test de reconciliación: `prod_pet_m3` del mart Barrilito = suma de `fct_well_month` del mismo `periodo` y recorte.
-- [ ] Actualizar [data-model.md](data-model.md) si la evidencia cambia preferred/fallback. No inventar sensores ni grano intradía.
+- [x] Mart `fct_barrilito_rate` (identificador único; alias `mart_barrilito_headline` retirado).
+- [x] Grano: **una fila** = snapshot del recorte VM no conv. para el **último mes Capítulo IV** (agregado **total** Pulse, no por empresa).
+- [x] Fórmula preferida: `rate_m3_dia = sum(prod_pet_m3) / nullif(sum(tef), 0)` cuando `tef_sum > 0` (`tef_weighted`).
+- [x] Fallback: `rate_m3_dia = sum(prod_pet_m3) / days_in_month(periodo)` (`calendar_days`). Unit tests con fixtures para `tef` = 0. Viabilidad de `tef` **en warehouse** = UNKNOWN (este PR no tuvo SA BQ; no se afirma `dbt test` verde contra raw).
+- [x] Conversión `rate_bbl_dia = rate_m3_dia × 6.28981077` en el modelo (`var('m3_to_bbl')` / macro).
+- [x] El **mismo** factor `6.28981077` en YAML de métricas (`transform/metrics.yml` + `config.meta`) y `dbt_project.yml`.
+- [x] `stg` materializa `periodo` como grano de negocio; no filtrar el mes Cap. IV por `_sdc_batched_at`.
+- [x] Source primario: `raw_cap4_dev.produccion_pozo_mes`. **`COUNT(*)` = 991844** (año 2025) — handoff DE/Tutor. Twin prod: `raw_cap4`. Este PR no re-consultó `INFORMATION_SCHEMA`.
+- [x] Test de reconciliación SQL: `prod_pet_m3` Barrilito vs suma de `fct_well_month` del mismo `periodo` (corre con `dbt test` cuando hay warehouse).
+- [x] Actualizar [data-model.md](data-model.md): contrato `fct_barrilito_rate`; tef no promovido a CONFIRMED. Sin sensores ni grano intradía.
+- [ ] `dbt build` / `dbt test` contra BigQuery — **bloqueado** en este PR (sin credenciales en el agente). Instrucciones: [transform/README.md](../../transform/README.md). `dbt deps` + `dbt parse` sí.
 
 ---
 

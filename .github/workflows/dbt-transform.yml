@@ -1,0 +1,36 @@
+name: dbt transform
+
+# Parse + deps only. No BigQuery, no secrets, no dbt build.
+
+on:
+  pull_request:
+    paths:
+      - "transform/**"
+      - ".github/workflows/dbt-transform.yml"
+  push:
+    branches: [main]
+    paths:
+      - "transform/**"
+      - ".github/workflows/dbt-transform.yml"
+
+jobs:
+  parse:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: transform
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dbt Core
+        run: pip install -r requirements.txt
+      - name: Dummy profiles (placeholders only)
+        run: |
+          mkdir -p "$HOME/.dbt"
+          cp profiles.yml.example "$HOME/.dbt/profiles.yml"
+      - name: dbt deps
+        run: dbt deps --profiles-dir "$HOME/.dbt"
+      - name: dbt parse
+        run: dbt parse --profiles-dir "$HOME/.dbt"

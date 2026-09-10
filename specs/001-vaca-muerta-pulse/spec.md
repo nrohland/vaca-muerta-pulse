@@ -2,7 +2,7 @@
 
 - **Estado:** Activa
 - **Marca (UI / copy):** **Barrilito**. **Repo GitHub:** `vaca-muerta-pulse` (no se renombra).
-- **Hito actual del repo:** 1 (Meltano en `extraction/`). Load live a BQ pendiente de SA. Esta spec define el relato de producto **antes** de dbt (Hito 2) y Next (Hito 3).
+- **Hito actual del repo:** 2 (dbt Core en `transform/`). Meltano en `extraction/`. Load live a BQ y `dbt build` warehouse pendientes de SA. Next = Hito 3.
 - **Plan:** [plan.md](plan.md) · **Granos:** [data-model.md](data-model.md) · **Tasks:** [tasks.md](tasks.md)
 
 ## Problema
@@ -83,7 +83,7 @@ Prioridad **P0** = Hitos 1–3. **P1** = después, sin bloquear Barrilito v1.
 - Reemplazar el [reporte avanzado de SE](https://www.se.gob.ar/datosupstream/consulta_avanzada/reporte.php).
 - Ingesta de todas las cuencas como producto (raw puede ser amplio; Barrilito filtra).
 - App móvil nativa.
-- Implementar dbt/Next en el mismo PR que esta actualización de specs (docs only).
+- Implementar Next en el mismo PR que dbt (Hito 3 es aparte).
 
 La simulación interpolada del contador **sí** está in-scope. Lo que está fuera es presentarla como medición en vivo.
 

@@ -53,13 +53,13 @@ Producto UI: **Barrilito** (repo `vaca-muerta-pulse`). El contador “live” es
 
 ### Aceptación
 
-- [x] `extraction/` tiene Meltano versionado (`meltano.yml`); README explica `meltano run` y env vars (nombres, no valores). — cron mensual en CI; full-year gated por `ALLOW_FULL_YEAR_LOAD`
-- [x] Existe tabla raw de producción pozo-mes en BQ; **partition** y **cluster** verificables. — MONTH(`_sdc_batched_at`)+CLUSTER `empresa,idpozo,cuenca`; `COUNT(*)` final = 500 (streaming buffer)
-- [x] Load reproducible contra un resource público documentado (URL + id CKAN). — 2025 `d774b5d7-…`; smoke 500 a tabla final con `overwrite:false`
-- [ ] Conteos de smoke: filas del sample vs source. — Datastore 2025 = 991 844; BQ = 500 (cap). Año completo **bloqueado** (costo / Nico)
-- [ ] Completaciones: **o** tabla raw + source documentado, **o** `data-model.md` actualizado a “sin source en v1” (no silenciar el UNKNOWN). — source Adjunto IV documentado; tabla raw no cargada (job default + mismo bloqueo SA)
-- [ ] Ningún secreto en el PR; presupuesto/alerta GCP mencionada en `extraction/README.md`. — docs sí; secretos no (revisar en el PR)
-- [ ] `data-model.md`: columnas reales del tap reemplazan la lista draft donde haya evidencia. — hecho vía DataStore, no vía BQ
+- [x] `extraction/` tiene Meltano versionado (`meltano.yml`); README explica `meltano run` y env vars (nombres, no valores). — Meltano + cron gated por `ALLOW_FULL_YEAR_LOAD`; año 2025 corrido en dev
+- [x] Existe tabla raw de producción pozo-mes en BQ; **partition** y **cluster** verificables (`INFORMATION_SCHEMA` o console). — MONTH(`_sdc_batched_at`)+CLUSTER `empresa,idpozo,cuenca`; `COUNT(*)` = 991 844
+- [x] Load reproducible contra un resource público documentado (URL + id CKAN o patrón de CSV anual). — 2025 `d774b5d7-…`; append `overwrite:false` + `--recreate` en sandbox
+- [x] Conteos de smoke: filas del sample vs source (tolerancia y duplicados documentados). — Datastore 991 844 vs BQ 991 844 (delta 0)
+- [ ] Completaciones: **o** tabla raw + source documentado, **o** `data-model.md` actualizado a “sin source en v1” (no silenciar el UNKNOWN). — source Adjunto IV documentado; tabla raw no cargada (job default, deseleccionado)
+- [x] Ningún secreto en el PR; presupuesto/alerta GCP mencionada en `extraction/README.md`. — docs sí; sandbox 60 días de expiración documentado
+- [x] `data-model.md`: columnas reales del tap reemplazan la lista draft donde haya evidencia. — hecho vía DataStore + COUNT BQ del año
 
 ---
 
@@ -71,23 +71,23 @@ Producto UI: **Barrilito** (repo `vaca-muerta-pulse`). El contador “live” es
 
 **Incluye:** sources sobre raw, staging (rename, types, filtro VM; materializar `periodo` como grano de negocio), intermediate (claves, unidades), marts de [data-model.md](data-model.md) **incluido** el mart DRAFT de headline (`fct_barrilito_rate` / `mart_barrilito_headline`), tests, factor `bbl = m³ × 6.28981077` en SQL **y** en YAML de métricas.
 
-**Ops BQ (2026-09-10):** datasets US `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev` **existen** (vacíos). `raw_cap4_dev` existe; `raw_cap4` no. SA `vm-pulse-dbt` **no** existe — Nico. Evidencia: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.md). Este corte **no** tilda las casillas de modelos.
+**Ops BQ (2026-09-10):** datasets US `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev` **existen**. `raw_cap4_dev` existe; `raw_cap4` no. SA `vm-pulse-dbt` **creada por Nico**; bindings OK (`jobUser` + READER raw / WRITER stg-int-marts). Secret `GCP_SA_KEY_DBT`. Evidencia: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.md).
 
 **No incluye:** Meltano nuevo salvo un bug de contrato; UI; sensores ni grano intradía; convertir en el tap.
 
 ### Aceptación
 
-- [ ] `dbt_project.yml` + `stg` / `int` / `marts` (nombres alineados al data-model).
-- [ ] Tests `unique`/`not_null` en claves de `fct_well_month` (o nombre final).
-- [ ] Filtro VM no convencional aplicado en `stg` o `int` y documentado (strings confirmados).
-- [ ] Marts de empresa y área; grano de área ya no UNKNOWN (o P1 explícito).
-- [ ] Completaciones: mart **o** no-goal actualizado en spec.
-- [ ] **Mart Barrilito (DRAFT → contrato):** una fila = snapshot del recorte VM no conv. para el **último mes Capítulo IV** (agregado total Pulse, no por empresa). Tasa **bbl/día**.
-- [ ] **Fórmula** documentada en el modelo y en data-model: preferir `sum(prod_pet_m3) / sum(tef)` cuando `tef` son días usables; fallback `sum(prod_pet_m3) / days_in_month`. Tests cubren `tef` = 0 / nulos. Cerrar preferred vs UNKNOWN con evidencia; no inventar sensores.
-- [ ] Conversión `bbl = m³ × 6.28981077` en el mart **y** en YAML de métricas dbt (el mismo factor). Petróleo de headline UI default = **bbl**; m³ sigue disponible.
-- [ ] `stg` usa `periodo` (grano de negocio). No tratar `_sdc_batched_at` (partición del loader raw) como mes de producción.
-- [ ] `dbt test` verde en CI o instrucciones locales inequívocas.
-- [ ] Front puede basarse en nombres de marts documentados (contrato en data-model), incluida la tasa Barrilito.
+- [x] `dbt_project.yml` + `stg` / `int` / `marts` (nombres alineados al data-model). — `stg_produccion_pozo_mes`, `int_produccion_vm_noconv`, `fct_well_month`, `fct_barrilito_rate`
+- [x] Tests `unique`/`not_null` en claves de `fct_well_month` (YAML; corren con warehouse).
+- [x] Filtro VM no convencional aplicado en `stg` y documentado (strings confirmados).
+- [ ] Marts de empresa y área; grano de área ya no UNKNOWN (o P1 explícito). — **P1 explícito** este PR: no `fct_company_month` / `fct_area_month`. Área preferida sigue `areapermisoconcesion`.
+- [x] Completaciones: mart **o** no-goal actualizado en spec. — **sin mart** (Adjunto IV no está en el job Meltano default); Hito 3 empty state. Source documentado.
+- [x] **Mart Barrilito:** `fct_barrilito_rate`, una fila = snapshot VM no conv. último mes Cap. IV (total Pulse). Tasa **bbl/día**.
+- [x] **Fórmula** en modelo + data-model: preferred `sum(prod_pet_m3) / nullif(sum(tef), 0)`; fallback `days_in_month`. Unit tests fixtures `tef = 0`. Viabilidad tef en BQ = UNKNOWN (sin `dbt test` warehouse en este PR).
+- [x] Conversión `bbl = m³ × 6.28981077` en el mart **y** en YAML de métricas (mismo factor).
+- [x] `stg` usa `periodo`. No tratar `_sdc_batched_at` como mes de producción.
+- [ ] `dbt test` verde en CI o instrucciones locales inequívocas. — CI: `dbt deps` + `dbt parse` (`.github/workflows/dbt-transform.yml`). `dbt build`/`test` documentados en `transform/README.md`; **no** se afirmaron verdes sin SA.
+- [x] Front puede basarse en nombres de marts documentados (`transform/README.md` + data-model), incluida la tasa Barrilito.
 
 ---
 

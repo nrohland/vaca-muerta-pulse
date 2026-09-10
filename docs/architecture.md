@@ -2,7 +2,7 @@
 
 Vista C4-ish del data product. Stack y *por qué*: [ADR 0001](adrs/0001-stack-choices.md). Producto: [spec.md](../specs/001-vaca-muerta-pulse/spec.md).
 
-**Hoy:** Meltano versionado en `extraction/` (tap CKAN DataStore → `target-bigquery`). Dataset raw **`raw_cap4_dev`** existe (prod `raw_cap4` aún no). Datasets dbt **`stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev`** existen (US, vacíos). SA `vm-pulse-dbt` **no** existe. Next: Hito 3.
+**Hoy (Hito 2):** dbt Core en `transform/` sobre raw Meltano. Source primario de stg: **`raw_cap4_dev`** (`produccion_pozo_mes` `COUNT(*)` = 991844, año 2025 — handoff DE/Tutor). Prod twin: `raw_cap4`. Mart headline **`fct_barrilito_rate`**. SA `vm-pulse-dbt` **creada por Nico**; bindings OK. Next: Hito 3.
 
 ## 1. Contexto
 
@@ -74,26 +74,32 @@ flowchart LR
   RAW --> STG["stg_*<br/>rename, types, filtros VM"]
   STG --> INT["int_*<br/>joins, claves, unidades"]
   INT --> M1["mart fct_well_month"]
-  INT --> M2["marts empresa / área"]
-  INT --> M3["mart completaciones"]
+  M1 --> M4["mart fct_barrilito_rate"]
+  INT --> M2["marts empresa / área (P1)"]
+  INT --> M3["mart completaciones (empty Hito 3)"]
   M1 --> WEB["Dashboard"]
   M2 --> WEB
   M3 --> WEB
+  M4 --> WEB
 ```
 
 Filtro de producto (CONFIRMED en sample 2025 DataStore; aplicar en `stg`/`int`, no en el tap): `formacion = 'vaca muerta'` y `tipo_de_recurso = 'NO CONVENCIONAL'`. Detalle en [data-model.md](../specs/001-vaca-muerta-pulse/data-model.md).
 
-## 4. BigQuery — naming y físico (Hito 1–2)
+## 4. BigQuery — naming y físico (Hito 1 + datasets Hito 2)
 
-Nombres **confirmados**. Datasets dbt `_dev` verificados 2026-09-10 (`INFORMATION_SCHEMA.SCHEMATA` + `datasets.get`). SA `vm-pulse-dbt` **no** existe (IAM API off para Meltano). Evidencia: [transform/docs/hito-2-bq-iam.md](../transform/docs/hito-2-bq-iam.md).
+Nombres **confirmados**. Handoff Hito 2: `raw_cap4_dev.produccion_pozo_mes` `COUNT(*)` = **991844** (año 2025). Datasets dbt `_dev` verificados 2026-09-10 (`INFORMATION_SCHEMA.SCHEMATA` + `datasets.get`). SA `vm-pulse-dbt` **creada por Nico**; bindings OK. Evidencia: [transform/docs/hito-2-bq-iam.md](../transform/docs/hito-2-bq-iam.md).
 
 | Dataset | Contenido | Quién escribe |
 | --- | --- | --- |
-| `raw_cap4` | Twin prod 1:1 con el tap. **No existe** al 2026-09-10 | Meltano (prod), cuando se cree |
-| `raw_cap4_dev` | Landing Hito 1. **Existe** (US, `2026-09-10T18:11:40Z`). Tabla `produccion_pozo_mes` | Meltano (`vm-pulse-meltano`) |
-| `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev` | Capas dbt Hito 2. **Existen** (US, `2026-09-10T21:09Z`), **0 tablas**. Twins prod `stg_cap4` / `int_cap4` / `marts_cap4` **no** existen | dbt (`vm-pulse-dbt`) **cuando Nico cree la SA** |
+| `raw_cap4_dev` | **Primario Hito 2 / stg.** Tabla `produccion_pozo_mes`, `COUNT(*)` = 991844 (año 2025, handoff DE/Tutor). **append** (reload = TRUNCATE o DELETE year) | Meltano (`vm-pulse-meltano`) |
+| `raw_cap4` | Twin de prod (mismo patrón de tabla; no es otro grano). **No existe todavía** | Meltano (prod, cuando se cree) |
+| `stg_cap4_dev` | Staging dbt (dev). Prod twin: `stg_cap4` | dbt (`vm-pulse-dbt`) |
+| `int_cap4_dev` | Intermediate dbt (dev). Prod twin: `int_cap4` | dbt (`vm-pulse-dbt`) |
+| `marts_cap4_dev` | Marts dbt (dev), incl. `fct_barrilito_rate`. Prod twin: `marts_cap4` | dbt (`vm-pulse-dbt`) |
 
 Proyecto GCP: **`vaca-muerta-pulse`**. Location: **US**.
+
+Twins prod (`stg_cap4` / `int_cap4` / `marts_cap4`) = follow-up. SA dbt: `vm-pulse-dbt` (**existe**; secret `GCP_SA_KEY_DBT`). Roles: `jobUser`, `dataViewer` en `raw_cap4_dev`, `dataEditor` en stg/int/marts. Detalle: [transform/docs/hito-2-bq-iam.md](../transform/docs/hito-2-bq-iam.md).
 
 Tablas raw de hechos de producción (`produccion_pozo_mes`):
 
@@ -115,7 +121,7 @@ Completaciones (Adjunto IV): grano evento (`id_base_fractura_adjiv`); partición
 
 ## 6. Secretos
 
-Diagrama de confianza: el SA de Meltano (`vm-pulse-meltano`) escribe `raw_*`; el SA de dbt (`vm-pulse-dbt`) **debe** leer `raw_cap4_dev` y escribir `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev`. **Hoy `vm-pulse-dbt` no existe** — Nico la crea con [transform/scripts/provision_hito2_bq.sh](../transform/scripts/provision_hito2_bq.sh). Key dbt = secret `GCP_SA_KEY_DBT` (distinto de Meltano `GCP_SA_KEY`); materializar con [transform/scripts/materialize-dbt-sa-key.sh](../transform/scripts/materialize-dbt-sa-key.sh). El runtime del front **solo lee marts**. Ningún JSON de SA en el repo. Ver [AGENTS.md](../AGENTS.md).
+Diagrama de confianza: el SA de Meltano (`vm-pulse-meltano`) escribe `raw_*`; el SA de dbt (`vm-pulse-dbt`, **creada por Nico**) lee `raw_cap4_dev` y escribe `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev` (prod twins sin `_dev`). Key dbt = secret `GCP_SA_KEY_DBT` (distinto de Meltano `GCP_SA_KEY`); materializar con [transform/scripts/materialize-dbt-sa-key.sh](../transform/scripts/materialize-dbt-sa-key.sh) (rechaza `GCP_SA_KEY` a propósito). Provision/re-verify: [transform/scripts/provision_hito2_bq.sh](../transform/scripts/provision_hito2_bq.sh). El runtime del front **solo lee marts**. Ningún JSON de SA en el repo. Ver [AGENTS.md](../AGENTS.md).
 
 ## 7. Lo que no está en v1
 
