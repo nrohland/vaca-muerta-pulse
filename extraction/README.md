@@ -277,6 +277,7 @@ Evidencia anual 2026-09-10 (SA materializada en runtime, **sin** secrets en git)
 | Bytes (committed + buffer) | **338.43 MiB** |
 | Staging `__*` | ninguna |
 | Prod `raw_cap4` | no se tocó |
+| Smoke 500 (previo, #6) | exit 0; **504 s**; `COUNT(*)`=**500** |
 
 Reemit en este proyecto (sandbox, DML off): `--recreate` (DROP+CREATE). Con billing: `--truncate` (dev) o `--delete-year` (prod).
 
