@@ -9,5 +9,6 @@ logs/
 # Local profiles / env — never commit keys or a real profiles.yml
 profiles.yml
 .env
+.secrets/
 *.json
 !package-lock.yml

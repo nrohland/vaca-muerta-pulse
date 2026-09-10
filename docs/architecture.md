@@ -85,17 +85,21 @@ flowchart LR
 
 Filtro de producto (CONFIRMED en sample 2025 DataStore; aplicar en `stg`/`int`, no en el tap): `formacion = 'vaca muerta'` y `tipo_de_recurso = 'NO CONVENCIONAL'`. Detalle en [data-model.md](../specs/001-vaca-muerta-pulse/data-model.md).
 
-## 4. BigQuery — naming y físico (Hito 1)
+## 4. BigQuery — naming y físico (Hito 1 + datasets Hito 2)
 
 Nombres **confirmados como intención de DE**. Handoff Hito 2: `raw_cap4_dev.produccion_pozo_mes` `COUNT(*)` = **991844** (año 2025). Este árbol de AE no afirma `INFORMATION_SCHEMA` extra (partition/cluster siguen la evidencia Hito 1).
 
 | Dataset | Contenido | Quién escribe |
 | --- | --- | --- |
-| `raw_cap4_dev` | **Primario Hito 2 / stg.** Tabla `produccion_pozo_mes`, `COUNT(*)` = 991844 (handoff DE/Tutor) | Meltano (dev) |
-| `raw_cap4` | Twin de prod (mismo patrón de tabla; no es otro grano) | Meltano (prod) |
-| `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev` | Modelos dbt Hito 2 (SA `vm-pulse-dbt`). Prod twin: `stg_cap4` / `int_cap4` / `marts_cap4` | dbt |
+| `raw_cap4_dev` | **Primario Hito 2 / stg.** Tabla `produccion_pozo_mes`, `COUNT(*)` = 991844 (handoff DE). Append. | Meltano (dev) |
+| `raw_cap4` | Twin prod (mismo patrón). **Aún no existe.** | Meltano (prod, cuando se cree) |
+| `stg_cap4_dev` | Staging dbt (dev) | dbt (`vm-pulse-dbt`) |
+| `int_cap4_dev` | Intermediate dbt (dev) | dbt (`vm-pulse-dbt`) |
+| `marts_cap4_dev` | Marts dbt (dev); Front lee `fct_barrilito_rate` | dbt (`vm-pulse-dbt`) |
 
 Proyecto GCP: **`vaca-muerta-pulse`**. Location: **US**.
+
+Twins prod (`stg_cap4` / `int_cap4` / `marts_cap4`) = follow-up. SA dbt: `vm-pulse-dbt` (**existe**; secret `GCP_SA_KEY_DBT`). Roles: `jobUser`, `dataViewer` en `raw_cap4_dev`, `dataEditor` en stg/int/marts. Detalle: [transform/docs/hito-2-bq-iam.md](../transform/docs/hito-2-bq-iam.md).
 
 Tablas raw de hechos de producción (`produccion_pozo_mes`):
 

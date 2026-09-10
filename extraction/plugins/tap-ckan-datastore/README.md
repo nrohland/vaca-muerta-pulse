@@ -2,4 +2,6 @@
 
 Singer SDK tap (Hito 1) for [CKAN DataStore](https://datos.energia.gob.ar/api/3/action/datastore_search) on Capítulo IV / Adjunto IV.
 
+`schema` se cachea en el stream. El SDK lo lee en cada RECORD; pegarle a `datastore_search` por fila deja el tap a ~1 rec/s.
+
 Not a Hub plugin: installed by Meltano via `pip_url: -e ./plugins/tap-ckan-datastore`. How to run: [`../../README.md`](../../README.md).

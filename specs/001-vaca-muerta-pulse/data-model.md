@@ -10,6 +10,8 @@ Leyenda:
 
 Nombres de marts (`fct_*`, `dim_*`) siguen **DRAFT** salvo **`fct_barrilito_rate`**, publicado como contrato Hito 2 (el alias `mart_barrilito_headline` no se usa).
 
+Datasets físicos dbt (dev, US, Hito 2 IAM): `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev`. Source raw Hito 2: `raw_cap4_dev`. Detalle: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.md).
+
 ## Fuentes
 
 | Recurso | Uso | Estado |

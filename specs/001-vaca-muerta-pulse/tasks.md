@@ -5,7 +5,7 @@ Criterios de aceptación: [plan.md](plan.md). Marca UI: **Barrilito** (repo `vac
 - **Hito 1** (abajo): owner **DE**, folder [`extraction/`](../../extraction/README.md). Cadencia extract **mensual**; no cambiar `meltano.yml` en un PR de marca/producto.
 - **Hito 2 / 3:** Hito 2 código en `transform/` (este árbol). Hito 3 Next **sin tachar**.
 
-Tachá Hito 1 en el PR que complete el ítem. Smoke 500 re-medido 2026-09-10: `COUNT(*)` final **500** (streaming buffer). Año completo (~991k) **bloqueado** hasta OK de costo de Nicolás — este PR no corre Meltano full-year.
+Tachá en el PR que complete el ítem. Año 2025 cargado 2026-09-10: `COUNT(*)` **991 844** (delta 0 vs Datastore). Evidencia: [extraction/docs/hito-1-full-year-2025-load.md](../../extraction/docs/hito-1-full-year-2025-load.md). Smoke 500 previo: [extraction/docs/hito-1-post-merge-smoke.md](../../extraction/docs/hito-1-post-merge-smoke.md).
 
 ## GCP y BigQuery
 
@@ -34,9 +34,9 @@ Tachá Hito 1 en el PR que complete el ítem. Smoke 500 re-medido 2026-09-10: `C
 
 ## Loads de smoke
 
-- [ ] Load de **al menos un año** de producción pozo-mes a BQ. — **bloqueado (costo).** Smoke 500 en tabla final (Write API). Año 2025 (~991 844) no se carga hasta OK de Nicolás. Bytes: [extraction/docs/hito-1-full-year-cost.md](../../extraction/docs/hito-1-full-year-cost.md).
-- [x] Verificación: tabla **particionada** y **clustered**. — `tables.get` + DDL: MONTH(`_sdc_batched_at`) + CLUSTER `empresa`,`idpozo`,`cuenca`. `COUNT(*)` final = 500 (buffer). Queries: `extraction/sql/verify_layout.sql`.
-- [ ] Conteo de filas vs source (delta explicado: header, duplicados, filtro). — Datastore 2025 `total=991844`; BQ final **500** (smoke). Falta COUNT del año completo.
+- [x] Load de **al menos un año** de producción pozo-mes a BQ. — 2025 completo en `raw_cap4_dev.produccion_pozo_mes`: `COUNT(*)` = **991 844**. Wall-clock 13 min 35 s. [evidencia](../../extraction/docs/hito-1-full-year-2025-load.md).
+- [x] Verificación: tabla **particionada** y **clustered**. — DDL + `tables.get`: MONTH(`_sdc_batched_at`) + CLUSTER `empresa`,`idpozo`,`cuenca`. Write API deja filas en streaming buffer / `__UNPARTITIONED__` al cierre.
+- [x] Conteo de filas vs source (delta explicado: header, duplicados, filtro). — Datastore 2025 `total=991844`; BQ final **991844**; delta **0**; grano `idpozo+anio+mes` único.
 - [x] Sample de columnas reales vs lista draft: PR actualiza [data-model.md](data-model.md) (CONFIRMED / UNKNOWN). — evidencia DataStore, no INFORMATION_SCHEMA
 
 ## Padrón y completaciones (descubrimiento, no dbt)
@@ -52,7 +52,7 @@ Tachá Hito 1 en el PR que complete el ítem. Smoke 500 re-medido 2026-09-10: `C
 - [x] `.gitignore` cubre `.meltano/`, outputs, keys (ajustar si el init crea paths nuevos).
 - [x] Ningún CSV pesado commiteado.
 - [x] Ningún JSON de SA, ningún `.env` real.
-- [ ] [plan.md](plan.md) Hito 1: casillas de aceptación revisadas (se tildan cuando QA/DE cierran el hito). — smoke 500 + layout OK; año completo pendiente de OK de costo
+- [x] [plan.md](plan.md) Hito 1: casillas de aceptación revisadas (se tildan cuando QA/DE cierran el hito). — año 2025 en `raw_cap4_dev` con COUNT=source; QA sigue siendo quien cierra el hito. Completaciones raw siguen residuales.
 - [x] No hay `dbt_project.yml` ni app Next en este hito (rechazar scope creep).
 
 ## Fuera del checklist Hito 1
@@ -63,6 +63,16 @@ Tachá Hito 1 en el PR que complete el ítem. Smoke 500 re-medido 2026-09-10: `C
 - Airflow/Composer.
 
 ---
+
+## Hito 2 — IAM + datasets BQ (DE, prereq de dbt)
+
+Evidencia: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.md) (PR #11, mergeado).
+
+- [x] Datasets US: `stg_cap4_dev`, `int_cap4_dev`, `marts_cap4_dev`.
+- [x] `raw_cap4_dev` existe; `raw_cap4` no.
+- [x] SA `vm-pulse-dbt` creada (Nico) + auth `GCP_SA_KEY_DBT` (en el agente de IAM; este agente de modelos no tiene el secret inyectado).
+- [x] Roles: `jobUser`; `dataViewer` en `raw_cap4_dev`; `dataEditor` en stg/int/marts.
+- [x] Docs + `.env.example` con nombres (`DBT_BIGQUERY_PROJECT`, `DBT_DATASET_*`, `GCP_SA_KEY_DBT`).
 
 ## Hito 2 — tasa Barrilito (AE, `transform/`)
 
@@ -78,7 +88,7 @@ Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 5. Código: [`t
 - [x] Source primario: `raw_cap4_dev.produccion_pozo_mes`. **`COUNT(*)` = 991844** (año 2025) — handoff DE/Tutor. Twin prod: `raw_cap4`. Este PR no re-consultó `INFORMATION_SCHEMA`.
 - [x] Test de reconciliación SQL: `prod_pet_m3` Barrilito vs suma de `fct_well_month` del mismo `periodo` (corre con `dbt test` cuando hay warehouse).
 - [x] Actualizar [data-model.md](data-model.md): contrato `fct_barrilito_rate`; tef no promovido a CONFIRMED. Sin sensores ni grano intradía.
-- [ ] `dbt build` / `dbt test` contra BigQuery — **bloqueado** en este PR (sin credenciales en el agente). Instrucciones: [transform/README.md](../../transform/README.md). `dbt deps` + `dbt parse` sí.
+- [ ] `dbt build` / `dbt test` contra BigQuery — **bloqueado** 2026-09-10: IAM de `vm-pulse-dbt` OK (PR #11); este agente **no** tiene `GCP_SA_KEY_DBT` inyectado (env vacío, sin ADC, `gh secret list` 403). No se usó `GCP_SA_KEY` Meltano. Instrucciones: [transform/README.md](../../transform/README.md). `dbt deps` + `dbt parse` sí.
 
 ---
 
