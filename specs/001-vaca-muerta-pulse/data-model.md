@@ -1,6 +1,6 @@
 # Data model — Spec 001
 
-Granos para Vaca Muerta Pulse. Raw Meltano = Hito 1 (`extraction/`). Marts dbt = Hito 2.
+Granos para **Barrilito** (repo `vaca-muerta-pulse`). Raw Meltano = Hito 1 (`extraction/`). Marts dbt = Hito 2. Headline UI = Hito 3.
 
 Leyenda:
 
@@ -8,7 +8,7 @@ Leyenda:
 - **DRAFT** = diseño de producto; falta evidencia en warehouse / dbt.
 - **UNKNOWN** = no afirmar. Cerrar en Hito 2 con tests sobre más años o marcar no-goal.
 
-Nombres de marts (`fct_*`, `dim_*`) siguen **DRAFT**.
+Nombres de marts (`fct_*`, `dim_*`, `fct_barrilito_rate`) siguen **DRAFT**.
 
 ## Fuentes
 
@@ -86,10 +86,11 @@ Tight no-VM: no-goal (spec). El raw carga **todas las cuencas/años del resource
 | Clave | **CONFIRMED 2025:** `idpozo + anio + mes`. UNKNOWN otros años |
 | Medidas | `prod_pet`, `prod_gas`, `prod_agua`, `tef` (+ inyecciones en raw) |
 | Dims | `empresa` / `idempresa`, `areapermisoconcesion`, `areayacimiento`, `cuenca`, `tipo_de_recurso`, coords solo vía tap pozos |
-| Partition | DATE `periodo` — **intención**; loader nativo hoy = `_sdc_batched_at` MONTH |
-| Cluster | `empresa`, `idpozo`, `cuenca` — cableado en Meltano |
+| Partition raw | **CONFIRMED (loader):** `PARTITION BY TIMESTAMP_TRUNC(_sdc_batched_at, MONTH)` — instante de batch Meltano, **no** el mes de producción |
+| Cluster raw | `empresa`, `idpozo`, `cuenca` — cableado en Meltano |
+| Grano de negocio | **`periodo`** (DATE `YYYY-MM-01`, lo agrega el tap). `stg` **materializa** `periodo` para filtros/agregados. No usar `_sdc_batched_at` como mes Cap. IV |
 
-**Re-emit / rectificativas:** snapshot anual. Prod: `DELETE WHERE anio=@year` + append. No “última fila gana” por `rectificado` hasta Hito 2.
+**Re-emit / rectificativas:** snapshot anual. Prod: `DELETE WHERE anio=@year` + append. No “última fila gana” por `rectificado` hasta Hito 2. El último mes Cap. IV (input de Barrilito) puede **reexpresarse** en un load posterior.
 
 ## Grano 2 — Empresa
 
@@ -131,19 +132,85 @@ Estabilidad de ids entre años = UNKNOWN.
 
 Hito 1 **no** carga este stream en el job default. Hito 3 no debe inventar curvas si el mart todavía no existe; el source ya no es UNKNOWN.
 
+## Grano 5 — Barrilito / headline rate (DRAFT)
+
+Contrato para el contador de portada. **No hay sensores.** La tasa sale del último mes oficial de Capítulo IV (~últimos 30 días de DDJJ), no de telemetría.
+
+**Nombre DRAFT:** `fct_barrilito_rate`  
+**Alias de producto (DRAFT):** `mart_barrilito_headline`  
+Hito 2 elige **un** identificador, lo publica aquí como contrato y no deja los dos nombres vivos en YAML.
+
+**Grano DRAFT:** una fila = **un snapshot de producto** para el **último mes Capítulo IV** disponible, agregado al recorte Pulse (**total Vaca Muerta no convencional**, no por empresa ni por pozo). Desglose por `idempresa` no es el headline v1 (P1).
+
+| | |
+| --- | --- |
+| Clave | DRAFT: `periodo` del último mes Cap. IV (una fila). UNKNOWN si hace falta un surrogate `as_of_date` aparte |
+| Recorte | Mismo filtro que el resto del Pulse: `formacion = 'vaca muerta'` y `tipo_de_recurso = 'NO CONVENCIONAL'` |
+| Medidas DRAFT | `prod_pet_m3` (suma), `tef_sum`, `days_in_month`, `rate_m3_dia`, `rate_bbl_dia`, `rate_method` |
+| Partition / cluster | Mart chico (una fila o histórico mensual corto). No heredar la partición raw `_sdc_batched_at` como grano |
+
+### Fórmula DRAFT (tasa diaria)
+
+Cap. IV trae petróleo en **m³** al mes (source `prod_pet`; en stg/marts DRAFT: `prod_pet_m3`). Se busca una tasa **por día** para que el Front interpole el contador.
+
+**Preferida** (cuando `tef` es usable como días y `sum(tef) > 0`):
+
+```text
+rate_m3_dia = sum(prod_pet_m3) / sum(tef)
+```
+
+Es un promedio **ponderado por tiempo efectivo** sobre el último mes Cap. IV (~30 días de DDJJ), no una ventana rodante de producción horaria. Sample 2025: `tef` *parece* días (31.0 en enero no-conv) — **CONFIRMED plausible**; que sirva como denominador en el recorte VM (ceros, nulos, pozos abandonados) = **UNKNOWN hasta tests Hito 2**.
+
+**Fallback** (si `tef` no es usable):
+
+```text
+rate_m3_dia = sum(prod_pet_m3) / days_in_month(periodo)
+```
+
+Días de calendario del último mes Cap. IV. Siempre definible; sesga si muchos pozos no produjeron el mes entero.
+
+**Conversión (factor fijo; el mismo en SQL y en YAML de métricas dbt):**
+
+```text
+bbl = m³ × 6.28981077
+rate_bbl_dia = rate_m3_dia × 6.28981077
+```
+
+El Front **no** recalcula el factor. El mart expone `rate_bbl_dia`. `rate_method` DRAFT: `tef_weighted` | `calendar_days`.
+
+| Método | Estado | Por qué |
+| --- | --- | --- |
+| `sum(prod_pet_m3) / sum(tef)` | **Preferido** DRAFT; viabilidad = UNKNOWN hasta Hito 2 | Pondera pozos que realmente “estuvieron on” |
+| `sum(prod_pet_m3) / days_in_month` | Fallback DRAFT | No depende de `tef`; asume el mes calendario lleno |
+| Sensores / SCADA / grano horario | **Fuera de diseño** | Cap. IV no lo publica |
+
+### Caveats (no promover a CONFIRMED)
+
+- **Grano mensual:** “~últimos 30 días” = último `periodo` de Capítulo IV, no 30 días móviles de telemetría.
+- **`tef` = 0** en abandonados / sin tiempo efectivo: incluirlos en el numerador con petróleo 0 está bien; un `sum(tef) = 0` obliga al fallback. UNKNOWN cuántas filas VM caen ahí.
+- **Rectificativas / re-emit:** el último mes puede corregirse en un load posterior. El contador sigue al mart, no a un cache eterno.
+- **Partición raw vs negocio:** filtrar el mes de producción por `periodo` (stg), nunca por `_sdc_batched_at`.
+- **Agregado total:** el headline no es “Barrilito por empresa”. Sumar el recorte Pulse entero.
+
 ## Dimensión pozo
 
 **DRAFT `dim_well`:** de producción: `sigla`, `idpozo`, `profundidad`, `tipopozo`. Primera producción: recurso `5578dd48-…`. Coords: `capitulo_iv_pozos.geojson` (EPSG:4326). Validar un punto en Neuquén antes de GIS (Hito 2/3). El anual 2025 **no** trae `coordenadax`/`coordenaday`.
 
-## Unidades (CONFIRMED en catálogo y sample; conversión DRAFT)
+## Unidades (CONFIRMED en catálogo y sample; headline decidido)
 
-| Fluido | Source | Marts UI |
+Factor petróleo (constante de producto; **el mismo** en marts SQL y en YAML de métricas dbt Hito 2):
+
+```text
+bbl = m³ × 6.28981077
+```
+
+| Fluido | Source | Marts / UI |
 | --- | --- | --- |
-| Petróleo | m³ | m³; opcional bbl (`× 6.28981077`) — **decidir en Hito 2** |
+| Petróleo | m³ | Headline **Barrilito** default **bbl**. Marts también exponen m³ (tooltip, series, rankings). No un segundo factor. |
 | Gas | miles de m³ | miles de m³ |
 | Agua | m³ | m³ |
 
-No convertir en Meltano.
+No convertir en Meltano. No convertir en el browser salvo leer `rate_bbl_dia` ya convertida.
 
 ## Relación entre granos (DRAFT)
 
@@ -154,13 +221,15 @@ erDiagram
   DIM_AREA ||--o{ FCT_WELL_MONTH : "areapermisoconcesion preferido"
   FCT_WELL_MONTH }o--|| FCT_COMPANY_MONTH : "suma"
   FCT_WELL_MONTH }o--|| FCT_AREA_MONTH : "suma"
+  FCT_WELL_MONTH }o--|| FCT_BARRILITO_RATE : "agregado ultimo mes Cap IV"
   DIM_WELL ||--o{ FCT_COMPLETIONS : "idpozo / sigla"
 ```
 
-Agregados empresa/área deben **reconciliar** con la suma del pozo-mes del mismo filtro (test dbt Hito 2).
+Agregados empresa/área deben **reconciliar** con la suma del pozo-mes del mismo filtro (test dbt Hito 2). `fct_barrilito_rate` debe reconciliar `prod_pet_m3` con esa misma suma del último `periodo` (mismo recorte).
 
 ## Lo que este archivo no es
 
 - No es un diccionario completo de Capítulo IV.
 - No autoriza a inventar `well_id` surrogate opaco sin publicar la regla.
+- No autoriza sensores ni un grano intradía para el contador Barrilito.
 - Cualquier cierre de UNKNOWN se hace **editando este archivo** en el PR que lo descubrió.

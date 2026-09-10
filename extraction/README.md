@@ -99,7 +99,7 @@ export GOOGLE_APPLICATION_CREDENTIALS="$(bash scripts/materialize-sa-key.sh)"
 Workflow: [`.github/workflows/extract-cap4.yml`](../.github/workflows/extract-cap4.yml).
 
 - **`workflow_dispatch`** (manual): inputs `environment` / `year_resource_id` / `max_records` / `reemit` / `delete_year`.
-- **`schedule` mensual:** `0 6 5 * *` (día 5, 06:00 UTC). Capítulo IV es **mensual**. GitHub solo corre el cron en la rama default **después de merge**. El job **sale 1 antes de Meltano/BQ** hasta `ALLOW_FULL_YEAR_LOAD=true`. Nicolás OK el costo el 2026-09-10; hay que **setear la variable** en el repo para que el cron no quede rojo.
+- **`schedule` mensual:** `0 6 5 * *` (día 5, 06:00 UTC). Capítulo IV es **mensual**; Barrilito en UI es simulación, no hay polling de alta frecuencia. GitHub solo corre el cron en la rama default **después de merge**. El job **sale 1 antes de Meltano/BQ** hasta `ALLOW_FULL_YEAR_LOAD=true`. Nicolás OK el costo el 2026-09-10 (medido ~338 MiB); hay que **setear la variable** en el repo para que el cron no quede rojo. Cuando esté seteada: Meltano **`dev`** (`raw_cap4_dev`) + `TRUNCATE` (o `--recreate` en sandbox) + año completo. Prod: `workflow_dispatch` `environment=prod` + `reemit=true`.
 
 Requisitos en el repo (Settings → Secrets and variables → Actions):
 
@@ -109,9 +109,9 @@ Requisitos en el repo (Settings → Secrets and variables → Actions):
 | Variable (opcional) | `BIGQUERY_PROJECT` | default del `meltano.yml` |
 | Variable (opcional) | `BIGQUERY_LOCATION` | default `US` |
 | Variable (opcional) | `GCP_SA_CLIENT_EMAIL` | solo si `GCP_SA_KEY` trae únicamente la private key |
-| Variable | `ALLOW_FULL_YEAR_LOAD` | `true` para schedule / dispatch sin `max_records` |
+| Variable | `ALLOW_FULL_YEAR_LOAD` | `true` para schedule / dispatch sin `max_records`. Nicolás OK el costo 2026-09-10; hay que **setear** la variable (el OK no la prende solo). |
 
-El workflow instala Meltano, materializa la key, asegura el dataset, corre `prepare_year_load.py` y `cap4-produccion` **solo si** el guardia deja pasar. Evidencia del año 2025: [docs/hito-1-full-year-2025-load.md](docs/hito-1-full-year-2025-load.md).
+El workflow instala Meltano, materializa la key, asegura el dataset, corre `prepare_year_load.py` y `cap4-produccion` **solo si** el guardia deja pasar. Evidencia del año 2025: [docs/hito-1-full-year-2025-load.md](docs/hito-1-full-year-2025-load.md). Bytes / pricing: [docs/hito-1-full-year-cost.md](docs/hito-1-full-year-cost.md).
 
 > **Alternativa sin key de larga vida:** Workload Identity Federation (`google-github-actions/auth` con `workload_identity_provider` + `service_account`, sin `GCP_SA_KEY`). Más seguro; pide configurar un WIF pool en GCP. Se puede migrar sin tocar Meltano.
 
@@ -267,7 +267,7 @@ Hay una familia paralela **DDJJ abiertas y cerradas** (otro UUID por año) — n
 
 ## Smoke / año 2025 (estado)
 
-Evidencia 2026-09-10 (SA materializada en runtime, **sin** secrets en git): [docs/hito-1-full-year-2025-load.md](docs/hito-1-full-year-2025-load.md).
+Evidencia anual 2026-09-10 (SA materializada en runtime, **sin** secrets en git): [docs/hito-1-full-year-2025-load.md](docs/hito-1-full-year-2025-load.md). Smoke 500 previo (post-merge PR #5): [docs/hito-1-post-merge-smoke.md](docs/hito-1-post-merge-smoke.md). Costo (extrapolación + medido): [docs/hito-1-full-year-cost.md](docs/hito-1-full-year-cost.md).
 
 | Check | Resultado |
 | --- | --- |

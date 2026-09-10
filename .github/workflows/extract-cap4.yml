@@ -10,8 +10,9 @@ name: extract-cap4 (Meltano → BigQuery)
 # Optional repository variables (fall back to meltano.yml defaults):
 #   BIGQUERY_PROJECT, BIGQUERY_LOCATION (default US)
 #   ALLOW_FULL_YEAR_LOAD=true — required for schedule / uncapped dispatch.
-#     Nicolás OK'd cost 2026-09-10 (measured ~338 MiB). Without the variable
-#     the job still exits before any BQ write.
+#     Nicolás OK'd cost 2026-09-10 (measured ~338 MiB). Full-year Cap. IV
+#     (~991k, Storage Write API) still needs this variable; without it the
+#     job exits before any BQ write.
 
 on:
   workflow_dispatch:

@@ -2,11 +2,20 @@
 
 **Estado:** placeholder. No hay app todavía. Eso es **Hito 3**.
 
-**Owner:** Front. Ver [AGENTS.md](../AGENTS.md).
+**Owner:** Front. Ver [AGENTS.md](../../AGENTS.md).
 
-Acá va a vivir el dashboard público de storytelling (Next.js App Router + Tremor).
+**Marca UI:** **Barrilito** (el repo se sigue llamando `vaca-muerta-pulse`).
 
-Contrato con datos (Hito 2+): leer **marts** de BigQuery (o una capa cacheada), nunca `raw_*`. Las preguntas de producto están en [spec.md](../../specs/001-vaca-muerta-pulse/spec.md).
+Acá va a vivir el dashboard público (Next.js App Router + Tremor).
+
+## Headline (Hito 3 — no hay código en este folder todavía)
+
+- Leer del mart de tasa (Hito 2): `fct_barrilito_rate` / el nombre que publique el data-model — **`rate_bbl_dia`**.
+- Interpolar un contador de barriles “extrayéndose” (aspecto live). Capítulo IV es **mensual**; esto **no** es telemetría.
+- **MUST** disclaimer visible junto al contador: *simulación a partir de datos mensuales oficiales*.
+- Factor `bbl = m³ × 6.28981077`: lo aplica el mart, no el cliente. No inventar sensores ni queries a `raw_*`.
+
+Contrato con datos (Hito 2+): leer **marts** de BigQuery (o una capa cacheada), nunca `raw_*`. Relato: [spec.md](../../specs/001-vaca-muerta-pulse/spec.md). Fórmula: [data-model.md](../../specs/001-vaca-muerta-pulse/data-model.md).
 
 Hasta Hito 3:
 
