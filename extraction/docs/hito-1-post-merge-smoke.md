@@ -1,8 +1,9 @@
 # Evidencia smoke Hito 1 (post-merge PR #5)
 
 Corrida **2026-09-10** contra el HEAD que recibió el merge de PR #5
-(`30f6970` en `cursor/hito-1-bigquery-credentials-ci-8d0b`). **No se mergeó a `main`**
-(sigue en Hito 0 / `a668423`). **No se commitearon secretos.**
+(`30f6970` en `cursor/hito-1-bigquery-credentials-ci-8d0b`). Evidencia de esa
+corrida; **no** se re-ejecutó el load. `main` posterior (#4 credenciales CI,
+#8 cron/costo) no cambia estos números. **No se commitearon secretos.**
 
 ## Resultado
 
@@ -17,7 +18,7 @@ Corrida **2026-09-10** contra el HEAD que recibió el merge de PR #5
 | Layout | `PARTITION BY TIMESTAMP_TRUNC(_sdc_batched_at, MONTH)` + `CLUSTER BY empresa, idpozo, cuenca` |
 | Destino del load | tabla **final** (Storage Write API: 306 + 194 filas a `…/tables/produccion_pozo_mes/streams/_default`). No es el staging `__*` |
 | Duración | **504 s** wall-clock (start `19:34:39Z` → end `19:43:03Z`); tap `sync_duration` 494.9 s |
-| Año completo | **no** corrido (`MAX_RECORDS=500`). Datastore 2025 `total` 991 844 sigue pendiente |
+| Año completo | **no** corrido (`MAX_RECORDS=500`). Datastore 2025 `total` 991 844 **bloqueado** hasta OK de costo (ver [hito-1-full-year-cost.md](hito-1-full-year-cost.md)) |
 
 Pre-smoke: `COUNT(*)` = **0** (Bug 1 del handoff). Post-smoke: **500**.
 
@@ -98,7 +99,6 @@ la tocó.
 
 ## Fuera de alcance
 
-- Merge a `main` / merge de este doc PR.
-- Load de año completo.
+- Load de año completo (bloqueado a costo; ver [hito-1-full-year-cost.md](hito-1-full-year-cost.md)).
 - dbt / Next.js.
 - Recrear SAs.

@@ -11,8 +11,9 @@
 #   GCP_SA_KEY_BASE64  base64 of the full JSON (handy for stores that mangle newlines).
 #
 # When GCP_SA_KEY holds only a PEM private key, the JSON is reconstructed from:
-#   GCP_SA_CLIENT_EMAIL   (required)  e.g. vm-pulse-meltano@<project-id>.iam.gserviceaccount.com
-#   BIGQUERY_PROJECT / GCP_PROJECT    (optional; taken from env if present)
+#   GCP_SA_CLIENT_EMAIL   (optional if BIGQUERY_PROJECT is set — documented SA
+#                          vm-pulse-meltano@<project>.iam.gserviceaccount.com)
+#   BIGQUERY_PROJECT / GCP_PROJECT
 #   GCP_SA_PRIVATE_KEY_ID             (optional)
 #
 # Optional:
@@ -43,6 +44,16 @@ if raw.startswith("{"):
         sys.exit(f"[sa-key] ERROR: GCP_SA_KEY looks like JSON but did not parse: {e}")
 elif "BEGIN" in raw and "PRIVATE KEY" in raw:
     client_email = os.environ.get("GCP_SA_CLIENT_EMAIL", "").strip()
+    project = os.environ.get("BIGQUERY_PROJECT") or os.environ.get("GCP_PROJECT") or ""
+    project = project.strip()
+    # Documented Meltano SA name. Lets PEM-only secrets work in Cloud Agent / CI
+    # without a second variable, as long as BIGQUERY_PROJECT is set.
+    if not client_email and project:
+        client_email = f"vm-pulse-meltano@{project}.iam.gserviceaccount.com"
+        sys.stderr.write(
+            "[sa-key] GCP_SA_CLIENT_EMAIL unset; using documented SA "
+            f"vm-pulse-meltano@<project>.iam.gserviceaccount.com\n"
+        )
     if not client_email:
         sys.exit(
             "[sa-key] ERROR: GCP_SA_KEY contains only a PRIVATE KEY, not the full "
@@ -50,7 +61,8 @@ elif "BEGIN" in raw and "PRIVATE KEY" in raw:
             "  Fix ONE of:\n"
             "  (A, preferred) set GCP_SA_KEY to the ENTIRE contents of the downloaded .json key file; or\n"
             "  (B) also set GCP_SA_CLIENT_EMAIL (e.g. vm-pulse-meltano@<project-id>.iam.gserviceaccount.com) "
-            "so this script can reconstruct the JSON."
+            "so this script can reconstruct the JSON.\n"
+            "  (C) set BIGQUERY_PROJECT and this script derives the documented SA email."
         )
     private_key = raw.replace("\\n", "\n") if ("\\n" in raw and "\n" not in raw) else raw
     info = {
@@ -59,7 +71,6 @@ elif "BEGIN" in raw and "PRIVATE KEY" in raw:
         "client_email": client_email,
         "token_uri": "https://oauth2.googleapis.com/token",
     }
-    project = os.environ.get("BIGQUERY_PROJECT") or os.environ.get("GCP_PROJECT")
     if project:
         info["project_id"] = project
     pkid = os.environ.get("GCP_SA_PRIVATE_KEY_ID", "").strip()

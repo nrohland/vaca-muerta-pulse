@@ -2,7 +2,7 @@
 
 Solo **Hito 1**. Hitos 2–3 no se tachan acá. Criterios de aceptación: [plan.md](plan.md). Owner: **DE**. Folder: [`extraction/`](../../extraction/README.md).
 
-Tachá en el PR que complete el ítem. Smoke BQ post-fix de overwrite/throughput: **falta evidencia en este PR** (la VM del agente no tiene `GCP_SA_KEY`). Handoff humano: dataset `raw_cap4_dev` existe; 500 filas en staging; final 0 filas por Bug 1.
+Tachá en el PR que complete el ítem. Smoke 500 post-fix 2026-09-10: `COUNT(*)` final **500** (streaming buffer). Layout MONTH(`_sdc_batched_at`)+CLUSTER en [extraction/docs/hito-1-post-merge-smoke.md](../../extraction/docs/hito-1-post-merge-smoke.md). Año completo (~991k) **bloqueado** hasta OK de costo de Nicolás — este PR no corre Meltano full-year.
 
 ## GCP y BigQuery
 
@@ -31,9 +31,9 @@ Tachá en el PR que complete el ítem. Smoke BQ post-fix de overwrite/throughput
 
 ## Loads de smoke
 
-- [ ] Load de **al menos un año** de producción pozo-mes a BQ. — smoke 500 post-fix OK; año completo (991 844) **pendiente**.
-- [x] Verificación: tabla **particionada** y **clustered** (screenshot o query a `INFORMATION_SCHEMA` en el PR, sin datos sensibles). — [extraction/docs/hito-1-post-merge-smoke.md](../../extraction/docs/hito-1-post-merge-smoke.md): MONTH(`_sdc_batched_at`) + CLUSTER `empresa`,`idpozo`,`cuenca` con `COUNT(*)=500`.
-- [ ] Conteo de filas vs source (delta explicado: header, duplicados, filtro). — smoke 500 vs `MAX_RECORDS=500` (delta 0) documentado; año completo 991 844 vs BQ **pendiente**.
+- [ ] Load de **al menos un año** de producción pozo-mes a BQ. — **bloqueado (costo).** Smoke 500 post-fix OK en tabla final (Write API). Año 2025 (~991 844) no se carga hasta OK de Nicolás. Bytes: [extraction/docs/hito-1-full-year-cost.md](../../extraction/docs/hito-1-full-year-cost.md). Evidencia smoke: [extraction/docs/hito-1-post-merge-smoke.md](../../extraction/docs/hito-1-post-merge-smoke.md).
+- [x] Verificación: tabla **particionada** y **clustered** (screenshot o query a `INFORMATION_SCHEMA` en el PR, sin datos sensibles). — [extraction/docs/hito-1-post-merge-smoke.md](../../extraction/docs/hito-1-post-merge-smoke.md): MONTH(`_sdc_batched_at`) + CLUSTER `empresa`,`idpozo`,`cuenca` con `COUNT(*)=500`. `tables.get` + DDL; queries: `extraction/sql/verify_layout.sql`.
+- [ ] Conteo de filas vs source (delta explicado: header, duplicados, filtro). — smoke 500 vs `MAX_RECORDS=500` (delta 0) documentado; Datastore 2025 `total=991844`; falta COUNT del año completo.
 - [x] Sample de columnas reales vs lista draft: PR actualiza [data-model.md](data-model.md) (CONFIRMED / UNKNOWN). — evidencia DataStore, no INFORMATION_SCHEMA
 
 ## Padrón y completaciones (descubrimiento, no dbt)
@@ -49,7 +49,7 @@ Tachá en el PR que complete el ítem. Smoke BQ post-fix de overwrite/throughput
 - [x] `.gitignore` cubre `.meltano/`, outputs, keys (ajustar si el init crea paths nuevos).
 - [x] Ningún CSV pesado commiteado.
 - [x] Ningún JSON de SA, ningún `.env` real.
-- [ ] [plan.md](plan.md) Hito 1: casillas de aceptación revisadas (se tildan cuando QA/DE cierran el hito). — scaffold + fix overwrite/throughput en repo; smoke BQ COUNT>0 aún no verificado en este PR
+- [ ] [plan.md](plan.md) Hito 1: casillas de aceptación revisadas (se tildan cuando QA/DE cierran el hito). — smoke 500 + layout OK; año completo pendiente de OK de costo
 - [x] No hay `dbt_project.yml` ni app Next en este hito (rechazar scope creep).
 
 ## Fuera de este checklist

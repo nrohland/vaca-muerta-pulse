@@ -149,6 +149,16 @@ class CkanDatastoreStream(Stream):
             limit = page_size if remaining is None else min(page_size, remaining)
             result = self._datastore_search(limit=limit, offset=offset)
             records = result.get("records") or []
+            total = result.get("total")
+            self.logger.info(
+                "datastore_search resource=%s offset=%s limit=%s page_rows=%s emitted_before=%s total=%s",
+                self.resource_id,
+                offset,
+                limit,
+                len(records),
+                emitted,
+                total,
+            )
             if not records:
                 break
             for row in records:
@@ -157,7 +167,6 @@ class CkanDatastoreStream(Stream):
                 if max_records_i is not None and emitted >= max_records_i:
                     return
             offset += len(records)
-            total = result.get("total")
             if total is not None and offset >= int(total):
                 break
             if len(records) < limit:

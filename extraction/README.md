@@ -39,6 +39,7 @@ export GOOGLE_APPLICATION_CREDENTIALS=/absolute/path/to/meltano-raw-writer.json
 python scripts/prepare_year_load.py --dataset raw_cap4_dev
 
 # Dev: dataset raw_cap4_dev, append (overwrite:true está prohibido — ver Bug 1)
+# Año completo 2025: NO setear TAP_CKAN_DATASTORE_MAX_RECORDS (~991_844 filas)
 MELTANO_ENVIRONMENT=dev meltano run cap4-produccion
 
 # Dev reload de un año: TRUNCATE (conserva partition+cluster) y append
@@ -91,7 +92,12 @@ export GOOGLE_APPLICATION_CREDENTIALS="$(bash scripts/materialize-sa-key.sh)"
 > **Ojo (error común):** `GCP_SA_KEY` tiene que ser el **JSON entero** (de `{` a `}`), no solo el bloque `-----BEGIN PRIVATE KEY-----`. Si por lo que sea solo tenés la private key, seteá además `GCP_SA_CLIENT_EMAIL` (el email de la SA, `vm-pulse-meltano@<project-id>.iam.gserviceaccount.com`) y el script reconstruye el JSON.
 
 ### 3. GitHub Actions (todo el pipeline en CI)
-Workflow: [`.github/workflows/extract-cap4.yml`](../.github/workflows/extract-cap4.yml) (trigger manual `workflow_dispatch`, inputs `environment` / `year_resource_id` / `max_records`). Requisitos en el repo (Settings → Secrets and variables → Actions):
+Workflow: [`.github/workflows/extract-cap4.yml`](../.github/workflows/extract-cap4.yml).
+
+- **`workflow_dispatch`** (manual): inputs `environment` / `year_resource_id` / `max_records` / `reemit` / `delete_year`.
+- **`schedule` mensual:** `0 6 5 * *` (día 5, 06:00 UTC). Capítulo IV es **mensual**; Barrilito en UI es simulación, no hay polling de alta frecuencia. GitHub solo corre el cron en la rama default **después de merge**. El job **sale 1 antes de Meltano/BQ** hasta que exista la variable `ALLOW_FULL_YEAR_LOAD=true` (OK de costo de Nicolás). Cuando se desbloquee: Meltano **`dev`** (`raw_cap4_dev`) + `TRUNCATE` + año completo. Prod: `workflow_dispatch` `environment=prod` + `reemit=true`.
+
+Requisitos en el repo (Settings → Secrets and variables → Actions):
 
 | Tipo | Nombre | Valor |
 | --- | --- | --- |
@@ -99,8 +105,9 @@ Workflow: [`.github/workflows/extract-cap4.yml`](../.github/workflows/extract-ca
 | Variable (opcional) | `BIGQUERY_PROJECT` | default `vaca-muerta-pulse` |
 | Variable (opcional) | `BIGQUERY_LOCATION` | default `US` |
 | Variable (opcional) | `GCP_SA_CLIENT_EMAIL` | solo si `GCP_SA_KEY` trae únicamente la private key |
+| Variable | `ALLOW_FULL_YEAR_LOAD` | `true` recién cuando Nico OK el costo del año (~991k, Write API). Sin esto, schedule y dispatch sin `max_records` no escriben BQ. |
 
-El workflow instala Meltano, materializa la key con `scripts/materialize-sa-key.sh`, asegura el dataset (`scripts/ensure_dataset.py`) y corre `cap4-produccion`. Habilitá el `schedule` (comentado) recién cuando un run manual quede verde.
+El workflow instala Meltano, materializa la key, asegura el dataset, corre `prepare_year_load.py` y `cap4-produccion` **solo si** el guardia de costo deja pasar. Estimación de bytes: [docs/hito-1-full-year-cost.md](docs/hito-1-full-year-cost.md).
 
 > **Alternativa sin key de larga vida:** Workload Identity Federation (`google-github-actions/auth` con `workload_identity_provider` + `service_account`, sin `GCP_SA_KEY`). Más seguro; pide configurar un WIF pool en GCP. Se puede migrar sin tocar Meltano.
 
@@ -256,18 +263,19 @@ Hay una familia paralela **DDJJ abiertas y cerradas** (otro UUID por año) — n
 
 ## Smoke load (estado)
 
-Post-merge PR #5 (HEAD `30f6970` en `cursor/hito-1-bigquery-credentials-ci-8d0b`; **no** está en `main`). Evidencia completa: [docs/hito-1-post-merge-smoke.md](docs/hito-1-post-merge-smoke.md).
+Post-merge PR #5 (corrida 2026-09-10 contra `30f6970`). Evidencia: [docs/hito-1-post-merge-smoke.md](docs/hito-1-post-merge-smoke.md). Costo año completo: [docs/hito-1-full-year-cost.md](docs/hito-1-full-year-cost.md).
 
 | Check | Resultado (2026-09-10) |
 | --- | --- |
 | Auth SA | OK |
 | `meltano run cap4-produccion` (500/500) | exit 0; **504 s** |
-| `COUNT(*)` `raw_cap4_dev.produccion_pozo_mes` | **500** (pre-smoke era 0) |
+| `COUNT(*)` `raw_cap4_dev.produccion_pozo_mes` | **500** (pre-smoke era 0; en streaming buffer: `tables.get` `num_rows=0` / `num_bytes=0`) |
+| Buffer Write API | 500 filas / **37 257 bytes** (~74.5 B/fila) |
 | DDL | `PARTITION BY TIMESTAMP_TRUNC(_sdc_batched_at, MONTH)` + `CLUSTER BY empresa, idpozo, cuenca` |
 | Destino | tabla **final** (no staging `__*`) |
-| Año completo (991 844) | pendiente |
+| Año completo (991 844) | **no corrido** — bloqueado hasta OK de costo de Nicolás |
 
-Repro (con SA; no commitear el JSON):
+Repro smoke (con SA; no commitear el JSON):
 
 ```bash
 cd extraction
@@ -288,7 +296,19 @@ Checklist:
 3. Smoke 500 con `storage_write_api`; wall-clock — **504 s**
 4. `COUNT(*)` final **> 0** — **500**; staging `__*` leftover del Bug 1 no es producto
 5. `INFORMATION_SCHEMA.TABLES.ddl` MONTH `_sdc_batched_at` + CLUSTER — **sí**
-6. Año completo: sin `MAX_RECORDS`; Datastore `total` 991844 vs `COUNT(*)` BQ — **pendiente**
+6. Año completo: sin `MAX_RECORDS`; Datastore `total` 991844 vs `COUNT(*)` BQ — **pendiente** (OK de costo de Nicolás)
+
+Cuando Nico OK:
+
+```bash
+cd extraction
+source .venv/bin/activate
+export GOOGLE_APPLICATION_CREDENTIALS="$(bash scripts/materialize-sa-key.sh)"  # gitignored
+python scripts/prepare_year_load.py --dataset raw_cap4_dev --truncate
+unset TAP_CKAN_DATASTORE_MAX_RECORDS
+MELTANO_ENVIRONMENT=dev meltano run cap4-produccion
+python scripts/compare_source_count.py --dataset raw_cap4_dev
+```
 
 ---
 
