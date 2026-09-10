@@ -1,0 +1,19 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tap-ckan-datastore"
+version = "0.1.0"
+description = "Singer tap for CKAN DataStore (Capítulo IV / datos.energia.gob.ar)"
+requires-python = ">=3.10"
+dependencies = [
+  "singer-sdk>=0.46.0,<0.55",
+  "requests>=2.31,<3",
+]
+
+[project.scripts]
+tap-ckan-datastore = "tap_ckan_datastore.tap:TapCkanDatastore.cli"
+
+[tool.hatch.build.targets.wheel]
+packages = ["tap_ckan_datastore"]

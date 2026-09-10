@@ -1,0 +1,100 @@
+name: extract-cap4 (Meltano → BigQuery)
+
+# Runs the Hito 1 ingestion (Capítulo IV → BigQuery raw_*) from CI.
+# Credentials come only from GitHub secrets — no key material lives in git.
+#
+# Required repository secret:
+#   GCP_SA_KEY   full JSON of the Meltano service-account key (roles: bigquery.jobUser
+#                + bigquery.dataEditor on the raw dataset; + bigquery.user if this
+#                workflow should create the dataset).
+# Optional repository variables (fall back to meltano.yml defaults):
+#   BIGQUERY_PROJECT (default vaca-muerta-pulse), BIGQUERY_LOCATION (default US)
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Meltano environment (dev = raw_cap4_dev, prod = raw_cap4; both append)
+        type: choice
+        options: [dev, prod]
+        default: dev
+      year_resource_id:
+        description: "Optional CKAN resource_id to override the production year (blank = 2025 default)"
+        type: string
+        default: ""
+      max_records:
+        description: "Optional cap for a cheap smoke run (blank = full year, ~992k rows)"
+        type: string
+        default: ""
+  # Capítulo IV publishes monthly; enable a schedule once a manual run is green.
+  # schedule:
+  #   - cron: "0 6 5 * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: extract-cap4-${{ github.ref }}-${{ github.event.inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: extraction
+    env:
+      MELTANO_ENVIRONMENT: ${{ inputs.environment }}
+      BIGQUERY_PROJECT: ${{ vars.BIGQUERY_PROJECT || 'vaca-muerta-pulse' }}
+      BIGQUERY_LOCATION: ${{ vars.BIGQUERY_LOCATION || 'US' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install Meltano + plugins
+        run: |
+          python -m pip install --upgrade pip
+          pip install "meltano==4.2.2" "google-cloud-bigquery"
+          meltano install
+
+      - name: Materialize GCP service-account key
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+          # Only needed if GCP_SA_KEY holds just the PEM private key (not the full JSON).
+          GCP_SA_CLIENT_EMAIL: ${{ vars.GCP_SA_CLIENT_EMAIL }}
+        run: |
+          if [ -z "$GCP_SA_KEY" ]; then
+            echo "::error::Repository secret GCP_SA_KEY is not set. Add it in Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$(bash scripts/materialize-sa-key.sh)" >> "$GITHUB_ENV"
+
+      - name: Ensure BigQuery dataset exists
+        run: |
+          if [ "$MELTANO_ENVIRONMENT" = "prod" ]; then
+            export BIGQUERY_DATASET=raw_cap4
+          else
+            export BIGQUERY_DATASET=raw_cap4_dev
+          fi
+          python scripts/ensure_dataset.py
+
+      - name: Run Meltano job (cap4-produccion)
+        env:
+          # Pass inputs via env (not inline interpolation) to avoid shell injection.
+          YEAR_RESOURCE_ID: ${{ inputs.year_resource_id }}
+          MAX_RECORDS: ${{ inputs.max_records }}
+        run: |
+          # Only override tap defaults when inputs were provided (empty = keep meltano.yml).
+          if [ -n "$YEAR_RESOURCE_ID" ]; then
+            export TAP_CKAN_DATASTORE_PRODUCCION_RESOURCE_ID="$YEAR_RESOURCE_ID"
+          fi
+          if [ -n "$MAX_RECORDS" ]; then
+            export TAP_CKAN_DATASTORE_MAX_RECORDS="$MAX_RECORDS"
+          fi
+          meltano run cap4-produccion
+          # Append-only (overwrite:true strips BQ partitioning on this pin).
+          # Re-runs duplicate unless the year was DELETE/TRUNCATEd first.

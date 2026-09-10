@@ -4,9 +4,9 @@ Instrucciones para **coding agents** (y humanos que implementan). El relato de p
 
 ## 0. Qué es este repo ahora
 
-Greenfield **spec-driven**. Hito 0 = docs + scaffolding. **No** implementes Meltano, dbt ni Next.js hasta el hito que lo pide ([plan.md](specs/001-vaca-muerta-pulse/plan.md)).
+Greenfield **spec-driven**. **Hito 1 en curso:** Meltano vive en [`extraction/`](extraction/README.md). **No** implementes dbt ni Next.js hasta el hito que lo pide ([plan.md](specs/001-vaca-muerta-pulse/plan.md)).
 
-Los folders `extraction/`, `transform/`, `apps/web/` existen con README de owner; están **vacíos de código a propósito**.
+`transform/` y `apps/web/` siguen con README de owner, vacíos de código a propósito.
 
 ## 1. Leé esto primero (en orden)
 
@@ -18,7 +18,7 @@ Los folders `extraction/`, `transform/`, `apps/web/` existen con README de owner
 6. El README del folder que vas a tocar (`extraction/`, `transform/`, `apps/web/`).
 7. Si tocás granos o columnas: [data-model.md](specs/001-vaca-muerta-pulse/data-model.md). UNKNOWN no se inventan: se marcan o se confirman con evidencia (sample de source / `INFORMATION_SCHEMA`).
 
-No busques “la app” ni `dbt_project.yml` todavía: no están.
+No busques `dbt_project.yml` ni la app Next todavía: no están. Meltano **sí** está en `extraction/meltano.yml`.
 
 ## 2. Spec-Driven Development (obligatorio)
 
@@ -33,7 +33,7 @@ No busques “la app” ni `dbt_project.yml` todavía: no están.
 | --- | --- | --- | --- |
 | `specs/` | todos (AE lidera granos) | 0+ | fuente de verdad de producto |
 | `docs/` | todos (DE lidera BQ/Meltano) | 0+ | arquitectura + ADRs |
-| `extraction/` | **DE** | 1 | placeholder Meltano |
+| `extraction/` | **DE** | 1 | Meltano + tap CKAN DataStore → target-bigquery |
 | `transform/` | **AE** | 2 | placeholder dbt |
 | `apps/web/` | **Front** | 3 | placeholder Next + Tremor |
 
@@ -68,9 +68,14 @@ Un agente que actúa en un rol **no cruza** de folder salvo un cambio de contrat
 ## 6. Secretos y GCP — nunca
 
 - Service account JSON: **fuera del git** (secret manager, env del runner, archivo local gitignored).
-- Variables: `BIGQUERY_PROJECT`, `GOOGLE_APPLICATION_CREDENTIALS`, tokens CKAN si existieran → `.env` gitignored. Podés agregar `.env.example` **sin valores reales**.
-- No subas dumps de Capítulo IV. Documentá URL + resource id.
+- Variables: `BIGQUERY_PROJECT`, `GOOGLE_APPLICATION_CREDENTIALS`, tokens CKAN si existieran → `.env` gitignored. Hay `.env.example` y `extraction/.env.example` **sin valores de keys**.
+- No subas dumps de Capítulo IV. Documentá URL + resource id (`extraction/resources/cap4.yml`).
 - Si un comando imprime una key, no la dejes en logs del PR.
+
+### MUST de Nicolás (no negociable)
+
+- **Nunca** commitear `.env`, JSON de service account, tokens ni keys — ni en el diff, ni en el body del PR, ni en logs/chat.
+- Flujo de merge: **author → QA → Security Analyst → solo Nicolás mergea**. Bots y agentes **nunca** aprueban ni mergean.
 
 ## 7. Cómo trabajar un hito
 
@@ -87,7 +92,8 @@ Un agente que actúa en un rol **no cruza** de folder salvo un cambio de contrat
 
 ## 9. Lo que no tenés que hacer
 
-- Scaffold de Meltano/dbt/Next “para adelantar” el portfolio.
+- Scaffold de dbt/Next “para adelantar” el portfolio (Meltano es Hito 1, ya está).
 - Inventar granos de completaciones o IDs de empresa si el source no los confirma.
 - Apuntar el dashboard a CSVs locales como arquitectura final.
 - Snowflake, Airbyte, Streamlit u otro stack sin un ADR que reemplace el 0001.
+- Scrapear el HTML de consulta avanzada de SE.

@@ -6,7 +6,10 @@
 *.key
 *.p12
 secrets/
+.secrets/
 credentials/
+meltano-raw-writer.json
+vm-pulse-meltano.json
 
 # GCP service-account keys (any filename pattern)
 *service-account*.json
@@ -54,8 +57,12 @@ pnpm-debug.log*
 # --- Meltano ---
 .meltano/
 extract/output/
+extract/.meltano/
 output/
 *.singer.log
+*.jsonl
+*.singer
+meltano.db
 
 # --- dbt ---
 target/

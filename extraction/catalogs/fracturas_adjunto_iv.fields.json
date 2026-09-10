@@ -1,0 +1,129 @@
+{
+  "stream": "fracturas_adjunto_iv",
+  "resource_id": "2280ad92-6ed3-403e-a095-50139863ab0d",
+  "datastore_total_at_discovery": 4890,
+  "discovered_at": "2026-09-10",
+  "source": "https://datos.energia.gob.ar/api/3/action/datastore_search",
+  "fields": [
+    {
+      "id": "id_base_fractura_adjiv",
+      "type": "numeric"
+    },
+    {
+      "id": "idpozo",
+      "type": "numeric"
+    },
+    {
+      "id": "sigla",
+      "type": "text"
+    },
+    {
+      "id": "cuenca",
+      "type": "text"
+    },
+    {
+      "id": "areapermisoconcesion",
+      "type": "text"
+    },
+    {
+      "id": "yacimiento",
+      "type": "text"
+    },
+    {
+      "id": "formacion_productiva",
+      "type": "text"
+    },
+    {
+      "id": "tipo_reservorio",
+      "type": "text"
+    },
+    {
+      "id": "subtipo_reservorio",
+      "type": "text"
+    },
+    {
+      "id": "longitud_rama_horizontal_m",
+      "type": "numeric"
+    },
+    {
+      "id": "cantidad_fracturas",
+      "type": "numeric"
+    },
+    {
+      "id": "tipo_terminacion",
+      "type": "text"
+    },
+    {
+      "id": "arena_bombeada_nacional_tn",
+      "type": "numeric"
+    },
+    {
+      "id": "arena_bombeada_importada_tn",
+      "type": "numeric"
+    },
+    {
+      "id": "agua_inyectada_m3",
+      "type": "numeric"
+    },
+    {
+      "id": "co2_inyectado_m3",
+      "type": "numeric"
+    },
+    {
+      "id": "presion_maxima_psi",
+      "type": "numeric"
+    },
+    {
+      "id": "potencia_equipos_fractura_hp",
+      "type": "numeric"
+    },
+    {
+      "id": "fecha_inicio_fractura",
+      "type": "timestamp"
+    },
+    {
+      "id": "fecha_fin_fractura",
+      "type": "timestamp"
+    },
+    {
+      "id": "fecha_data",
+      "type": "timestamp"
+    },
+    {
+      "id": "anio_if",
+      "type": "numeric"
+    },
+    {
+      "id": "mes_if",
+      "type": "numeric"
+    },
+    {
+      "id": "anio_ff",
+      "type": "numeric"
+    },
+    {
+      "id": "mes_ff",
+      "type": "numeric"
+    },
+    {
+      "id": "anio_carga",
+      "type": "numeric"
+    },
+    {
+      "id": "mes_carga",
+      "type": "numeric"
+    },
+    {
+      "id": "empresa_informante",
+      "type": "text"
+    },
+    {
+      "id": "mes",
+      "type": "numeric"
+    },
+    {
+      "id": "anio",
+      "type": "numeric"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 # Spec 001 — Vaca Muerta Pulse
 
 - **Estado:** Activa
-- **Hito actual del repo:** 0 (fundación SDD) completo en docs; siguiente implementación = Hito 1
+- **Hito actual del repo:** 1 (Meltano scaffold en `extraction/`). Load live a BQ pendiente de SA en `vaca-muerta-pulse`.
 - **Plan:** [plan.md](plan.md) · **Granos:** [data-model.md](data-model.md) · **Tasks Hito 1:** [tasks.md](tasks.md)
 
 ## Problema
@@ -34,7 +34,7 @@ Prioridad **P0** = Hitos 1–3. **P1** = después, sin bloquear el Pulse v1.
 
 - R1. Ingerir producción Capítulo IV hacia BigQuery **raw** de forma reproducible (Meltano).
 - R2. Tablas de hechos particionadas y clustered según [architecture.md](../../docs/architecture.md).
-- R3. Poder filtrar el recorte de producto: Vaca Muerta no convencional (regla exacta = UNKNOWN hasta sample).
+- R3. Poder filtrar el recorte de producto: Vaca Muerta no convencional (`formacion = 'vaca muerta'` y `tipo_de_recurso = 'NO CONVENCIONAL'` en sample 2025; filtro en stg).
 - R4. Exponer granos de [data-model.md](data-model.md): pozo-mes, empresa, área; completaciones si el source existe.
 - R5. Documentar unidades y cualquier conversión (m³ → bbl) en marts, no en el tap.
 
@@ -43,7 +43,7 @@ Prioridad **P0** = Hitos 1–3. **P1** = después, sin bloquear el Pulse v1.
 - R6. Portada con KPIs del último período disponible (producción petróleo, gas, pozos activos o equivalente).
 - R7. Serie temporal (cuenca VM / no convencional) y ranking de empresas.
 - R8. Vista de área (concesión / yacimiento — **elegir un grano de área** cuando se cierre el UNKNOWN).
-- R9. Vista de completaciones **si** hay source; si no, la UI dice “sin dato” y la spec se actualiza (no inventar curvas).
+- R9. Vista de completaciones **si** hay source; source Adjunto IV **encontrado** (Hito 1, no cargado en el job default). Si el mart no está, la UI dice “sin dato”.
 - R10. Copy en español; números con unidad visible.
 
 ### Ingeniería (P0)
@@ -64,7 +64,7 @@ Prioridad **P0** = Hitos 1–3. **P1** = después, sin bloquear el Pulse v1.
 - Reemplazar el [reporte avanzado de SE](https://www.se.gob.ar/datosupstream/consulta_avanzada/reporte.php).
 - Ingesta de todas las cuencas como producto (raw puede ser amplio; el Pulse filtra).
 - App móvil nativa.
-- Implementar Meltano/dbt/Next en el mismo PR que esta fundación (Hito 0).
+- Implementar dbt/Next en el mismo PR que Meltano (Hito 1).
 
 ## Métricas de éxito
 
