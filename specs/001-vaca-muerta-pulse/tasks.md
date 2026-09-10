@@ -2,7 +2,7 @@
 
 Solo **Hito 1**. Hitos 2–3 no se tachan acá. Criterios de aceptación: [plan.md](plan.md). Owner: **DE**. Folder: [`extraction/`](../../extraction/README.md).
 
-Tachá en el PR que complete el ítem. Smoke BQ post-fix de overwrite/throughput: **falta evidencia en este PR** (la VM del agente no tiene `GCP_SA_KEY`). Handoff humano: dataset `raw_cap4_dev` existe; 500 filas en staging; final 0 filas por Bug 1.
+Tachá en el PR que complete el ítem. Año 2025 cargado 2026-09-10: `COUNT(*)` **991 844** (delta 0 vs Datastore). Evidencia: [extraction/docs/hito-1-full-year-2025-load.md](../../extraction/docs/hito-1-full-year-2025-load.md).
 
 ## GCP y BigQuery
 
@@ -31,9 +31,9 @@ Tachá en el PR que complete el ítem. Smoke BQ post-fix de overwrite/throughput
 
 ## Loads de smoke
 
-- [ ] Load de **al menos un año** de producción pozo-mes a BQ. — **pendiente post-fix.** Handoff: 500 filas en staging `produccion_pozo_mes__*`; final 0 filas (Bug 1). Este PR: `overwrite:false` + Storage Write API. Repro en `extraction/README.md`.
-- [ ] Verificación: tabla **particionada** y **clustered** (screenshot o query a `INFORMATION_SCHEMA` en el PR, sin datos sensibles). — **handoff (tabla existente, 0 filas):** MONTH(`_sdc_batched_at`) + CLUSTER `empresa`,`idpozo`,`cuenca`. Falta evidencia **después** del append que deje COUNT>0. Queries: `extraction/sql/verify_layout.sql`.
-- [ ] Conteo de filas vs source (delta explicado: header, duplicados, filtro). — Datastore 2025 `total=991844` documentado; falta `COUNT(*)` BQ en la tabla **final**
+- [x] Load de **al menos un año** de producción pozo-mes a BQ. — 2025 completo en `raw_cap4_dev.produccion_pozo_mes`: `COUNT(*)` = **991 844**. Wall-clock 13 min 35 s. [evidencia](../../extraction/docs/hito-1-full-year-2025-load.md).
+- [x] Verificación: tabla **particionada** y **clustered**. — DDL + `tables.get`: MONTH(`_sdc_batched_at`) + CLUSTER `empresa`,`idpozo`,`cuenca`. Write API deja filas en streaming buffer / `__UNPARTITIONED__` al cierre.
+- [x] Conteo de filas vs source (delta explicado: header, duplicados, filtro). — Datastore 2025 `total=991844`; BQ final **991844**; delta **0**; grano `idpozo+anio+mes` único.
 - [x] Sample de columnas reales vs lista draft: PR actualiza [data-model.md](data-model.md) (CONFIRMED / UNKNOWN). — evidencia DataStore, no INFORMATION_SCHEMA
 
 ## Padrón y completaciones (descubrimiento, no dbt)
@@ -49,7 +49,7 @@ Tachá en el PR que complete el ítem. Smoke BQ post-fix de overwrite/throughput
 - [x] `.gitignore` cubre `.meltano/`, outputs, keys (ajustar si el init crea paths nuevos).
 - [x] Ningún CSV pesado commiteado.
 - [x] Ningún JSON de SA, ningún `.env` real.
-- [ ] [plan.md](plan.md) Hito 1: casillas de aceptación revisadas (se tildan cuando QA/DE cierran el hito). — scaffold + fix overwrite/throughput en repo; smoke BQ COUNT>0 aún no verificado en este PR
+- [x] [plan.md](plan.md) Hito 1: casillas de aceptación revisadas (se tildan cuando QA/DE cierran el hito). — año 2025 en `raw_cap4_dev` con COUNT=source; QA sigue siendo quien cierra el hito. Completaciones raw siguen residuales.
 - [x] No hay `dbt_project.yml` ni app Next en este hito (rechazar scope creep).
 
 ## Fuera de este checklist

@@ -51,13 +51,13 @@ Código por hito: `docs/specs` → `extraction/` → `transform/` → `apps/web/
 
 ### Aceptación
 
-- [ ] `extraction/` tiene Meltano versionado (`meltano.yml`); README explica `meltano run` y env vars (nombres, no valores). — Meltano + fix Bug 1/2 en repo; QA cierra el hito cuando el smoke BQ (COUNT final > 0) exista
-- [ ] Existe tabla raw de producción pozo-mes en BQ; **partition** y **cluster** verificables (`INFORMATION_SCHEMA` o console). — **handoff:** layout MONTH(`_sdc_batched_at`)+CLUSTER ok; final 0 filas por overwrite. Falta COUNT>0 post-append
-- [ ] Load reproducible contra un resource público documentado (URL + id CKAN o patrón de CSV anual). — resource documentado; load a tabla **final** pendiente de repro con `overwrite:false`
-- [ ] Conteos de smoke: filas del sample vs source (tolerancia y duplicados documentados). — total Datastore 2025 documentado; falta COUNT BQ en tabla final
-- [ ] Completaciones: **o** tabla raw + source documentado, **o** `data-model.md` actualizado a “sin source en v1” (no silenciar el UNKNOWN). — source Adjunto IV documentado; tabla raw no cargada (job default + mismo bloqueo SA)
-- [ ] Ningún secreto en el PR; presupuesto/alerta GCP mencionada en `extraction/README.md`. — docs sí; secretos no (revisar en el PR)
-- [ ] `data-model.md`: columnas reales del tap reemplazan la lista draft donde haya evidencia. — hecho vía DataStore, no vía BQ
+- [x] `extraction/` tiene Meltano versionado (`meltano.yml`); README explica `meltano run` y env vars (nombres, no valores). — Meltano + cron gated por `ALLOW_FULL_YEAR_LOAD`; año 2025 corrido en dev
+- [x] Existe tabla raw de producción pozo-mes en BQ; **partition** y **cluster** verificables (`INFORMATION_SCHEMA` o console). — MONTH(`_sdc_batched_at`)+CLUSTER `empresa,idpozo,cuenca`; `COUNT(*)` = 991 844
+- [x] Load reproducible contra un resource público documentado (URL + id CKAN o patrón de CSV anual). — 2025 `d774b5d7-…`; append `overwrite:false` + `--recreate` en sandbox
+- [x] Conteos de smoke: filas del sample vs source (tolerancia y duplicados documentados). — Datastore 991 844 vs BQ 991 844 (delta 0)
+- [ ] Completaciones: **o** tabla raw + source documentado, **o** `data-model.md` actualizado a “sin source en v1” (no silenciar el UNKNOWN). — source Adjunto IV documentado; tabla raw no cargada (job default, deseleccionado)
+- [x] Ningún secreto en el PR; presupuesto/alerta GCP mencionada en `extraction/README.md`. — docs sí; sandbox 60 días de expiración documentado
+- [x] `data-model.md`: columnas reales del tap reemplazan la lista draft donde haya evidencia. — hecho vía DataStore + COUNT BQ del año
 
 ---
 
