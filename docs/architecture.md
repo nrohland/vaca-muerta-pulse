@@ -2,7 +2,7 @@
 
 Vista C4-ish del data product. Stack y *por qué*: [ADR 0001](adrs/0001-stack-choices.md). Producto: [spec.md](../specs/001-vaca-muerta-pulse/spec.md).
 
-**Hoy (Hito 0):** solo este diseño. Meltano / BQ / dbt / Next se materializan en Hitos 1–3.
+**Hoy (Hito 1):** Meltano versionado en `extraction/` (tap CKAN DataStore → `target-bigquery`). Dataset propuesto **`raw_cap4`** (dev: `raw_cap4_dev`). El primer load live a BQ depende de SA en el proyecto `vaca-muerta-pulse`. dbt / Next: Hitos 2–3.
 
 ## 1. Contexto
 
@@ -63,9 +63,9 @@ El browser **no** habla con CKAN ni con `raw_*`.
 ```mermaid
 flowchart LR
   subgraph Sources["Sources Capítulo IV"]
-    P["Producción pozo-mes<br/>CSVs por año"]
-    W["Padrón / pozos<br/>UNKNOWN si es archivo aparte"]
-    F["Fracturas / completaciones<br/>UNKNOWN resource"]
+    P["Producción pozo-mes<br/>CKAN DataStore / CSVs por año"]
+    W["Capítulo IV - Pozos<br/>coords; no en job default"]
+    F["Adjunto IV fracturas<br/>resource encontrado; no en job default"]
   end
   P --> TAPS
   W --> TAPS
@@ -81,23 +81,28 @@ flowchart LR
   M3 --> WEB
 ```
 
-Filtro de producto (draft, confirmar en Hito 1): formación **Vaca Muerta** y recurso **no convencional**. Strings exactos = UNKNOWN en [data-model.md](../specs/001-vaca-muerta-pulse/data-model.md).
+Filtro de producto (CONFIRMED en sample 2025 DataStore; aplicar en `stg`/`int`, no en el tap): `formacion = 'vaca muerta'` y `tipo_de_recurso = 'NO CONVENCIONAL'`. Detalle en [data-model.md](../specs/001-vaca-muerta-pulse/data-model.md).
 
-## 4. BigQuery — naming y físico (propuesto)
+## 4. BigQuery — naming y físico (Hito 1)
 
-Nombres **propuestos**; Hito 1 puede ajustarlos si documenta el delta en este archivo.
+Nombres **confirmados como intención de DE**. El load live puede faltar; no afirmar DDL verificado en `INFORMATION_SCHEMA` hasta el smoke.
 
 | Dataset | Contenido | Quién escribe |
 | --- | --- | --- |
-| `raw_cap4` | Tablas 1:1 con el tap (snake_case source) | Meltano |
-| `analytics` o datasets dbt `stg_cap4` / `int_cap4` / `marts` | Modelos | dbt |
+| `raw_cap4` | Tablas 1:1 con el tap (`produccion_pozo_mes`, …) | Meltano (prod) |
+| `raw_cap4_dev` | Idem, overwrite de un año | Meltano (dev) |
+| `analytics` o datasets dbt `stg_cap4` / `int_cap4` / `marts` | Modelos | dbt (Hito 2) |
 
-Tablas raw de hechos de producción:
+Proyecto GCP: **`vaca-muerta-pulse`**. Location: **US**.
 
-- **PARTITION BY** `DATE` construida desde `anio`+`mes` (o columna de fecha de declaración si el tap la trae estable). Objetivo: queries de “último año” sin full scan del histórico 2006–hoy.
-- **CLUSTER BY** columnas de filtro del dashboard: p.ej. `empresa`, `sigla` / `idpozo`, `cuenca` (orden exacto = Hito 1, medir bytes).
+Tablas raw de hechos de producción (`produccion_pozo_mes`):
 
-Completaciones: si el grano es evento (no mes), particionar por `fecha_fractura` (o equivalente). Si esa columna no existe, **no inventarla** — documentar UNKNOWN y un partition proxy.
+- Columna de período: `periodo` DATE `YYYY-MM-01` (la arma el tap desde `anio`+`mes`).
+- **PARTITION intento de producto:** `PARTITION BY DATE(periodo)`.
+- **PARTITION que cablea z3z1ma hoy:** MONTH sobre `_sdc_batched_at`. Post-load: [extraction/sql/intended_partition.sql](../extraction/sql/intended_partition.sql).
+- **CLUSTER BY** (orden cableado en `meltano.yml`): `empresa`, `idpozo`, `cuenca`.
+
+Completaciones (Adjunto IV): grano evento (`id_base_fractura_adjiv`); partición candidata `fecha_inicio_fractura`. Stream en el tap, **no** seleccionado en el job default de Hito 1.
 
 ## 5. Costo y cuota (cheap/free-tier)
 
@@ -105,7 +110,7 @@ Completaciones: si el grano es evento (no mes), particionar por `fecha_fractura`
 - No BI Engine ni slots reservados en v1.
 - Meltano corre en máquina de contributor / CI barata; no un cluster 24/7.
 - Front: estático o server mínimo (Hito 3 + ADR si hay hosting).
-- Presupuesto GCP y alertas: tarea de Hito 1 ([tasks.md](../specs/001-vaca-muerta-pulse/tasks.md)).
+- Presupuesto GCP y alertas: documentado en [extraction/README.md](../extraction/README.md) (budget alert 1 / 5 USD sugerido). SA write-only a `raw_*`.
 
 ## 6. Secretos
 

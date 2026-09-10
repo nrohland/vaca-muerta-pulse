@@ -4,7 +4,7 @@ Dashboard público de **storytelling** sobre producción y completaciones no con
 
 Este repo es un **data product** de portfolio, **spec-driven**: primero specs y ADRs, después Meltano / dbt / Next.
 
-> **Hito 0 (este árbol):** documentación y scaffolding. Todavía **no** hay Meltano, dbt ni Next implementados. Los folders `extraction/`, `transform/` y `apps/web/` son placeholders a propósito.
+> **Hito 1 (este árbol):** Meltano en [`extraction/`](extraction/README.md) → BigQuery `raw_cap4`. dbt y Next siguen sin implementar. El load live a BQ puede estar bloqueado si no hay SA en el entorno.
 
 | Si sos… | Empezá por |
 | --- | --- |
@@ -89,8 +89,8 @@ flowchart TB
 
 | Capa | Tecnología | Dónde | Hito |
 | --- | --- | --- | --- |
-| Specs / docs | Markdown + Mermaid | `specs/`, `docs/` | **0 (ahora)** |
-| Ingesta | Meltano | `extraction/` | 1 |
+| Specs / docs | Markdown + Mermaid | `specs/`, `docs/` | 0 |
+| Ingesta | Meltano | `extraction/` | **1 (ahora)** |
 | Warehouse | BigQuery, `PARTITION` + `CLUSTER` | GCP | 1 |
 | Transformación | dbt Core (`stg` → `int` → `marts`) | `transform/` | 2 |
 | UI | Next.js + Tremor | `apps/web/` | 3 |
@@ -104,12 +104,12 @@ Detalle y criterios de aceptación: [plan.md](specs/001-vaca-muerta-pulse/plan.m
 
 | Hito | Qué | Código |
 | --- | --- | --- |
-| **0** Fundación SDD | Specs, ADRs, AGENTS.md, placeholders | este commit |
-| **1** Raw + Meltano | CKAN/CSV → BQ `raw_*` particionado | `extraction/` |
+| **0** Fundación SDD | Specs, ADRs, AGENTS.md, placeholders | mergeado / PR #1 |
+| **1** Raw + Meltano | CKAN DataStore → BQ `raw_*` particionado | `extraction/` |
 | **2** dbt | `stg` → `int` → `marts` + tests | `transform/` |
 | **3** Dashboard | Storytelling público Next + Tremor | `apps/web/` |
 
-Checklist operativo de Hito 1 (sin tachar): [tasks.md](specs/001-vaca-muerta-pulse/tasks.md).
+Checklist operativo de Hito 1: [tasks.md](specs/001-vaca-muerta-pulse/tasks.md). Cómo correr Meltano: [extraction/README.md](extraction/README.md).
 
 ---
 
@@ -117,7 +117,7 @@ Checklist operativo de Hito 1 (sin tachar): [tasks.md](specs/001-vaca-muerta-pul
 
 1. Leé [AGENTS.md](AGENTS.md) (roles, DoD, secretos) y la spec activa.
 2. **SDD:** si el cambio es más que un typo, actualizá `specs/` y/o un ADR *antes* del código.
-3. No implementes Meltano, dbt o Next fuera de su hito (Hito 1 / 2 / 3).
+3. No implementes dbt o Next fuera de su hito (Hito 2 / 3). Meltano ya vive en `extraction/`.
 4. Nunca commitees `.env`, JSON de service accounts, ni CSVs crudos pesados.
 5. Un PR = un hito o una historia acotada; el owner del folder (DE / AE / Front) debe poder revisar en aislamiento.
 6. QA: aceptar contra los criterios de [plan.md](specs/001-vaca-muerta-pulse/plan.md), no contra “el código corre”.

@@ -1,0 +1,161 @@
+{
+  "stream": "produccion_pozo_mes",
+  "resource_id": "d774b5d7-0756-48fe-88f2-8729b57b22da",
+  "datastore_total_at_discovery": 991844,
+  "discovered_at": "2026-09-10",
+  "source": "https://datos.energia.gob.ar/api/3/action/datastore_search",
+  "fields": [
+    {
+      "id": "idempresa",
+      "type": "text"
+    },
+    {
+      "id": "anio",
+      "type": "numeric"
+    },
+    {
+      "id": "mes",
+      "type": "numeric"
+    },
+    {
+      "id": "idpozo",
+      "type": "numeric"
+    },
+    {
+      "id": "prod_pet",
+      "type": "numeric"
+    },
+    {
+      "id": "prod_gas",
+      "type": "numeric"
+    },
+    {
+      "id": "prod_agua",
+      "type": "numeric"
+    },
+    {
+      "id": "iny_agua",
+      "type": "numeric"
+    },
+    {
+      "id": "iny_gas",
+      "type": "numeric"
+    },
+    {
+      "id": "iny_co2",
+      "type": "numeric"
+    },
+    {
+      "id": "iny_otro",
+      "type": "numeric"
+    },
+    {
+      "id": "tef",
+      "type": "numeric"
+    },
+    {
+      "id": "vida_util",
+      "type": "numeric"
+    },
+    {
+      "id": "tipoextraccion",
+      "type": "text"
+    },
+    {
+      "id": "tipoestado",
+      "type": "text"
+    },
+    {
+      "id": "tipopozo",
+      "type": "text"
+    },
+    {
+      "id": "observaciones",
+      "type": "text"
+    },
+    {
+      "id": "fechaingreso",
+      "type": "timestamp"
+    },
+    {
+      "id": "rectificado",
+      "type": "text"
+    },
+    {
+      "id": "habilitado",
+      "type": "text"
+    },
+    {
+      "id": "idusuario",
+      "type": "numeric"
+    },
+    {
+      "id": "empresa",
+      "type": "text"
+    },
+    {
+      "id": "sigla",
+      "type": "text"
+    },
+    {
+      "id": "formprod",
+      "type": "text"
+    },
+    {
+      "id": "profundidad",
+      "type": "numeric"
+    },
+    {
+      "id": "formacion",
+      "type": "text"
+    },
+    {
+      "id": "idareapermisoconcesion",
+      "type": "text"
+    },
+    {
+      "id": "areapermisoconcesion",
+      "type": "text"
+    },
+    {
+      "id": "idareayacimiento",
+      "type": "text"
+    },
+    {
+      "id": "areayacimiento",
+      "type": "text"
+    },
+    {
+      "id": "cuenca",
+      "type": "text"
+    },
+    {
+      "id": "provincia",
+      "type": "text"
+    },
+    {
+      "id": "tipo_de_recurso",
+      "type": "text"
+    },
+    {
+      "id": "proyecto",
+      "type": "text"
+    },
+    {
+      "id": "clasificacion",
+      "type": "text"
+    },
+    {
+      "id": "subclasificacion",
+      "type": "text"
+    },
+    {
+      "id": "sub_tipo_recurso",
+      "type": "text"
+    },
+    {
+      "id": "fecha_data",
+      "type": "timestamp"
+    }
+  ]
+}
