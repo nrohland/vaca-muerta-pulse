@@ -16,6 +16,7 @@ Env:
 Examples:
   python scripts/prepare_year_load.py --dataset raw_cap4_dev
   python scripts/prepare_year_load.py --dataset raw_cap4_dev --truncate
+  python scripts/prepare_year_load.py --dataset raw_cap4_dev --recreate
   python scripts/prepare_year_load.py --dataset raw_cap4 --delete-year 2025
 """
 from __future__ import annotations
@@ -60,9 +61,16 @@ def _print_layout(client: bigquery.Client, project: str, dataset: str) -> None:
         print(f"[prepare_year_load] {table_id} not found after create", file=sys.stderr)
         return
     print(f"[prepare_year_load] ddl:\n{ddl_rows[0].ddl}")
-    cluster_rows = list(client.query(q_cluster, job_config=cfg).result())
-    cluster = ", ".join(r.column_name for r in cluster_rows) or "(none)"
-    print(f"[prepare_year_load] cluster: {cluster}")
+    try:
+        cluster_rows = list(client.query(q_cluster, job_config=cfg).result())
+        cluster = ", ".join(r.column_name for r in cluster_rows) or "(none)"
+        print(f"[prepare_year_load] cluster: {cluster}")
+    except NotFound as exc:
+        # Some projects expose TABLES.ddl but not CLUSTERING_COLUMNS.
+        print(f"[prepare_year_load] cluster INFORMATION_SCHEMA unavailable: {exc}")
+        ddl = ddl_rows[0].ddl
+        if "CLUSTER BY empresa, idpozo, cuenca" in ddl:
+            print("[prepare_year_load] cluster (from ddl): empresa, idpozo, cuenca")
     count = list(client.query(q_count).result())[0].row_count
     print(f"[prepare_year_load] row_count: {count}")
 
@@ -83,12 +91,24 @@ def main() -> int:
         action="store_true",
         help="TRUNCATE TABLE (keeps partition+cluster). Dev full refresh.",
     )
+    parser.add_argument(
+        "--recreate",
+        action="store_true",
+        help=(
+            "DROP TABLE + CREATE (same MONTH+_sdc_batched_at+cluster DDL). "
+            "Use when TRUNCATE/DELETE are blocked (BigQuery free tier: DML not allowed)."
+        ),
+    )
     args = parser.parse_args()
     if not args.dataset:
         print("ERROR: --dataset or BIGQUERY_DATASET is required", file=sys.stderr)
         return 2
-    if args.truncate and args.delete_year is not None:
-        print("ERROR: use either --truncate or --delete-year, not both", file=sys.stderr)
+    exclusive = [args.truncate, args.delete_year is not None, args.recreate]
+    if sum(1 for flag in exclusive if flag) > 1:
+        print(
+            "ERROR: use only one of --truncate, --delete-year, --recreate",
+            file=sys.stderr,
+        )
         return 2
 
     client = bigquery.Client(project=args.project, location=args.location)
@@ -107,6 +127,17 @@ def main() -> int:
         return 1
 
     created = False
+    if args.recreate:
+        try:
+            client.delete_table(table_id, not_found_ok=True)
+            print(f"[prepare_year_load] dropped {table_id} (--recreate)")
+        except Forbidden as exc:
+            print(
+                f"[prepare_year_load] ERROR: cannot drop {table_id}: {exc}",
+                file=sys.stderr,
+            )
+            return 1
+
     try:
         client.get_table(table_id)
         print(f"[prepare_year_load] {table_id} already exists")

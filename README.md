@@ -6,7 +6,7 @@ Dashboard público de **storytelling** sobre producción y completaciones no con
 
 Este repo es un **data product** de portfolio, **spec-driven**: primero specs y ADRs, después Meltano / dbt / Next.
 
-> **Hito 1 (este árbol):** Meltano en [`extraction/`](extraction/README.md) → BigQuery `raw_cap4`. dbt y Next siguen sin implementar. El load live a BQ puede estar bloqueado si no hay SA en el entorno. Esta docs setea el relato Barrilito **antes** del código de Hito 2/3.
+> **Hito 1 (este árbol):** Meltano en [`extraction/`](extraction/README.md) → BigQuery `raw_cap4_dev` (año 2025: `COUNT(*)` **991 844**, delta 0). dbt y Next siguen sin implementar. Esta docs setea el relato Barrilito **antes** del código de Hito 2/3.
 
 | Si sos… | Empezá por |
 | --- | --- |
