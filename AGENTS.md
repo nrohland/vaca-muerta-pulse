@@ -4,9 +4,9 @@ Instrucciones para **coding agents** (y humanos que implementan). El relato de p
 
 ## 0. Qué es este repo ahora
 
-Greenfield **spec-driven**. **Hito 2 en curso:** dbt Core vive en [`transform/`](transform/README.md). Meltano (Hito 1) está en [`extraction/`](extraction/README.md). **No** implementes Next.js hasta el Hito 3 ([plan.md](specs/001-vaca-muerta-pulse/plan.md)).
+Greenfield **spec-driven**. **Hito 2 marts en `main`.** dbt Core vive en [`transform/`](transform/README.md). Meltano (Hito 1) está en [`extraction/`](extraction/README.md). **No** implementes Next.js hasta el Hito 3 ([plan.md](specs/001-vaca-muerta-pulse/plan.md)).
 
-`apps/web/` sigue con README de owner, vacío de código a propósito.
+`apps/web/` sigue con README de owner, vacío de código a propósito. Hay un **spike** de portada en [`apps/spike/`](apps/spike/README.md) (notebook + CSV de marts; [ADR 0002](docs/adrs/0002-ui-spike-notebook.md)) — no es el dashboard público.
 
 ## 1. Leé esto primero (en orden)
 
@@ -14,11 +14,11 @@ Greenfield **spec-driven**. **Hito 2 en curso:** dbt Core vive en [`transform/`]
 2. [README.md](README.md) — problema, diagramas, hitos.
 3. [specs/README.md](specs/README.md) — reglas SDD.
 4. Spec activa: [specs/001-vaca-muerta-pulse/spec.md](specs/001-vaca-muerta-pulse/spec.md) y [plan.md](specs/001-vaca-muerta-pulse/plan.md).
-5. [docs/architecture.md](docs/architecture.md) + [ADR 0001](docs/adrs/0001-stack-choices.md).
-6. El README del folder que vas a tocar (`extraction/`, `transform/`, `apps/web/`).
+5. [docs/architecture.md](docs/architecture.md) + [ADR 0001](docs/adrs/0001-stack-choices.md) (+ [ADR 0002](docs/adrs/0002-ui-spike-notebook.md) si tocás el spike).
+6. El README del folder que vas a tocar (`extraction/`, `transform/`, `apps/web/`, `apps/spike/`).
 7. Si tocás granos o columnas: [data-model.md](specs/001-vaca-muerta-pulse/data-model.md). UNKNOWN no se inventan: se marcan o se confirman con evidencia (sample de source / `INFORMATION_SCHEMA`).
 
-No busques la app Next todavía: no está. Meltano **sí** está en `extraction/meltano.yml`. dbt **sí** está en `transform/dbt_project.yml`.
+No busques la app Next todavía: no está. El spike de portada **sí** está en `apps/spike/`. Meltano **sí** está en `extraction/meltano.yml`. dbt **sí** está en `transform/dbt_project.yml`.
 
 ## 2. Spec-Driven Development (obligatorio)
 
@@ -35,6 +35,7 @@ No busques la app Next todavía: no está. Meltano **sí** está en `extraction/
 | `docs/` | todos (DE lidera BQ/Meltano) | 0+ | arquitectura + ADRs |
 | `extraction/` | **DE** | 1 | Meltano + tap CKAN DataStore → target-bigquery |
 | `transform/` | **AE** | 2 | dbt Core `stg` → `int` → `marts` (Barrilito `fct_barrilito_rate`) + IAM/datasets (`vm-pulse-dbt`) |
+| `apps/spike/` | AE + producto | 2→3 | notebook + CSV de marts; **no** es Hito 3 |
 | `apps/web/` | **Front** | 3 | placeholder Next + Tremor |
 
 No pongas modelos dbt en `extraction/`, ni taps Singer en `transform/`, ni queries a `raw_*` desde el front.
@@ -96,5 +97,5 @@ Un agente que actúa en un rol **no cruza** de folder salvo un cambio de contrat
 - Scaffold de Next “para adelantar” el portfolio (dbt es Hito 2, ya está).
 - Inventar granos de completaciones o IDs de empresa si el source no los confirma.
 - Apuntar el dashboard a CSVs locales como arquitectura final.
-- Snowflake, Airbyte, Streamlit u otro stack sin un ADR que reemplace el 0001.
+- Snowflake, Airbyte, Streamlit u otro stack **de producto** sin un ADR que reemplace el 0001. Un spike en `apps/spike/` está cubierto por el [ADR 0002](docs/adrs/0002-ui-spike-notebook.md) y **no** es Hito 3.
 - Scrapear el HTML de consulta avanzada de SE.

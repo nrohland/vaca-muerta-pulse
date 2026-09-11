@@ -2,7 +2,7 @@
 
 Vista C4-ish del data product. Stack y *por qué*: [ADR 0001](adrs/0001-stack-choices.md). Producto: [spec.md](../specs/001-vaca-muerta-pulse/spec.md).
 
-**Hoy (Hito 2, P0+P1 en `main`):** dbt Core en `transform/` sobre raw Meltano. Source primario de stg: **`raw_cap4_dev`** (`produccion_pozo_mes` `COUNT(*)` = 991844, año 2025 — handoff DE/Tutor). Prod twin: `raw_cap4`. Mart headline **`fct_barrilito_rate`**. Rankings **`fct_company_month`** / **`fct_area_month`**. SA `vm-pulse-dbt` **creada por Nico**; bindings OK. Completaciones: empty (Adjunto IV no está en el job default). Next: Hito 3.
+**Hoy (Hito 2, P0+P1 en `main`):** dbt Core en `transform/` sobre raw Meltano. Source primario de stg: **`raw_cap4_dev`** (`produccion_pozo_mes` `COUNT(*)` = 991844, año 2025 — handoff DE/Tutor). Prod twin: `raw_cap4`. Mart headline **`fct_barrilito_rate`**. Rankings **`fct_company_month`** / **`fct_area_month`**. SA `vm-pulse-dbt` **creada por Nico**; bindings OK. Completaciones: empty (Adjunto IV no está en el job default). Spike de portada: [`apps/spike/`](../apps/spike/README.md) ([ADR 0002](adrs/0002-ui-spike-notebook.md)). Next: Hito 3.
 
 ## 1. Contexto
 

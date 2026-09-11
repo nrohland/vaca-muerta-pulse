@@ -2,7 +2,7 @@
 
 - **Estado:** Activa
 - **Marca (UI / copy):** **Barrilito**. **Repo GitHub:** `vaca-muerta-pulse` (no se renombra).
-- **Hito actual del repo:** 2 (dbt Core en `transform/`). Meltano en `extraction/`. Load live a BQ y `dbt build` warehouse pendientes de SA. Next = Hito 3.
+- **Hito actual del repo:** 2 cerrado en warehouse (marts Barrilito + empresa/área). Next = Hito 3. Spike de portada: `apps/spike/` (ADR 0002).
 - **Plan:** [plan.md](plan.md) · **Granos:** [data-model.md](data-model.md) · **Tasks:** [tasks.md](tasks.md)
 
 ## Problema

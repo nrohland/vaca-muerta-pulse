@@ -22,6 +22,8 @@ Hasta Hito 3:
 - no scaffold de Next “por si acaso”
 - no copiar secretos de GCP al front; si hay queries, service role en server / vistas públicas
 
+Decisiones de interpolación / paleta / empty de completaciones: spike [`apps/spike/`](../spike/README.md) ([ADR 0002](../../docs/adrs/0002-ui-spike-notebook.md)). No cierra este hito.
+
 Referencias:
 
 - [docs/architecture.md](../../docs/architecture.md)

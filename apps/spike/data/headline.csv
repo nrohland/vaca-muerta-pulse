@@ -1,0 +1,2 @@
+periodo,anio,mes,prod_pet_m3,tef_sum,days_in_month,well_month_row_count,rate_m3_dia,rate_bbl_dia,rate_method,is_simulation,disclaimer,source_batched_at_max,fecha_data_max
+2025-12-01,2025,12,2909815.325269685,70455.38873466998,31,3052,41.30011029004246,259.7698785044969,tef_weighted,True,simulación a partir de datos mensuales oficiales,2026-09-10 20:50:24.350928+00:00,2025-12-31 00:00:00+00:00

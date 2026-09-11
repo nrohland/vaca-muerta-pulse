@@ -89,6 +89,8 @@ Producto UI: **Barrilito** (repo `vaca-muerta-pulse`). El contador “live” es
 - [x] `dbt test` verde en CI o instrucciones locales inequívocas. — CI: `dbt deps` + `dbt parse`. Warehouse 2026-09-11: `dbt build --select +fct_barrilito_rate` PASS=33 y `dbt test` PASS=29 contra `raw_cap4_dev` (SA `vm-pulse-dbt`). `fct_barrilito_rate` 1 fila.
 - [x] Front puede basarse en nombres de marts documentados (`transform/README.md` + data-model), incluida la tasa Barrilito y los rankings empresa/área.
 
+**Spike de portada (no cierra Hito 3):** [`apps/spike/`](../../apps/spike/README.md) — notebook + CSV acotados de marts. Interpolación = reloj diario. [ADR 0002](../../docs/adrs/0002-ui-spike-notebook.md).
+
 ---
 
 ## Hito 3 — Dashboard Next.js + Tremor
