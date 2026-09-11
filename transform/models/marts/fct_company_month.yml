@@ -6,9 +6,10 @@ models:
       Company × Capítulo IV month for the Pulse cut (Vaca Muerta, no
       convencional). Built only from `fct_well_month` — never from raw_*.
 
-      **Grain:** one row = `idempresa` × `periodo`. Clustered by
-      `idempresa`. Not partitioned by `periodo` while the GCP sandbox
-      forces 60-day partition expiration.
+      **Grain:** one row = `idempresa` × `periodo`. Sparse: a row exists
+      only if that operator has at least one well-month in that month
+      (no date spine). Clustered by `idempresa`. Not partitioned by
+      `periodo` while the GCP sandbox forces 60-day partition expiration.
 
       Volumes are sums of well-month. `wells_with_oil` is distinct wells
       with `prod_pet_m3 > 0` that month (not new wells — that remains

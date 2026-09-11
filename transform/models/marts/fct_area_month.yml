@@ -6,10 +6,11 @@ models:
       Permiso/concesión area × Capítulo IV month for the Pulse cut.
       Built only from `fct_well_month` — never from raw_*.
 
-      **Grain:** one row = `idareapermisoconcesion` × `periodo`. Preferred
-      area column pair from the data-model (`areapermisoconcesion`).
-      Clustered by `idareapermisoconcesion`. Not partitioned by `periodo`
-      in sandbox. Inter-year stability of area ids remains UNKNOWN.
+      **Grain:** one row = `idareapermisoconcesion` × `periodo`. Sparse
+      (no date spine). Preferred area column pair from the data-model
+      (`areapermisoconcesion`). Clustered by `idareapermisoconcesion`.
+      Not partitioned by `periodo` in sandbox. Inter-year stability of
+      area ids remains UNKNOWN.
     columns:
       - name: area_month_id
         description: Surrogate of idareapermisoconcesion + periodo.

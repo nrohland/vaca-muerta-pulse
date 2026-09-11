@@ -102,6 +102,7 @@ Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 2–3. Código:
 - [x] Sin `PARTITION BY periodo` (sandbox 60d). Cluster `idempresa` / `idareapermisoconcesion`.
 - [x] Tests: unique combo, not_null, relationships a dims, reconciliación `sum(prod_pet_m3)` vs `fct_well_month` por `periodo`.
 - [x] Completaciones: **no** en este PR (Adjunto IV sigue fuera del job Meltano default).
+- [x] Warehouse 2026-09-11 (SA `vm-pulse-dbt`, sin Meltano `GCP_SA_KEY`): `dbt build` de estos 4 modelos + tests **PASS=32** en 16.3 s. `dim_company` **24** filas; `dim_area` **83**; `fct_company_month` **242** (sparse); `fct_area_month` **981**. Dic-2025 `sum(prod_pet_m3)` = Barrilito **2 909 815.325** m³. Jobs US: company `6750284a-7942-4c4e-b97e-cc8a1c404551` (~3.5 MiB); area `caa17abd-e62f-44a0-b564-4cde970f8564` (~3.8 MiB).
 
 ---
 

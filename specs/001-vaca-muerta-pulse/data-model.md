@@ -103,7 +103,7 @@ Tight no-VM: no-goal (spec). El raw carga **todas las cuencas/años del resource
 | | |
 | --- | --- |
 | Clave empresa | **CONFIRMED** `idempresa` + texto `empresa`. Warehouse 2025 Pulse: **24** ids, 1:1 con nombres (0 `idempresa` con más de un string). Estabilidad temporal / operador ≠ titular = UNKNOWN (sin GLEIF; solo 2025 cargado) |
-| Clave hecho | `idempresa` × `periodo` (DATE `YYYY-MM-01`) |
+| Clave hecho | `idempresa` × `periodo` (DATE `YYYY-MM-01`). **Sparse:** hay fila solo si el operador tiene al menos un well-month ese mes (no hay date spine ni ceros inventados). Dim = 24 ids en 2025; dic-2025 = 22 company-months |
 | Medidas | `prod_pet_m3` / `prod_gas_km3` / `prod_agua_m3`, `tef_sum`, `well_count`, `wells_with_oil` (distinct `idpozo` con petróleo > 0 ese mes). **UNKNOWN** pozos nuevos (no hay padrón de primera producción en el DAG) |
 | Source | Solo `fct_well_month`. Front no lee `raw_*` |
 | Partition / cluster | **No** `PARTITION BY periodo` en sandbox (mismo cap 60d). Cluster `idempresa` |
@@ -125,7 +125,7 @@ Estabilidad de ids entre años = UNKNOWN (solo 2025 cargado).
 
 | | |
 | --- | --- |
-| Clave hecho | `idareapermisoconcesion` × `periodo` |
+| Clave hecho | `idareapermisoconcesion` × `periodo`. Sparse como empresa-mes (981 area-months en 2025 vs 83×12 = 996) |
 | Warehouse 2025 Pulse | **83** áreas, 1:1 id/nombre (0 ids con más de un string; 0 blanks) |
 | Medidas | mismas sumas que empresa-mes (`prod_*`, `tef_sum`, `well_count`, `wells_with_oil`) + `company_count` |
 | Source | Solo `fct_well_month` |
