@@ -196,12 +196,13 @@ dbt debug
 # raw_cap4_dev.produccion_pozo_mes COUNT(*) = 991844 (año 2025, handoff DE).
 # Evitá select * de raw_*. Preferí --select acotado y dbt show --limit.
 # Antes de un scan pesado: dry-run BQ. Raw ~338 MiB; si el estimado es ≫ 1 TiB, STOP.
-dbt run --select stg+
-dbt build --select fct_barrilito_rate+
+# `stg+` no matchea (tags = staging). El `+` a la izquierda incluye padres.
+dbt build --select +fct_barrilito_rate
+dbt test
 dbt show --select fct_barrilito_rate --limit 5
 ```
 
-`dbt build` **completo** no se corrió en el agente de este PR: **no hay `GCP_SA_KEY_DBT` inyectado** en este VM (IAM sí está OK en warehouse, ver PR #11). No se reutilizó `GCP_SA_KEY` de Meltano. No inventamos resultados verdes de warehouse.
+`dbt build --select +fct_barrilito_rate` y `dbt test` **verdes** 2026-09-11 contra BigQuery (SA `vm-pulse-dbt`, secret `GCP_SA_KEY_DBT`; no se usó Meltano `GCP_SA_KEY`). `fct_well_month` = 34051 filas; `fct_barrilito_rate` = 1 fila (`periodo` 2025-12-01, `rate_method=tef_weighted`). Source schema: `env_var('DBT_RAW_DATASET', 'raw_cap4_dev')` en `_sources.yml` — **no** pongas `{{ env_var() }}` dentro de `vars:` (dbt lo deja sin renderizar).
 
 Unit tests del mart (`test_type:unit`) también necesitan adapter BQ (tablas temporales). Están escritos; hay que correrlos con SA.
 

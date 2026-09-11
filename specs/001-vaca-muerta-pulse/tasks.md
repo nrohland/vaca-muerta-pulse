@@ -89,7 +89,7 @@ Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 5. Código: [`t
 - [x] Source primario: `raw_cap4_dev.produccion_pozo_mes`. **`COUNT(*)` = 991844** (año 2025) — handoff DE/Tutor. Twin prod: `raw_cap4`. Este PR no re-consultó `INFORMATION_SCHEMA`.
 - [x] Test de reconciliación SQL: `prod_pet_m3` Barrilito vs suma de `fct_well_month` del mismo `periodo` (corre con `dbt test` cuando hay warehouse).
 - [x] Actualizar [data-model.md](data-model.md): contrato `fct_barrilito_rate`; tef no promovido a CONFIRMED. Sin sensores ni grano intradía.
-- [ ] `dbt build` / `dbt test` contra BigQuery — **bloqueado** 2026-09-10: IAM de `vm-pulse-dbt` OK (PR #11); este agente **no** tiene `GCP_SA_KEY_DBT` inyectado (env vacío, sin ADC, `gh secret list` 403). No se usó `GCP_SA_KEY` Meltano. Instrucciones: [transform/README.md](../../transform/README.md). `dbt deps` + `dbt parse` sí.
+- [x] `dbt build` / `dbt test` contra BigQuery — 2026-09-11, SA `vm-pulse-dbt` / `GCP_SA_KEY_DBT`. `fct_well_month` **34051** filas; `fct_barrilito_rate` **1 fila** (`periodo` 2025-12-01, `rate_method=tef_weighted`). `dbt build --select +fct_barrilito_rate` PASS=33; `dbt test` PASS=29. Evidencia sin keys: job well-month `aeb65940-5766-4d3d-ad1d-6177c03fa2da` (258.9 MiB); job mart `a6ed973a-8881-4856-a038-1276c452606c`.
 
 ---
 

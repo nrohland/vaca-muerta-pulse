@@ -14,7 +14,7 @@ sources:
       production month. Business month is `periodo` (DATE first of month),
       materialized in staging.
     database: "{{ env_var('BIGQUERY_PROJECT', 'vaca-muerta-pulse') }}"
-    schema: "{{ var('raw_dataset') }}"
+    schema: "{{ env_var('DBT_RAW_DATASET', 'raw_cap4_dev') }}"
     tables:
       - name: produccion_pozo_mes
         description: >
