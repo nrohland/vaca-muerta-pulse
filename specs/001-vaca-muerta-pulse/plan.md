@@ -86,7 +86,7 @@ Producto UI: **Barrilito** (repo `vaca-muerta-pulse`). El contador “live” es
 - [x] **Fórmula** en modelo + data-model: preferred `sum(prod_pet_m3) / nullif(sum(tef), 0)`; fallback `days_in_month`. Unit tests fixtures `tef = 0`. Viabilidad tef en BQ = UNKNOWN (sin `dbt test` warehouse en este PR).
 - [x] Conversión `bbl = m³ × 6.28981077` en el mart **y** en YAML de métricas (mismo factor).
 - [x] `stg` usa `periodo`. No tratar `_sdc_batched_at` como mes de producción.
-- [ ] `dbt test` verde en CI o instrucciones locales inequívocas. — CI: `dbt deps` + `dbt parse` (`.github/workflows/dbt-transform.yml`). `dbt build`/`test` documentados en `transform/README.md`; **no** se afirmaron verdes sin SA.
+- [x] `dbt test` verde en CI o instrucciones locales inequívocas. — CI: `dbt deps` + `dbt parse`. Warehouse 2026-09-11: `dbt build --select +fct_barrilito_rate` PASS=33 y `dbt test` PASS=29 contra `raw_cap4_dev` (SA `vm-pulse-dbt`). `fct_barrilito_rate` 1 fila.
 - [x] Front puede basarse en nombres de marts documentados (`transform/README.md` + data-model), incluida la tasa Barrilito.
 
 ---
