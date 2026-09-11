@@ -38,7 +38,7 @@ flowchart LR
 
 | ID | Producto | Estado |
 | --- | --- | --- |
-| [001-vaca-muerta-pulse](001-vaca-muerta-pulse/spec.md) | **Barrilito** (repo `vaca-muerta-pulse`) — Cap. IV, simulación mensual | Activa · Hito 2 (dbt; año 2025 en `raw_cap4_dev`; `dbt build` BQ pide SA) |
+| [001-vaca-muerta-pulse](001-vaca-muerta-pulse/spec.md) | **Barrilito** (repo `vaca-muerta-pulse`) — Cap. IV, simulación mensual | Activa · Hito 2 (dbt; año 2025 en `raw_cap4_dev`; `dbt build` BQ pide `GCP_SA_KEY_DBT`) |
 
 ## Convenciones
 

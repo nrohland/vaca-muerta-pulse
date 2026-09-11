@@ -6,7 +6,7 @@ dbt **Core** (gratis) + paquetes Hub. No dbt Cloud, no paquetes pagos. Meltano n
 
 Contrato de granos: [data-model.md](../specs/001-vaca-muerta-pulse/data-model.md) § Grano 5. El identificador publicado es **`fct_barrilito_rate`** (el alias `mart_barrilito_headline` no se usa).
 
-IAM + datasets (evidencia DE): [docs/hito-2-bq-iam.md](docs/hito-2-bq-iam.md).
+IAM / datasets (DE, PR #11): [docs/hito-2-bq-iam.md](docs/hito-2-bq-iam.md). Secret de dbt: **`GCP_SA_KEY_DBT`** (nunca `GCP_SA_KEY` de Meltano).
 
 ---
 
@@ -78,7 +78,7 @@ Análisis compilable: [analyses/sample_barrilito_headline.sql](analyses/sample_b
 
 ## Datasets dbt (ops)
 
-SA de dbt (nombre, **docs only**): **`vm-pulse-dbt`**. El JSON de la key **nunca** va al git. Copiá `profiles.yml.example` → `transform/profiles.yml` (gitignored) o `~/.dbt/profiles.yml` y apuntá `GOOGLE_APPLICATION_CREDENTIALS` a un path local.
+SA de dbt (nombre, **docs only**): **`vm-pulse-dbt`**. El JSON de la key **nunca** va al git. Copiá `profiles.yml.example` → `transform/profiles.yml` (gitignored) o `~/.dbt/profiles.yml` y apuntá `GOOGLE_APPLICATION_CREDENTIALS` a un path local gitignored.
 
 | Capa | Dev (Hito 2, default) | Prod twin (futuro, `DBT_TARGET=prod`) |
 | --- | --- | --- |
@@ -87,7 +87,7 @@ SA de dbt (nombre, **docs only**): **`vm-pulse-dbt`**. El JSON de la key **nunca
 | Intermediate | `int_cap4_dev` | `int_cap4` |
 | Marts (Front) | `marts_cap4_dev` | `marts_cap4` |
 
-`generate_schema_name` escribe esos datasets (no `{profile}_stg`). IAM **verificado** 2026-09-10: [docs/hito-2-bq-iam.md](docs/hito-2-bq-iam.md).
+`generate_schema_name` escribe esos datasets (no `{profile}_stg`). IAM **verificado** 2026-09-10 (PR #11): [docs/hito-2-bq-iam.md](docs/hito-2-bq-iam.md).
 
 ---
 
@@ -158,6 +158,8 @@ Local, si ya tenés la key (Nico la creó; preferible ADC / WIF):
 
 ```bash
 cd transform
+export BIGQUERY_PROJECT=vaca-muerta-pulse
+# Exige GCP_SA_KEY_DBT. No cae a Meltano GCP_SA_KEY.
 mkdir -p .secrets                          # .secrets/ está gitignored
 # el JSON vive acá o en GH Secrets — nunca en el commit
 export GOOGLE_APPLICATION_CREDENTIALS="$PWD/.secrets/vm-pulse-dbt.json"
@@ -165,17 +167,6 @@ export GOOGLE_APPLICATION_CREDENTIALS="$PWD/.secrets/vm-pulse-dbt.json"
 export GCP_SA_KEY_DBT='<JSON completo de vm-pulse-dbt>'
 export GOOGLE_APPLICATION_CREDENTIALS="$(bash scripts/materialize-dbt-sa-key.sh)"
 ```
-
-### Cursor Cloud / GitHub (el menú de secrets)
-
-Mismo patrón que Meltano, **otro** secret:
-
-1. En el run del agente aparece el menú **Add secrets**.
-2. Pegá el JSON **entero** de la key (de `{` a `}`) en **`GCP_SA_KEY_DBT`**.
-3. Si solo tenés el PEM, pegá también **`GCP_SA_DBT_CLIENT_EMAIL`** = `vm-pulse-dbt@<project-id>.iam.gserviceaccount.com` (o `BIGQUERY_PROJECT`).
-4. El script materializa a `transform/.secrets/vm-pulse-dbt.json` (gitignored) y **rechaza** `GCP_SA_KEY` de Meltano.
-
-Este PR **no** descarga ni commitea un JSON de SA.
 
 ---
 
@@ -187,30 +178,44 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 cp profiles.yml.example profiles.yml   # gitignored — no lo commitees
-# GOOGLE_APPLICATION_CREDENTIALS → JSON local de vm-pulse-dbt (fuera de git)
+# Materializá la key de vm-pulse-dbt (GCP_SA_KEY_DBT, no GCP_SA_KEY):
+export BIGQUERY_PROJECT=vaca-muerta-pulse
+export GOOGLE_APPLICATION_CREDENTIALS="$(bash scripts/materialize-dbt-sa-key.sh)"
 dbt deps
 dbt parse          # no necesita warehouse (verificado en este PR con dbt 1.12)
 # dbt compile / build / test / show SÍ abren BigQuery con dbt-bigquery 1.12
 ```
 
-Con credenciales (SA **`vm-pulse-dbt`**, key fuera de git):
+Con credenciales (SA **`vm-pulse-dbt`**, secret **`GCP_SA_KEY_DBT`**, key fuera de git):
 
 ```bash
 export BIGQUERY_PROJECT=vaca-muerta-pulse
-export GOOGLE_APPLICATION_CREDENTIALS=/absolute/path/to/vm-pulse-dbt.json
+export GOOGLE_APPLICATION_CREDENTIALS="$(bash scripts/materialize-dbt-sa-key.sh)"
 dbt debug
 # El mart headline es 1 fila. El build de fct_well_month lee stg → raw.
 # raw_cap4_dev.produccion_pozo_mes COUNT(*) = 991844 (año 2025, handoff DE).
-# Evitá select * de raw_*. Preferí --select fct_barrilito_rate+ y dbt show --limit.
+# Evitá select * de raw_*. Preferí --select acotado y dbt show --limit.
+# Antes de un scan pesado: dry-run BQ. Raw ~338 MiB; si el estimado es ≫ 1 TiB, STOP.
+dbt run --select stg+
 dbt build --select fct_barrilito_rate+
 dbt show --select fct_barrilito_rate --limit 5
 ```
 
-`dbt build` **completo** no se corrió en el agente de este PR: no hay credenciales BQ en el entorno. No inventamos resultados verdes de warehouse.
+`dbt build` **completo** no se corrió en el agente de este PR: **no hay `GCP_SA_KEY_DBT` inyectado** en este VM (IAM sí está OK en warehouse, ver PR #11). No se reutilizó `GCP_SA_KEY` de Meltano. No inventamos resultados verdes de warehouse.
 
 Unit tests del mart (`test_type:unit`) también necesitan adapter BQ (tablas temporales). Están escritos; hay que correrlos con SA.
 
 Targets: `dev` (default) → `raw_cap4_dev` / `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev`. `prod` → twins sin `_dev`.
+
+### Cursor Cloud / GitHub (menú de secrets)
+
+Mismo patrón que Meltano, **otro** secret:
+
+1. Add secrets → **`GCP_SA_KEY_DBT`** = JSON **entero** de `{` a `}` de `vm-pulse-dbt`.
+2. Opcional PEM: también **`GCP_SA_DBT_CLIENT_EMAIL`** = `vm-pulse-dbt@<project-id>.iam.gserviceaccount.com` (o `BIGQUERY_PROJECT`).
+3. `bash transform/scripts/materialize-dbt-sa-key.sh` escribe `transform/.secrets/vm-pulse-dbt.json` (gitignored) y **rechaza** `GCP_SA_KEY` de Meltano.
+
+No pegues `GCP_SA_KEY` (Meltano) acá. Este PR **no** descarga ni commitea un JSON de SA.
 
 ---
 
@@ -253,10 +258,11 @@ Evaluator (caro; no es el `dbt build` default). Los modelos del paquete están `
 
 ## Costo BigQuery
 
-- Staging es **view**; el primer `dbt build` de `fct_well_month` lee **991844** filas de `raw_cap4_dev.produccion_pozo_mes` (año 2025). No hagas `select *` de raw.
+- Staging es **view**; el primer `dbt build` de `fct_well_month` lee **991844** filas de `raw_cap4_dev.produccion_pozo_mes` (año 2025, ~338 MiB). No hagas `select *` de raw.
 - Partición raw = `_sdc_batched_at` MONTH — **no** sirve para filtrar el mes Cap. IV (`periodo` vive en stg).
-- Preferí `dbt show --limit`, `dbt build --select fct_barrilito_rate+`.
+- Preferí dry-run BQ, `dbt show --limit`, `dbt run --select stg+`, luego `dbt build --select fct_barrilito_rate+`.
 - Recorte VM en stg (~34k well-months en el sample DataStore 2025); el scan de raw sigue siendo el año entero si la view no predica partición.
+- Si un dry-run estima ≫ 1 TiB, **STOP**.
 
 ---
 

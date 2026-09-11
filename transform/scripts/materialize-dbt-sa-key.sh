@@ -28,14 +28,20 @@ transform_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 dest="${SA_KEY_PATH:-$transform_dir/.secrets/vm-pulse-dbt.json}"
 mkdir -p "$(dirname "$dest")"
 
-# Refuse to accidentally consume the Meltano secret.
+# MUST require GCP_SA_KEY_DBT. NEVER fall back to Meltano GCP_SA_KEY.
 if [ -z "${GCP_SA_KEY_DBT:-}" ] && [ -z "${GCP_SA_KEY_DBT_BASE64:-}" ]; then
   if [ -n "${GCP_SA_KEY:-}" ] || [ -n "${GCP_SA_KEY_BASE64:-}" ]; then
     echo "[sa-key-dbt] ERROR: found Meltano GCP_SA_KEY / GCP_SA_KEY_BASE64 but not GCP_SA_KEY_DBT." >&2
     echo "  dbt uses a different SA (vm-pulse-dbt). Set GCP_SA_KEY_DBT (full JSON) like Meltano's GCP_SA_KEY." >&2
-    exit 1
+  else
+    echo "[sa-key-dbt] ERROR: set GCP_SA_KEY_DBT (full JSON of vm-pulse-dbt) or GCP_SA_KEY_DBT_BASE64." >&2
+    echo "[sa-key-dbt] Do not reuse Meltano GCP_SA_KEY." >&2
   fi
+  exit 1
 fi
+
+# Unset Meltano vars so a leftover GCP_SA_KEY cannot leak into vm-pulse-dbt.json.
+unset GCP_SA_KEY GCP_SA_KEY_BASE64 || true
 
 SA_KEY_DEST="$dest" python3 <<'PY'
 import base64, json, os, sys

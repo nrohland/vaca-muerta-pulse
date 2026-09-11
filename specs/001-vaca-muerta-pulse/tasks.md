@@ -70,7 +70,7 @@ Evidencia: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.
 
 - [x] Datasets US: `stg_cap4_dev`, `int_cap4_dev`, `marts_cap4_dev`.
 - [x] `raw_cap4_dev` existe; `raw_cap4` no.
-- [x] SA `vm-pulse-dbt` **creada por Nico** + auth `GCP_SA_KEY_DBT` (distinto de Meltano `GCP_SA_KEY`).
+- [x] SA `vm-pulse-dbt` **creada por Nico** + auth `GCP_SA_KEY_DBT` (distinto de Meltano `GCP_SA_KEY`; el agente de modelos de este PR no tiene el secret inyectado).
 - [x] Roles: `jobUser`; `dataViewer` (READER) en `raw_cap4_dev`; `dataEditor` (WRITER) en stg/int/marts.
 - [x] Docs + `.env.example` con nombres (`DBT_BIGQUERY_PROJECT`, `DBT_DATASET_*`, `GCP_SA_KEY_DBT`).
 - [x] Default table expiration 60d en datasets dbt — documentado; Nico puede `--unset-table-expiration`.
@@ -89,7 +89,7 @@ Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 5. Código: [`t
 - [x] Source primario: `raw_cap4_dev.produccion_pozo_mes`. **`COUNT(*)` = 991844** (año 2025) — handoff DE/Tutor. Twin prod: `raw_cap4`. Este PR no re-consultó `INFORMATION_SCHEMA`.
 - [x] Test de reconciliación SQL: `prod_pet_m3` Barrilito vs suma de `fct_well_month` del mismo `periodo` (corre con `dbt test` cuando hay warehouse).
 - [x] Actualizar [data-model.md](data-model.md): contrato `fct_barrilito_rate`; tef no promovido a CONFIRMED. Sin sensores ni grano intradía.
-- [ ] `dbt build` / `dbt test` contra BigQuery — **bloqueado** en este PR (sin credenciales en el agente). Instrucciones: [transform/README.md](../../transform/README.md). `dbt deps` + `dbt parse` sí.
+- [ ] `dbt build` / `dbt test` contra BigQuery — **bloqueado** 2026-09-10: IAM de `vm-pulse-dbt` OK (PR #11); este agente **no** tiene `GCP_SA_KEY_DBT` inyectado (env vacío, sin ADC, `gh secret list` 403). No se usó `GCP_SA_KEY` Meltano. Instrucciones: [transform/README.md](../../transform/README.md). `dbt deps` + `dbt parse` sí.
 
 ---
 

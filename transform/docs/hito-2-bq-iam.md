@@ -58,7 +58,7 @@ Meltano sigue OWNER de los datasets dbt. No escribe modelos ahí. `--tighten-acl
 
 ## Secret `GCP_SA_KEY_DBT` (mismo patrón que Meltano, otro secret)
 
-Meltano usa el secret de repo **`GCP_SA_KEY`**. dbt usa **otro** secret: **`GCP_SA_KEY_DBT`**. No reutilizar la key de Meltano (roles distintos; Meltano no debe escribir marts). [materialize-dbt-sa-key.sh](../scripts/materialize-dbt-sa-key.sh) **rechaza** `GCP_SA_KEY` a propósito.
+Meltano usa el secret de repo **`GCP_SA_KEY`**. dbt usa **otro** secret: **`GCP_SA_KEY_DBT`**. No reutilizar la key de Meltano (roles distintos; Meltano no debe escribir marts). [materialize-dbt-sa-key.sh](../scripts/materialize-dbt-sa-key.sh) **exige** `GCP_SA_KEY_DBT` (o `GCP_SA_KEY_DBT_BASE64`) y **rechaza** `GCP_SA_KEY` a propósito.
 
 1. Abrí el JSON descargado (el archivo **completo**, de `{` a `}`).
 2. GitHub / Cursor → Secrets → `GCP_SA_KEY_DBT`.
