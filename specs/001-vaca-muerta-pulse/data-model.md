@@ -8,7 +8,7 @@ Leyenda:
 - **DRAFT** = diseño de producto; falta evidencia en warehouse / dbt.
 - **UNKNOWN** = no afirmar. Cerrar en Hito 2 con tests sobre más años o marcar no-goal.
 
-Nombres de marts (`fct_*`, `dim_*`) siguen **DRAFT** salvo **`fct_barrilito_rate`**, publicado como contrato Hito 2 (el alias `mart_barrilito_headline` no se usa).
+Nombres de marts (`fct_*`, `dim_*`) siguen **DRAFT** salvo los publicados en Hito 2: **`fct_barrilito_rate`**, **`fct_well_month`**, **`fct_company_month`**, **`dim_company`**, **`fct_area_month`**, **`dim_area`**. El alias `mart_barrilito_headline` no se usa.
 
 Datasets físicos dbt (dev, US, Hito 2 IAM): `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev`. Source raw Hito 2: `raw_cap4_dev`. Detalle: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.md).
 
@@ -38,7 +38,7 @@ Dataset portal: [energia-produccion-petroleo-gas-por-pozo-capitulo-iv](https://d
 | `prod_gas` | Gas | miles de m³ |
 | `prod_agua` | Agua | m³ |
 | `iny_agua`, `iny_gas`, `iny_co2`, `iny_otro` | Inyecciones | raw sí; marts de storytelling no (salvo agua de producción) |
-| `tef` | Tiempo efectivo | **CONFIRMED plausible días** (31.0 en enero en sample no-conv; 0 en abandonados). Cast explícito en Hito 2 |
+| `tef` | Tiempo efectivo | **CONFIRMED plausible días** en el recorte Pulse 2025 (warehouse: 0 nulls, min 0, max 31.0, 6115 ceros / 27936 > 0 de 34051 well-months). Cast explícito en Hito 2. Definición oficial / otros años = UNKNOWN |
 | `vida_util` | | numeric; uso Pulse = UNKNOWN |
 | `empresa`, `idempresa` | Quién declara | text |
 | `formprod` | Código formación productiva (p.ej. `PROS`, `FIMP`) | text |
@@ -97,30 +97,39 @@ Tight no-VM: no-goal (spec). El raw carga **todas las cuencas/años del resource
 
 ## Grano 2 — Empresa
 
-**Nombre DRAFT:** `fct_company_month` + `dim_company`  
-**Grano DRAFT:** empresa × mes, suma del recorte VM.
+**Nombre (contrato Hito 2 P1):** `fct_company_month` + `dim_company`  
+**Grano:** empresa × mes, suma del recorte Pulse (VM no conv.).
 
 | | |
 | --- | --- |
-| Clave empresa | **CONFIRMED que existen** `idempresa` (p.ej. `Z001`) y texto `empresa`. Estabilidad temporal / operador ≠ titular = UNKNOWN (sin GLEIF) |
-| Medidas | producción pet/gas, pozos con producción > 0, UNKNOWN pozos nuevos |
+| Clave empresa | **CONFIRMED** `idempresa` + texto `empresa`. Warehouse 2025 Pulse: **24** ids, 1:1 con nombres (0 `idempresa` con más de un string). Estabilidad temporal / operador ≠ titular = UNKNOWN (sin GLEIF; solo 2025 cargado) |
+| Clave hecho | `idempresa` × `periodo` (DATE `YYYY-MM-01`) |
+| Medidas | `prod_pet_m3` / `prod_gas_km3` / `prod_agua_m3`, `tef_sum`, `well_count`, `wells_with_oil` (distinct `idpozo` con petróleo > 0 ese mes). **UNKNOWN** pozos nuevos (no hay padrón de primera producción en el DAG) |
+| Source | Solo `fct_well_month`. Front no lee `raw_*` |
+| Partition / cluster | **No** `PARTITION BY periodo` en sandbox (mismo cap 60d). Cluster `idempresa` |
 
-`dim_company` en v1 = DISTINCT del hecho. **P1 este PR:** no hay `fct_company_month` / `dim_company` todavía (Hito 2 entregó well-month + Barrilito).
+`dim_company` = DISTINCT `idempresa` del hecho (`any_value(empresa)`). Test singular falla si un id mapea a más de un nombre.
 
 ## Grano 3 — Área
 
-**Nombre DRAFT:** `fct_area_month`
+**Nombre (contrato Hito 2 P1):** `fct_area_month` + `dim_area`
 
 Columna `areahabilitada`: **no está** en el anual 2025.
 
 Candidatos que **sí** existen:
 
-1. `areapermisoconcesion` / `idareapermisoconcesion` — **preferido** (DRAFT de producto, ahora con columnas CONFIRMED)
-2. `areayacimiento` / `idareayacimiento` — drill-down
+1. `areapermisoconcesion` / `idareapermisoconcesion` — **preferido** (columnas CONFIRMED; mart P1 usa este par)
+2. `areayacimiento` / `idareayacimiento` — drill-down (no es este mart)
 
-Estabilidad de ids entre años = UNKNOWN.
+Estabilidad de ids entre años = UNKNOWN (solo 2025 cargado).
 
-**P1 este PR:** no hay `fct_area_month`. El grano de área preferido sigue siendo `areapermisoconcesion` (columnas CONFIRMED); no se cierra UNKNOWN de estabilidad entre años.
+| | |
+| --- | --- |
+| Clave hecho | `idareapermisoconcesion` × `periodo` |
+| Warehouse 2025 Pulse | **83** áreas, 1:1 id/nombre (0 ids con más de un string; 0 blanks) |
+| Medidas | mismas sumas que empresa-mes (`prod_*`, `tef_sum`, `well_count`, `wells_with_oil`) + `company_count` |
+| Source | Solo `fct_well_month` |
+| Partition / cluster | **No** `PARTITION BY periodo` en sandbox. Cluster `idareapermisoconcesion` |
 
 ## Grano 4 — Completaciones
 
@@ -163,7 +172,7 @@ Cap. IV trae petróleo en **m³** al mes (source `prod_pet`; en stg/marts DRAFT:
 rate_m3_dia = sum(prod_pet_m3) / nullif(sum(tef), 0)
 ```
 
-Es un promedio **ponderado por tiempo efectivo** sobre el último mes Cap. IV (~30 días de DDJJ), no una ventana rodante de producción horaria. Sample 2025: `tef` *parece* días (31.0 en enero no-conv) — **CONFIRMED plausible**. El modelo **implementa** preferred + fallback (`tef_sum > 0` → `tef_weighted`, si no `calendar_days`) y unit tests con fixtures. Que `tef` sea un denominador de días **en el recorte VM del warehouse** sigue **UNKNOWN**: este PR no corrió `dbt test` contra BigQuery (sin credenciales en el agente).
+Es un promedio **ponderado por tiempo efectivo** sobre el último mes Cap. IV (~30 días de DDJJ), no una ventana rodante de producción horaria. Sample 2025: `tef` *parece* días (31.0 en enero no-conv) — **CONFIRMED plausible**. Warehouse Pulse 2025 (`fct_well_month`, 34051 filas): 0 nulls, min 0, max 31.0, 6115 ceros, 27936 > 0. El modelo **implementa** preferred + fallback (`tef_sum > 0` → `tef_weighted`, si no `calendar_days`) y unit tests con fixtures. Corrida 2026-09-11: headline `rate_method = tef_weighted`. Definición oficial de `tef` como días / otros años sigue **UNKNOWN**.
 
 **Fallback** (si `tef` no es usable):
 
@@ -184,14 +193,14 @@ El Front **no** recalcula el factor. El mart expone `rate_bbl_dia`. `rate_method
 
 | Método | Estado | Por qué |
 | --- | --- | --- |
-| `sum(prod_pet_m3) / nullif(sum(tef), 0)` | **Preferido**, cableado (`rate_method = tef_weighted`). Viabilidad en BQ = UNKNOWN | Pondera pozos que realmente “estuvieron on” |
+| `sum(prod_pet_m3) / nullif(sum(tef), 0)` | **Preferido**, cableado (`rate_method = tef_weighted`). Warehouse 2025 Pulse: `tef` en [0, 31], `tef_sum` del headline > 0 | Pondera pozos que realmente “estuvieron on” |
 | `sum(prod_pet_m3) / days_in_month` | Fallback cableado (`calendar_days`) | No depende de `tef`; asume el mes calendario lleno |
 | Sensores / SCADA / grano horario | **Fuera de diseño** | Cap. IV no lo publica |
 
 ### Caveats (no promover a CONFIRMED)
 
 - **Grano mensual:** “~últimos 30 días” = último `periodo` de Capítulo IV, no 30 días móviles de telemetría.
-- **`tef` = 0** en abandonados / sin tiempo efectivo: incluirlos en el numerador con petróleo 0 está bien; un `sum(tef) = 0` obliga al fallback. UNKNOWN cuántas filas VM caen ahí.
+- **`tef` = 0** en abandonados / sin tiempo efectivo: incluirlos en el numerador con petróleo 0 está bien; un `sum(tef) = 0` obliga al fallback. Warehouse 2025 Pulse: **6115** well-months con `tef = 0` (de 34051).
 - **Rectificativas / re-emit:** el último mes puede corregirse en un load posterior. El contador sigue al mart, no a un cache eterno.
 - **Partición raw vs negocio:** filtrar el mes de producción por `periodo` (stg), nunca por `_sdc_batched_at`.
 - **Agregado total:** el headline no es “Barrilito por empresa”. Sumar el recorte Pulse entero.

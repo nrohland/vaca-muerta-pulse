@@ -77,17 +77,17 @@ Producto UI: **Barrilito** (repo `vaca-muerta-pulse`). El contador “live” es
 
 ### Aceptación
 
-- [x] `dbt_project.yml` + `stg` / `int` / `marts` (nombres alineados al data-model). — `stg_produccion_pozo_mes`, `int_produccion_vm_noconv`, `fct_well_month`, `fct_barrilito_rate`
+- [x] `dbt_project.yml` + `stg` / `int` / `marts` (nombres alineados al data-model). — `stg_produccion_pozo_mes`, `int_produccion_vm_noconv`, `fct_well_month`, `fct_barrilito_rate`, `fct_company_month`, `dim_company`, `fct_area_month`, `dim_area`
 - [x] Tests `unique`/`not_null` en claves de `fct_well_month` (YAML; corren con warehouse).
 - [x] Filtro VM no convencional aplicado en `stg` y documentado (strings confirmados).
-- [ ] Marts de empresa y área; grano de área ya no UNKNOWN (o P1 explícito). — **P1 explícito** este PR: no `fct_company_month` / `fct_area_month`. Área preferida sigue `areapermisoconcesion`.
+- [x] Marts de empresa y área; grano de área ya no UNKNOWN (o P1 explícito). — `fct_company_month` + `dim_company` (grano `idempresa+periodo`); `fct_area_month` + `dim_area` (grano preferido `idareapermisoconcesion+periodo`). Estabilidad de ids entre años = UNKNOWN (solo 2025).
 - [x] Completaciones: mart **o** no-goal actualizado en spec. — **sin mart** (Adjunto IV no está en el job Meltano default); Hito 3 empty state. Source documentado.
 - [x] **Mart Barrilito:** `fct_barrilito_rate`, una fila = snapshot VM no conv. último mes Cap. IV (total Pulse). Tasa **bbl/día**.
-- [x] **Fórmula** en modelo + data-model: preferred `sum(prod_pet_m3) / nullif(sum(tef), 0)`; fallback `days_in_month`. Unit tests fixtures `tef = 0`. Viabilidad tef en BQ = UNKNOWN (sin `dbt test` warehouse en este PR).
+- [x] **Fórmula** en modelo + data-model: preferred `sum(prod_pet_m3) / nullif(sum(tef), 0)`; fallback `days_in_month`. Unit tests fixtures `tef = 0`. Warehouse 2025 Pulse: `tef` en [0, 31], 0 nulls; headline `tef_weighted`.
 - [x] Conversión `bbl = m³ × 6.28981077` en el mart **y** en YAML de métricas (mismo factor).
 - [x] `stg` usa `periodo`. No tratar `_sdc_batched_at` como mes de producción.
 - [x] `dbt test` verde en CI o instrucciones locales inequívocas. — CI: `dbt deps` + `dbt parse`. Warehouse 2026-09-11: `dbt build --select +fct_barrilito_rate` PASS=33 y `dbt test` PASS=29 contra `raw_cap4_dev` (SA `vm-pulse-dbt`). `fct_barrilito_rate` 1 fila.
-- [x] Front puede basarse en nombres de marts documentados (`transform/README.md` + data-model), incluida la tasa Barrilito.
+- [x] Front puede basarse en nombres de marts documentados (`transform/README.md` + data-model), incluida la tasa Barrilito y los rankings empresa/área.
 
 ---
 

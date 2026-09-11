@@ -1,0 +1,68 @@
+version: 2
+
+models:
+  - name: fct_area_month
+    description: >
+      Permiso/concesión area × Capítulo IV month for the Pulse cut.
+      Built only from `fct_well_month` — never from raw_*.
+
+      **Grain:** one row = `idareapermisoconcesion` × `periodo`. Preferred
+      area column pair from the data-model (`areapermisoconcesion`).
+      Clustered by `idareapermisoconcesion`. Not partitioned by `periodo`
+      in sandbox. Inter-year stability of area ids remains UNKNOWN.
+    columns:
+      - name: area_month_id
+        description: Surrogate of idareapermisoconcesion + periodo.
+        data_tests:
+          - unique
+          - not_null
+      - name: idareapermisoconcesion
+        description: Permiso/concesión area id. Grain key with periodo.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref("dim_area")
+                field: idareapermisoconcesion
+      - name: areapermisoconcesion
+        description: Area display name (pass-through for ranking without a dim join).
+        data_tests:
+          - not_null
+      - name: periodo
+        description: Business month DATE YYYY-MM-01. Grain key.
+        data_tests:
+          - not_null
+      - name: anio
+        description: DDJJ year of periodo.
+        data_tests:
+          - not_null
+      - name: mes
+        description: DDJJ month of periodo.
+        data_tests:
+          - not_null
+      - name: days_in_month
+        description: Calendar days of periodo (same as well-month).
+      - name: well_month_row_count
+        description: Rows of fct_well_month for this area-month.
+      - name: well_count
+        description: Distinct idpozo in this area-month (on or off).
+      - name: company_count
+        description: Distinct idempresa in this area-month.
+      - name: wells_with_oil
+        description: Distinct idpozo with prod_pet_m3 > 0 in this area-month.
+      - name: prod_pet_m3
+        description: Sum of well-month oil m³.
+      - name: prod_gas_km3
+        description: Sum of well-month gas (thousands of m³).
+      - name: prod_agua_m3
+        description: Sum of well-month water m³.
+      - name: tef_sum
+        description: Sum of tef.
+      - name: source_batched_at_max
+        description: Max Singer batch timestamp in this area-month (freshness, not Cap. IV month).
+      - name: fecha_data_max
+        description: Max official fecha_data in this area-month.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [idareapermisoconcesion, periodo]
