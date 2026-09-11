@@ -11,7 +11,7 @@ Argentina publica el **Capítulo IV** (producción de petróleo y gas por pozo) 
 
 - La unidad de análisis (pozo-mes, a veces por formación) no está explicada para un lector no-upstream.
 - Petróleo/agua en m³ y gas en miles de m³ conviven sin narrativa.
-- Completaciones (fracturas / intervenciones) viven en **otro** recurso y casi nunca se cruzan en una historia única (“producción sube porque se fracturó más”).
+- Completaciones (fracturas / intervenciones) viven en **otro** recurso del mismo portal (Adjunto IV) y casi nunca se cruzan en una historia única (“producción sube porque se fracturó más”). Rigs, Brent, exportaciones y oleoductos **tampoco** están en el anual de producción: o son datasets SESCO hermanos, o son enriquecimiento / seed, o no hay source público.
 - Las herramientas oficiales sirven para consultar un área o un pozo, no para una portada: *qué empresas, qué áreas, qué ritmo de actividad*.
 - El dato oficial es **mensual**. No hay telemetría pública de barriles por segundo.
 
@@ -73,12 +73,41 @@ Prioridad **P0** = Hitos 1–3. **P1** = después, sin bloquear Barrilito v1.
 ### P1 (explícito, no ahora)
 
 - API pública versionada, auth, mapas GIS pesados, cuenca extra, alertas Slack, dbt Cloud, i18n inglés de UI, desglose Barrilito por empresa como headline.
+- **Fuentes hermanas SE / enriquecimiento** (cada una pide spec/ADR + Meltano **antes** de un KPI en UI). Catálogo y evidencia CKAN: [data-model.md](data-model.md) § Fuentes hermanas. No entran en Hito 3.
+  - Adjunto IV → `fct_completions` (R9; resource ya en el tap, job aparte).
+  - Perforación SESCO → actividad mensual de pozos en perforación (proxy, **no** rigs live).
+  - Comercio exterior SESCO → volúmenes / destinos (recorte nacional; no es VM-only).
+  - Seed de capacidad midstream (Oldelval / Otasa) con URL + fecha de cita, contrastada a producción Cap. IV.
+  - Brent u otra serie macro **como tap de enriquecimiento documentado**, no como columna de Capítulo IV.
+
+## Mapa de fuentes (Capítulo IV vs hermanas)
+
+La portada v1 **solo** afirma lo que sale de Capítulo IV (producción pozo-mes) y de marts derivados. Nación publica **más** en el mismo portal, bajo normativas hermanas. Eso **no** autoriza a pintar el número como “dato Cap. IV”.
+
+| Tema | ¿Dónde vive de verdad? | v1 / Hito 3 | Cómo se puede decir en UI |
+| --- | --- | --- | --- |
+| Producción pozo-mes, empresas, áreas, Barrilito | Capítulo IV (job Meltano default) | **In-scope** | Oficial SE, mensual |
+| Etapas de fractura, arena, agua | [Adjunto IV](https://datos.gob.ar/dataset/energia-datos-fractura-pozos-hidrocarburos-adjunto-iv) | Source **encontrado**, no cargado | Empty state, o mart cuando haya load |
+| Pozos en perforación (mensual) | [Perforación de pozos](https://datos.energia.gob.ar/dataset/perforacion-de-pozos-de-petroleo-y-gas) | P1 | “Pozos en perforación, SESCO mensual” — **nunca** “rigs activos ahora” |
+| Rigs live (NCS / IAPG / EconoJournal) | Consultoras / prensa de nicho | **No-goal** | No es dato abierto de producto |
+| Destinos / volúmenes de comercio | SESCO Comercio exterior (`ea145b70-…`); no el anual de producción | P1 | “Comercio exterior SE”, no Cap. IV |
+| Oferta de crudo a destilería / terceros / stock | [Distribución de petróleo](https://datos.energia.gob.ar/dataset/distribucion-de-petroleo) | P1 | Offtake de yacimiento, **no** país de destino |
+| Traza de oleoductos | Ductos Res. 319/93 (GIS anual) | P1 / mapa | Geometría DDJJ, **no** bbl/día de capacidad |
+| Capacidad nominal Oldelval / Otasa | Comunicados de concesionarias | P1 seed citada | Constante con URL+fecha vs producción Cap. IV |
+| Brent (`BZ=F` / API financiera) | Mercado internacional | P1 enriquecimiento | “Contexto macro, no Secretaría de Energía” |
+| Breakeven USD/bbl | No hay serie pública reproducible | **Fuera** | No se muestra como KPI |
+
+IDs, totales Datastore y caveats: [data-model.md](data-model.md) · [`extraction/resources/sibling-sources.yml`](../../extraction/resources/sibling-sources.yml).
 
 ## No-goals (v1)
 
 - Telemetría de pozo, SCADA, o **afirmar** que Capítulo IV es tiempo real / intradía / alta frecuencia.
 - Extraer Cap. IV con schedule distinto de **mensual** (no tocar `meltano.yml` en un PR de producto).
-- Precios, fiscal, royalties, reservas.
+- Presentar Adjunto IV, perforación, comercio exterior, ductos, Brent o capacidad midstream **como si fueran columnas de Capítulo IV**.
+- Rigs “en tiempo real” (NCS, IAPG, EconoJournal, Shale24) como source del warehouse o de un KPI sin disclaimer de prensa.
+- **Breakeven** (ni “margen” Brent − 35 USD). No hay DDJJ ni CKAN que lo publique; se deja **fuera del análisis**.
+- Fiscal, royalties, reservas.
+- Brent / Yahoo / Alpha Vantage **en el Front** sin tap + spec (el peer pregunta de dónde salió).
 - Optimización de fractura o geología de pozo (lateral length, etc.) salvo que el CSV de completaciones lo traiga **y** entre en el data-model.
 - Reemplazar el [reporte avanzado de SE](https://www.se.gob.ar/datosupstream/consulta_avanzada/reporte.php).
 - Ingesta de todas las cuencas como producto (raw puede ser amplio; Barrilito filtra).
@@ -95,6 +124,7 @@ La simulación interpolada del contador **sí** está in-scope. Lo que está fue
 | Honestidad del live | Disclaimer *simulación a partir de datos mensuales oficiales* visible; cero copy que afirme sensores o alta frecuencia |
 | Frescura | Load ≤ 7 días de un archivo Capítulo IV nuevo (proceso documentado; no 24/7) |
 | Cobertura | Marts de producción pozo-mes + mart de tasa Barrilito (`bbl/día`); % de filas droppeadas documentado |
+| Honestidad de fuentes | Cero KPI de rigs/Brent/export/capacidad/breakeven pintado como Capítulo IV; empty state o cita de source hermana |
 | Costo BQ | Un recorrido típico del dashboard << 1 TiB/mes; alerta de presupuesto en GCP |
 | Completaciones | Cero gráficos de completaciones sin source; UNKNOWNs visibles en data-model |
 | Portfolio | Un peer recorre README → spec → architecture sin preguntar “dónde está el código” ni “¿esto es real-time de verdad?” |

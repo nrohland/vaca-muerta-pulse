@@ -1,0 +1,105 @@
+# Sibling Nación / SE open-data packages — NOT Capítulo IV production.
+# Harvested 2026-09-11 via package_show / datastore_search on datos.energia.gob.ar.
+# Public UUIDs, not secrets. None of these are in the default Meltano job (cap4-produccion).
+# Product contract: specs/001-vaca-muerta-pulse/data-model.md § Fuentes hermanas.
+
+# --- Completions (already in cap4.yml fracturas; repeated here for the source map) ---
+fracturas_adjunto_iv:
+  package: datos-de-fractura-de-pozos-adjunto-iv
+  package_id: 71fa2e84-0316-4a1b-af68-7f35e41f58d7
+  portal: https://datos.energia.gob.ar/dataset/datos-de-fractura-de-pozos-adjunto-iv
+  datos_gob_ar: https://datos.gob.ar/dataset/energia-datos-fractura-pozos-hidrocarburos-adjunto-iv
+  resource_id: 2280ad92-6ed3-403e-a095-50139863ab0d
+  datastore_total_2026_09_11: 4890
+  grain: one row per id_base_fractura_adjiv; cantidad_fracturas = stages
+  in_default_meltano_job: false
+  notes: Stream fracturas_adjunto_iv exists in the tap, deselected.
+
+# --- Drilling activity (monthly wells in perforation, not live rig count) ---
+perforacion_pozos:
+  package: perforacion-de-pozos-de-petroleo-y-gas
+  package_id: 7ea2ac77-d7a0-4129-9fbf-6f1a25d94e21
+  portal: https://datos.energia.gob.ar/dataset/perforacion-de-pozos-de-petroleo-y-gas
+  datos_gob_ar: https://datos.gob.ar/dataset/energia-perforacion-pozos-petroleo-gas
+  suie_index: https://www.argentina.gob.ar/economia/energia/planeamiento-energetico/sistema-unificado-de-informacion-energetica/exploracion-y-0
+  periodicity: R/P1M
+  pozos_en_perforacion:
+    resource_id: af6838ef-f675-4409-ac6a-e7c391a5dbab
+    datastore_total_2026_09_11: 477446
+    fields:
+      - anio
+      - mes
+      - empresa
+      - idempresa
+      - cuenca
+      - provincia
+      - areapermisoconcesion
+      - concepto
+      - cantidad
+    grain: company × area × concept × month; cantidad = wells in drilling that month
+    notes: Proxy of drilling activity. NOT Baker Hughes / NCS / IAPG live rigs.
+
+# --- Field offtake (SESCO). Not country-level export destinations. ---
+distribucion_petroleo:
+  package: distribucion-de-petroleo
+  package_id: 1de93a11-047b-4665-93b7-f2927fc50f89
+  portal: https://datos.energia.gob.ar/dataset/distribucion-de-petroleo
+  resource_id: d9948c4a-c81b-4ad0-943e-c41a99c3e33c
+  datastore_total_2026_09_11: 104628
+  conceptos_confirmed:
+    - A Propias Destilerías (m3)
+    - Entregado a Terceros (m3)
+    - Stock en Yacimiento (m3)
+  notes: SESCO offtake from fields. Do not label as export destinations.
+
+# --- Trade (volumes, product, country). DataStore CSV, not Cap. IV. ---
+comercio_exterior_impexp_desde_2016:
+  parent_package: refinacion-y-comercializacion-de-petroleo-gas-y-derivados-tablas-dinamicas
+  parent_portal: https://datos.energia.gob.ar/dataset/refinacion-y-comercializacion-de-petroleo-gas-y-derivados-tablas-dinamicas
+  resource_name: Importaciones / Exportaciones a partir del 2016
+  resource_id: ea145b70-c78f-4c94-8df0-27e3acfda3fc
+  datastore_total_2026_09_11: 1378842
+  fields:
+    - anio
+    - mes
+    - empresa
+    - tipodecomercializacion
+    - producto
+    - cantidad
+    - monto
+    - pais
+    - unidad
+  tipodecomercializacion_confirmed:
+    - Exportación
+    - Importación
+  notes: National SESCO downstream/trade. Not VM-only. Product strings mix crudes by basin and fuels.
+
+precios_comercio_exterior:
+  package: precios-de-comercio-exterior2
+  portal: https://datos.energia.gob.ar/dataset/precios-de-comercio-exterior2
+  notes: ZIP only (no DataStore). USD / miles m3 / Tn by company and destination country.
+
+precio_exportacion_crudo:
+  package: precio-de-exportacion-de-petroleo-crudo
+  portal: https://datos.energia.gob.ar/dataset/precio-de-exportacion-de-petroleo-crudo
+  resource_id: 605580fd-ff0b-4c1e-93e7-9ea9cc748175
+  format: XLSX
+  datastore_active: false
+  notes: Official Argentine crude export price series, not Brent.
+
+# --- Duct GIS (Res. 319/93 annual DDJJ). Not Oldelval/Otasa nameplate bbl/d. ---
+ductos_res_319_93:
+  package: instalaciones-hidrocarburos-ductos-res--319-93
+  portal: https://datos.energia.gob.ar/dataset/instalaciones-hidrocarburos-ductos-res--319-93
+  csv_resource_id: 857bd3ad-9a8b-4cf9-8e25-a8bc73f3282f
+  shp_resource_id: 17fcc6b7-9d9c-4005-a93a-1b2d3a7b1ce5
+  epsg: 4326
+  datastore_search_2026_09_11: HTTP 404 despite resource_show datastore_active=true
+  notes: Geometry of ducts. Nameplate capacity of Oldelval/Otasa is NOT in this table.
+
+# --- Out of product as official facts ---
+not_open_product_sources:
+  - NCS Multistage / IAPG / EconoJournal live rig counts
+  - Yahoo Finance BZ=F or Alpha Vantage as Secretaría de Energía
+  - Operator breakeven USD/bbl (no public reproducible series found)
+  - Shale24 / niche press as warehouse source

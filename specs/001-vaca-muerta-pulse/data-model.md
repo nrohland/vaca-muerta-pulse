@@ -26,6 +26,28 @@ Dataset portal: [energia-produccion-petroleo-gas-por-pozo-capitulo-iv](https://d
 
 **Cuidado:** hay clones “con identificador” (p.ej. 2025 `6f9f63bd-…`) con Datastore **truncado** (~90k). No usarlos como extract del año.
 
+### Fuentes hermanas (Nación / SE; **no** Capítulo IV)
+
+Harvest 2026-09-11. IDs: [`extraction/resources/sibling-sources.yml`](../../extraction/resources/sibling-sources.yml). **Ninguna** está en el `meltano run` default. Un KPI de estos temas en UI exige load (o seed citada) **y** copy del source real. Relato de producto: [spec.md](spec.md) § Mapa de fuentes.
+
+| Recurso | Qué es | Qué no es | Estado v1 |
+| --- | --- | --- | --- |
+| Adjunto IV `2280ad92-…` (~4890 filas). `cantidad_fracturas`, `arena_bombeada_*_tn`, `agua_inyectada_m3` | Etapas / insumos de fractura por pozo (fechas `fecha_inicio_fractura`) | Producción; rigs | Resource CONFIRMED; **no** cargado. Grano 4 |
+| [Perforación de pozos](https://datos.energia.gob.ar/dataset/perforacion-de-pozos-de-petroleo-gas) `af6838ef-…` “Pozos en Perforación” (477 446 filas). Grano `empresa × área × concepto × anio/mes`, campo `cantidad` | Conteo **mensual** SESCO de pozos en perforación (sample 2025 Neuquina: conceptos Explotación / Servicio) | Rigs activos intradía; Baker Hughes / NCS / IAPG | Package CONFIRMED. P1. Copy prohibida: “rigs ahora” |
+| [Distribución de petróleo](https://datos.energia.gob.ar/dataset/distribucion-de-petroleo) `d9948c4a-…` (104 628). Conceptos CONFIRMED: *A Propias Destilerías*, *Entregado a Terceros*, *Stock en Yacimiento* (m³) | Offtake SESCO desde yacimiento | País de destino de exportación | Package CONFIRMED. P1 |
+| Comercio exterior `ea145b70-…` “Importaciones / Exportaciones a partir del 2016” (1 378 842). Campos: `tipodecomercializacion` (`Exportación` / `Importación`), `producto`, `cantidad`, `monto`, `pais`, `empresa`, mes | Volúmenes y destinos **nacionales** (sample 2025 exp. con cantidad≠0: Chile, Paraguay, Brasil, EE.UU., …). Productos mezclan crudos por cuenca (`Cuenca Neuquina - Neuquen (Medanito)(m3)`) y combustibles | Recorte Pulse / Cap. IV; Brent | Resource CONFIRMED DataStore. P1. Join a VM = UNKNOWN |
+| [Precios de comercio exterior](https://datos.energia.gob.ar/dataset/precios-de-comercio-exterior2) | ZIP (USD / miles m³ / Tn por empresa y país) | DataStore listo para el tap actual | Package CONFIRMED; formato ZIP. P1 |
+| [Precio de exportación de crudo](https://datos.energia.gob.ar/dataset/precio-de-exportacion-de-petroleo-crudo) XLSX `605580fd-…` | Precio oficial de export de crudo argentino | Brent internacional | CONFIRMED file; sin DataStore |
+| [Ductos Res. 319/93](https://datos.energia.gob.ar/dataset/instalaciones-hidrocarburos-ductos-res--319-93) CSV `857bd3ad-…` + SHP EPSG:4326 | Geometría anual de oleoductos / gasoductos (DDJJ Planos Base) | Capacidad nominal bbl/día Oldelval / Otasa | Package CONFIRMED. `datastore_search` 404 el 2026-09-11. P1 mapa |
+| Comunicados Oldelval / Otasa | Capacidad **constante** de un tramo (seed con URL + fecha) | Serie oficial CKAN; telemetría de flujo | Solo seed citada, nunca “dato Cap. IV” |
+| Yahoo `BZ=F` / Alpha Vantage / EIA | Enriquecimiento macro (Brent) | Secretaría de Energía | P1 con spec/ADR de tap. Copy: contexto global |
+| NCS / IAPG / EconoJournal / Shale24 | Prensa o consultora | Dato abierto de producto | **No-goal** |
+| Breakeven USD/bbl | — | No hay serie pública reproducible | **Fuera del análisis** (spec) |
+
+**Cuidado perforación ≠ rigs:** filtrar “fecha de inicio de perforación de pozos nuevos” **no** produce un conteo Baker Hughes. El recurso usable hoy es `cantidad` mensual de pozos en perforación. Un número “rigs activos a mayo 2026” de un medio de nicho **no** entra al warehouse.
+
+**Cuidado distribución ≠ exportación:** los tres `concepto` de `d9948c4a-…` son destilería propia / terceros / stock. Destinos de país están en comercio exterior (`pais`), no en distribución.
+
 ### Campos de producción (CONFIRMED en DataStore 2025)
 
 | Campo | Significado | Unidad / tipo CKAN |
@@ -245,4 +267,6 @@ Agregados empresa/área deben **reconciliar** con la suma del pozo-mes del mismo
 - No es un diccionario completo de Capítulo IV.
 - No autoriza a inventar `well_id` surrogate opaco sin publicar la regla.
 - No autoriza sensores ni un grano intradía para el contador Barrilito.
+- No autoriza a etiquetar Adjunto IV, SESCO perforación/comercio/ductos, Brent o capacidad midstream como “Capítulo IV”.
+- No autoriza breakeven ni rigs live como hecho.
 - Cualquier cierre de UNKNOWN se hace **editando este archivo** en el PR que lo descubrió.

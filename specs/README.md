@@ -8,7 +8,7 @@ Una carpeta `specs/NNN-slug/` describe **un producto o un cambio de producto**, 
 
 | Archivo | Contenido |
 | --- | --- |
-| `spec.md` | Problema, usuarios, requisitos, no-goals, éxito |
+| `spec.md` | Problema, usuarios, requisitos, no-goals, mapa de fuentes, éxito |
 | `plan.md` | Hitos y aceptación |
 | `data-model.md` | Granos, claves, UNKNOWNs |
 | `tasks.md` | Checklist Hito 1 (año 2025 en `raw_cap4_dev`) + Hito 2 (IAM + dbt Barrilito) + notas Hito 3 |

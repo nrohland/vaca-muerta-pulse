@@ -73,7 +73,7 @@ Producto UI: **Barrilito** (repo `vaca-muerta-pulse`). El contador “live” es
 
 **Ops BQ (2026-09-10):** datasets US `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev` **existen**. `raw_cap4_dev` existe; `raw_cap4` no. SA `vm-pulse-dbt` **creada por Nico**; bindings OK (`jobUser` + READER raw / WRITER stg-int-marts). Secret `GCP_SA_KEY_DBT`. Evidencia: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.md).
 
-**No incluye:** Meltano nuevo salvo un bug de contrato; UI; sensores ni grano intradía; convertir en el tap.
+**No incluye:** Meltano nuevo salvo un bug de contrato; UI; sensores ni grano intradía; convertir en el tap; taps de fuentes hermanas (Adjunto IV load, perforación, comercio exterior, Brent).
 
 ### Aceptación
 
@@ -101,7 +101,7 @@ Producto UI: **Barrilito** (repo `vaca-muerta-pulse`). El contador “live” es
 
 **Incluye:** app Next, Tremor, lectura de marts (server / cache), copy en español, contador interpolado + disclaimer MUST.
 
-**No incluye:** redefinir granos en el cliente; queries a `raw_*`; telemetría; afirmar alta frecuencia.
+**No incluye:** redefinir granos en el cliente; queries a `raw_*`; telemetría; afirmar alta frecuencia; KPIs de rigs/Brent/export/oleoductos/breakeven como si fueran Capítulo IV (mapa de fuentes: [spec.md](spec.md)).
 
 ### Aceptación
 
@@ -130,4 +130,4 @@ Producto UI: **Barrilito** (repo `vaca-muerta-pulse`). El contador “live” es
 | Costo BQ | 1–3 | Partition + cluster + lecturas de marts chicos |
 | Scope creep GIS/auth | 3 | No-goals |
 
-Después de Hito 3, una spec `002` (API, mapa, más cuencas) — no inflar 001.
+Después de Hito 3, una spec `002` (API, mapa, más cuencas, **o** un tap de fuente hermana: Adjunto IV / perforación / comercio exterior / Brent) — no inflar 001 ni el Hito 3. Catálogo: [data-model.md](data-model.md) § Fuentes hermanas. **Breakeven** no entra en `002` salvo que aparezca un source público reproducible.

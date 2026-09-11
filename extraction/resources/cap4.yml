@@ -99,6 +99,7 @@ dims_and_other:
     resource_id: b5b58cdc-9e07-41f9-b392-fb9ec68b0725
     notes: Pre-filtered no convencional; Hito 1 loads the full annual file instead.
 
+# Adjunto IV (also listed in sibling-sources.yml). Stream exists; deselected in default job.
 fracturas:
   package: datos-de-fractura-de-pozos-adjunto-iv
   package_id: 71fa2e84-0316-4a1b-af68-7f35e41f58d7

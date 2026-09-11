@@ -250,6 +250,8 @@ Hay una familia paralela **DDJJ abiertas y cerradas** (otro UUID por año) — n
 
 **Completaciones:** source **encontrado** — [Datos de fractura (Adjunto IV)](https://datos.energia.gob.ar/dataset/datos-de-fractura-de-pozos-adjunto-iv) resource `2280ad92-6ed3-403e-a095-50139863ab0d` (~4890 filas). Grano: una fila por `id_base_fractura_adjiv` con `cantidad_fracturas` (etapas). Join: `idpozo` / `sigla`. **No** está en el job default; load residual post-SA. No es no-goal: el source existe.
 
+**Otras tablas SE (no Cap. IV, no en el job):** perforación mensual, distribución de petróleo, comercio exterior, ductos Res. 319/93. IDs y caveats (rigs ≠ pozos en perforación; distribución ≠ destinos de export; Brent no es SE): [`resources/sibling-sources.yml`](resources/sibling-sources.yml) + [data-model.md](../specs/001-vaca-muerta-pulse/data-model.md) § Fuentes hermanas. Un tap nuevo = spec/ADR **antes** del `meltano.yml`.
+
 ---
 
 ## Handoff AE (aunque el load a BQ esté pendiente)
