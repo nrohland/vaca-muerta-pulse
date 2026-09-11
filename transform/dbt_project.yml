@@ -28,7 +28,9 @@ vars:
   vm_tipo_de_recurso: "NO CONVENCIONAL"
   # Primary Hito 2 source = DE landing. Default target `dev` → raw_cap4_dev.
   # Prod twin is raw_cap4 (same table name). Override with DBT_RAW_DATASET.
-  raw_dataset: "{{ env_var('DBT_RAW_DATASET', 'raw_cap4' if target.name == 'prod' else 'raw_cap4_dev') }}"
+  # Nested Python-style `if` inside env_var() is not Jinja; it leaked into the
+  # compiled source schema. Default is Hito 2 primary. Prod: DBT_RAW_DATASET=raw_cap4.
+  raw_dataset: "{{ env_var('DBT_RAW_DATASET', 'raw_cap4_dev') }}"
   "dbt_date:time_zone": "America/Argentina/Buenos_Aires"
 
 dispatch:

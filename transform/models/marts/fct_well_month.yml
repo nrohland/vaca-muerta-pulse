@@ -6,8 +6,9 @@ models:
       Public well-month fact for the Pulse cut (Vaca Muerta, no convencional).
 
       **Grain:** one row = `idpozo` × `anio` × `mes` (CONFIRMED unique in 2025
-      DataStore; staging dedupes if other years differ). Partitioned by
-      `periodo` (business month), clustered by idempresa, idpozo.
+      DataStore; staging dedupes if other years differ). Clustered by
+      idempresa, idpozo. Not partitioned by `periodo` while the GCP sandbox
+      forces 60-day partition expiration (2025 months would drop on write).
 
       Barrilito headline (`fct_barrilito_rate`) must reconcile `prod_pet_m3`
       to the sum of this table for the same `periodo`. Company / area marts
