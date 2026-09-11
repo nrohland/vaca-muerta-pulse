@@ -1,0 +1,29 @@
+version: 2
+
+models:
+  - name: dim_company
+    description: >
+      Distinct operators in the Pulse cut (Vaca Muerta, no convencional).
+
+      **Grain:** one row = `idempresa`. Labels come from `fct_well_month`
+      (`any_value(empresa)`). In the 2025 warehouse cut, 24 companies are
+      1:1 with names; a singular test fails if one id maps to more than
+      one string. Not a GLEIF legal entity. Operator ≠ titular remains
+      UNKNOWN. Inter-year stability of `idempresa` is UNKNOWN (only 2025
+      is loaded).
+    columns:
+      - name: idempresa
+        description: Operator id from Capítulo IV (e.g. Z001). Primary key.
+        data_tests:
+          - unique
+          - not_null
+      - name: empresa
+        description: Operator display name for the Pulse cut.
+        data_tests:
+          - not_null
+      - name: well_count
+        description: Distinct `idpozo` across all months in this dim.
+      - name: first_periodo
+        description: Earliest Cap. IV month this operator appears in well-month.
+      - name: last_periodo
+        description: Latest Cap. IV month this operator appears in well-month.

@@ -82,7 +82,7 @@ Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 5. Código: [`t
 - [x] Mart `fct_barrilito_rate` (identificador único; alias `mart_barrilito_headline` retirado).
 - [x] Grano: **una fila** = snapshot del recorte VM no conv. para el **último mes Capítulo IV** (agregado **total** Pulse, no por empresa).
 - [x] Fórmula preferida: `rate_m3_dia = sum(prod_pet_m3) / nullif(sum(tef), 0)` cuando `tef_sum > 0` (`tef_weighted`).
-- [x] Fallback: `rate_m3_dia = sum(prod_pet_m3) / days_in_month(periodo)` (`calendar_days`). Unit tests con fixtures para `tef` = 0. Viabilidad de `tef` **en warehouse** = UNKNOWN (este PR no tuvo SA BQ; no se afirma `dbt test` verde contra raw).
+- [x] Fallback: `rate_m3_dia = sum(prod_pet_m3) / days_in_month(periodo)` (`calendar_days`). Unit tests con fixtures para `tef` = 0. Warehouse 2025 Pulse: `tef` en [0, 31], 0 nulls, 6115 ceros; headline `tef_weighted`.
 - [x] Conversión `rate_bbl_dia = rate_m3_dia × 6.28981077` en el modelo (`var('m3_to_bbl')` / macro).
 - [x] El **mismo** factor `6.28981077` en YAML de métricas (`transform/metrics.yml` + `config.meta`) y `dbt_project.yml`.
 - [x] `stg` materializa `periodo` como grano de negocio; no filtrar el mes Cap. IV por `_sdc_batched_at`.
@@ -90,6 +90,19 @@ Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 5. Código: [`t
 - [x] Test de reconciliación SQL: `prod_pet_m3` Barrilito vs suma de `fct_well_month` del mismo `periodo` (corre con `dbt test` cuando hay warehouse).
 - [x] Actualizar [data-model.md](data-model.md): contrato `fct_barrilito_rate`; tef no promovido a CONFIRMED. Sin sensores ni grano intradía.
 - [x] `dbt build` / `dbt test` contra BigQuery — 2026-09-11, SA `vm-pulse-dbt` / `GCP_SA_KEY_DBT`. `fct_well_month` **34051** filas; `fct_barrilito_rate` **1 fila** (`periodo` 2025-12-01, `rate_method=tef_weighted`). `dbt build --select +fct_barrilito_rate` PASS=33; `dbt test` PASS=29. Evidencia sin keys: job well-month `aeb65940-5766-4d3d-ad1d-6177c03fa2da` (258.9 MiB); job mart `a6ed973a-8881-4856-a038-1276c452606c`.
+
+## Hito 2 — marts empresa / área (AE, `transform/`)
+
+Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 2–3. Código: [`transform/`](../../transform/README.md). No Next.js.
+
+- [x] `fct_company_month` grano `idempresa + periodo` desde `fct_well_month` (no `raw_*`).
+- [x] `dim_company` = DISTINCT `idempresa` / `empresa` del hecho.
+- [x] `fct_area_month` grano `idareapermisoconcesion + periodo` (área preferida `areapermisoconcesion`).
+- [x] `dim_area` = DISTINCT del hecho. Estabilidad de ids entre años = UNKNOWN (solo 2025).
+- [x] Sin `PARTITION BY periodo` (sandbox 60d). Cluster `idempresa` / `idareapermisoconcesion`.
+- [x] Tests: unique combo, not_null, relationships a dims, reconciliación `sum(prod_pet_m3)` vs `fct_well_month` por `periodo`.
+- [x] Completaciones: **no** en este PR (Adjunto IV sigue fuera del job Meltano default).
+- [x] Warehouse 2026-09-11 (SA `vm-pulse-dbt`, sin Meltano `GCP_SA_KEY`): `dbt build` de estos 4 modelos + tests **PASS=32** en 16.3 s. `dim_company` **24** filas; `dim_area` **83**; `fct_company_month` **242** (sparse); `fct_area_month` **981**. Dic-2025 `sum(prod_pet_m3)` = Barrilito **2 909 815.325** m³. Jobs US: company `6750284a-7942-4c4e-b97e-cc8a1c404551` (~3.5 MiB); area `caa17abd-e62f-44a0-b564-4cde970f8564` (~3.8 MiB).
 
 ---
 

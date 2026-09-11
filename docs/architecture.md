@@ -75,7 +75,7 @@ flowchart LR
   STG --> INT["int_*<br/>joins, claves, unidades"]
   INT --> M1["mart fct_well_month"]
   M1 --> M4["mart fct_barrilito_rate"]
-  INT --> M2["marts empresa / área (P1)"]
+  M1 --> M2["marts empresa / área"]
   INT --> M3["mart completaciones (empty Hito 3)"]
   M1 --> WEB["Dashboard"]
   M2 --> WEB

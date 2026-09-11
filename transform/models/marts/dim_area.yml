@@ -1,0 +1,30 @@
+version: 2
+
+models:
+  - name: dim_area
+    description: >
+      Distinct permiso/concesión areas in the Pulse cut.
+
+      **Grain:** one row = `idareapermisoconcesion` (preferred area grain
+      from the data-model; columns CONFIRMED). Labels from
+      `any_value(areapermisoconcesion)`. 2025 warehouse cut: 83 areas,
+      1:1 with names. Inter-year id stability remains UNKNOWN (only 2025
+      is loaded). `areayacimiento` is a later drill-down, not this dim.
+    columns:
+      - name: idareapermisoconcesion
+        description: Permiso/concesión area id. Primary key.
+        data_tests:
+          - unique
+          - not_null
+      - name: areapermisoconcesion
+        description: Area display name for the Pulse cut.
+        data_tests:
+          - not_null
+      - name: well_count
+        description: Distinct `idpozo` across all months in this dim.
+      - name: company_count
+        description: Distinct `idempresa` that produced in this area (any month).
+      - name: first_periodo
+        description: Earliest Cap. IV month this area appears in well-month.
+      - name: last_periodo
+        description: Latest Cap. IV month this area appears in well-month.

@@ -10,8 +10,9 @@ models:
       Preferred rate: `sum(prod_pet_m3) / nullif(sum(tef), 0)`
       (`rate_method = tef_weighted`). Fallback when `sum(tef) = 0`:
       `sum(prod_pet_m3) / days_in_month(periodo)` (`calendar_days`).
-      tef-as-days in the VM cut is **UNKNOWN** until a warehouse run; both
-      paths are implemented and unit-tested with fixtures.
+      Warehouse 2025 Pulse: tef in [0, 31], 0 nulls; headline uses
+      `tef_weighted`. Official dictionary / other years remain UNKNOWN.
+      Both paths are implemented and unit-tested with fixtures.
 
       Conversion: `rate_bbl_dia = rate_m3_dia × 6.28981077` via
       `var('m3_to_bbl')` — the same number as `_metrics.yml`. Front MUST

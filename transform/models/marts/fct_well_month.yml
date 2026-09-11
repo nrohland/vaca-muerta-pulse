@@ -12,8 +12,8 @@ models:
 
       Barrilito headline (`fct_barrilito_rate`) must reconcile `prod_pet_m3`
       to the sum of this table for the same `periodo`. Company / area marts
-      are P1 (not in this Hito 2 PR). Completions are not here — Adjunto IV
-      is not in the default Meltano job.
+      (`fct_company_month`, `fct_area_month`) roll up from here.
+      Completions are not here — Adjunto IV is not in the default Meltano job.
     columns:
       - name: well_month_id
         description: Surrogate of idpozo + anio + mes.
@@ -41,9 +41,9 @@ models:
       - name: tef
         description: >
           Effective time. Preferred Barrilito denominator when the monthly
-          SUM over the Pulse cut is > 0. Values of 0 (abandoned / off) are
-          expected. Whether tef is always "days" in the VM cut remains UNKNOWN
-          (no warehouse `dbt test` in the PR that added this model).
+          SUM over the Pulse cut is > 0. Warehouse 2025 Pulse: 0 nulls, min 0,
+          max 31.0, 6115 zeros / 27936 > 0 of 34051 rows. Official dictionary
+          / other years remain UNKNOWN.
         data_tests:
           - dbt_expectations.expect_column_values_to_be_between:
               arguments:

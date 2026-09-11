@@ -54,7 +54,7 @@ Leé **solo** marts. Headline = este mart, una fila.
 
 **Frescura:** Capítulo IV es **mensual**. `periodo` es el último mes de DDJJ en el mart de pozo-mes. `_sdc_batched_at` es cuándo Meltano bateó — no lo uses como mes de producción.
 
-Well-month (series / rankings posteriores, no el headline): `fct_well_month`, grano `idpozo+anio+mes`, recorte VM ya aplicado. Empresa / área / completaciones = **P1** (no en este PR).
+Well-month (series): `fct_well_month`, grano `idpozo+anio+mes`, recorte VM ya aplicado. Rankings Hito 3: `fct_company_month` / `dim_company` y `fct_area_month` / `dim_area`. Completaciones = empty state (Adjunto IV no está en el job Meltano default).
 
 ### Query de sample
 
@@ -73,6 +73,21 @@ from `vaca-muerta-pulse.marts_cap4_dev.fct_barrilito_rate`;
 ```
 
 Análisis compilable: [analyses/sample_barrilito_headline.sql](analyses/sample_barrilito_headline.sql).
+
+### Rankings empresa / área (Hito 3, no el headline)
+
+Leé estos marts para ranking y filtros. El contador interpolado **sigue** saliendo de `fct_barrilito_rate.rate_bbl_dia`.
+
+| Mart | Grano | Dataset BQ (dev) |
+| --- | --- | --- |
+| `dim_company` | `idempresa` | `marts_cap4_dev` |
+| `fct_company_month` | `idempresa` × `periodo` | `marts_cap4_dev` |
+| `dim_area` | `idareapermisoconcesion` | `marts_cap4_dev` |
+| `fct_area_month` | `idareapermisoconcesion` × `periodo` | `marts_cap4_dev` |
+
+Área preferida = permiso/concesión (`areapermisoconcesion`). `areayacimiento` no es este mart. Completaciones no están.
+
+Muestras: [analyses/sample_company_month.sql](analyses/sample_company_month.sql), [analyses/sample_area_month.sql](analyses/sample_area_month.sql).
 
 ---
 
@@ -198,8 +213,11 @@ dbt debug
 # Antes de un scan pesado: dry-run BQ. Raw ~338 MiB; si el estimado es ≫ 1 TiB, STOP.
 # `stg+` no matchea (tags = staging). El `+` a la izquierda incluye padres.
 dbt build --select +fct_barrilito_rate
+# Rankings empresa / área (leen fct_well_month; no re-scan de raw si la tabla ya existe):
+dbt build --select dim_company dim_area fct_company_month fct_area_month
 dbt test
 dbt show --select fct_barrilito_rate --limit 5
+dbt show --select fct_company_month --limit 5
 ```
 
 `dbt build --select +fct_barrilito_rate` y `dbt test` **verdes** 2026-09-11 contra BigQuery (SA `vm-pulse-dbt`, secret `GCP_SA_KEY_DBT`; no se usó Meltano `GCP_SA_KEY`). `fct_well_month` = 34051 filas; `fct_barrilito_rate` = 1 fila (`periodo` 2025-12-01, `rate_method=tef_weighted`). Source schema: `env_var('DBT_RAW_DATASET', 'raw_cap4_dev')` en `_sources.yml` — **no** pongas `{{ env_var() }}` dentro de `vars:` (dbt lo deja sin renderizar).
@@ -227,12 +245,14 @@ source raw_cap4.produccion_pozo_mes   (físico: raw_cap4_dev; twin prod: raw_cap
   → stg_produccion_pozo_mes     (view en stg_cap4_dev: cast, periodo, filtro VM, dedupe)
   → int_produccion_vm_noconv    (view en int_cap4_dev: surrogate + days_in_month)
   → fct_well_month              (tabla en marts_cap4_dev, cluster empresa/pozo; sin partition-by-periodo en sandbox 60d)
-  → fct_barrilito_rate          (1 fila en marts_cap4_dev)
+      → fct_barrilito_rate      (1 fila en marts_cap4_dev)
+      → dim_company / fct_company_month
+      → dim_area / fct_area_month
 ```
 
 Filtro de producto en **stg** (strings CONFIRMED): `formacion = 'vaca muerta'` y `tipo_de_recurso = 'NO CONVENCIONAL'`.
 
-Tasa: `sum(prod_pet_m3) / nullif(sum(tef), 0)` si `tef_sum > 0`; si no, `/ days_in_month`. Calidad de `tef` como días en el recorte VM = **UNKNOWN** hasta un `dbt test` con warehouse.
+Tasa: `sum(prod_pet_m3) / nullif(sum(tef), 0)` si `tef_sum > 0`; si no, `/ days_in_month`. Warehouse 2025 Pulse: `tef` en [0, 31], 0 nulls; headline `tef_weighted`. Definición oficial / otros años = UNKNOWN.
 
 ---
 

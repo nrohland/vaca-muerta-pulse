@@ -1,0 +1,71 @@
+version: 2
+
+models:
+  - name: fct_company_month
+    description: >
+      Company × Capítulo IV month for the Pulse cut (Vaca Muerta, no
+      convencional). Built only from `fct_well_month` — never from raw_*.
+
+      **Grain:** one row = `idempresa` × `periodo`. Sparse: a row exists
+      only if that operator has at least one well-month in that month
+      (no date spine). Clustered by `idempresa`. Not partitioned by
+      `periodo` while the GCP sandbox forces 60-day partition expiration.
+
+      Volumes are sums of well-month. `wells_with_oil` is distinct wells
+      with `prod_pet_m3 > 0` that month (not new wells — that remains
+      UNKNOWN). Not the Barrilito headline; Front ranks from this mart
+      and still interpolates the counter from `fct_barrilito_rate`.
+    columns:
+      - name: company_month_id
+        description: Surrogate of idempresa + periodo.
+        data_tests:
+          - unique
+          - not_null
+      - name: idempresa
+        description: Operator id. Grain key with periodo.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref("dim_company")
+                field: idempresa
+      - name: empresa
+        description: Operator name (pass-through for ranking without a dim join).
+        data_tests:
+          - not_null
+      - name: periodo
+        description: Business month DATE YYYY-MM-01. Grain key.
+        data_tests:
+          - not_null
+      - name: anio
+        description: DDJJ year of periodo.
+        data_tests:
+          - not_null
+      - name: mes
+        description: DDJJ month of periodo.
+        data_tests:
+          - not_null
+      - name: days_in_month
+        description: Calendar days of periodo (same as well-month).
+      - name: well_month_row_count
+        description: Rows of fct_well_month for this company-month.
+      - name: well_count
+        description: Distinct idpozo in this company-month (on or off).
+      - name: wells_with_oil
+        description: Distinct idpozo with prod_pet_m3 > 0 in this company-month.
+      - name: prod_pet_m3
+        description: Sum of well-month oil m³.
+      - name: prod_gas_km3
+        description: Sum of well-month gas (thousands of m³).
+      - name: prod_agua_m3
+        description: Sum of well-month water m³.
+      - name: tef_sum
+        description: Sum of tef. Preferred Barrilito denominator lives on the headline mart.
+      - name: source_batched_at_max
+        description: Max Singer batch timestamp in this company-month (freshness, not Cap. IV month).
+      - name: fecha_data_max
+        description: Max official fecha_data in this company-month.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [idempresa, periodo]
