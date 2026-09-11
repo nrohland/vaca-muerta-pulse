@@ -83,6 +83,8 @@ flowchart LR
   M4 --> WEB
 ```
 
+El nodo raw del diagrama coincide con `extraction/meltano.yml`: partición **MONTH(`_sdc_batched_at`)** (no `periodo`); cluster **`empresa`, `idpozo`, `cuenca`** (no `sigla`). Intento de producto `PARTITION BY DATE(periodo)`: [extraction/sql/intended_partition.sql](../extraction/sql/intended_partition.sql).
+
 Filtro de producto (CONFIRMED en sample 2025 DataStore; aplicar en `stg`/`int`, no en el tap): `formacion = 'vaca muerta'` y `tipo_de_recurso = 'NO CONVENCIONAL'`. Detalle en [data-model.md](../specs/001-vaca-muerta-pulse/data-model.md).
 
 ## 4. BigQuery — naming y físico (Hito 1 + datasets Hito 2)
