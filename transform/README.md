@@ -19,7 +19,7 @@ IAM / datasets (DE, PR #11): [docs/hito-2-bq-iam.md](docs/hito-2-bq-iam.md). Sec
 | Twin prod | `raw_cap4.produccion_pozo_mes` (mismo grano / mismo nombre de tabla). **El dataset `raw_cap4` no existe todavía.** `DBT_TARGET=prod` o `DBT_DATASET_RAW=raw_cap4` cuando DE lo cree. |
 | Match source | Datastore 2025 resource `d774b5d7-0756-48fe-88f2-8729b57b22da` total 991 844 |
 
-`var('raw_dataset')` default = `raw_cap4_dev`. No apuntes stg a un dump local.
+`var('raw_dataset')` default = `raw_cap4_dev` (string plana: dbt **no** re-renderiza Jinja dentro de `var()`). El source usa `env_var('DBT_RAW_DATASET', var('raw_dataset'))`. No apuntes stg a un dump local.
 
 ---
 
