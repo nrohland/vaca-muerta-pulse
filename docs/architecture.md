@@ -2,7 +2,7 @@
 
 Vista C4-ish del data product. Stack y *por qué*: [ADR 0001](adrs/0001-stack-choices.md). Producto: [spec.md](../specs/001-vaca-muerta-pulse/spec.md).
 
-**Hoy (Hito 2):** dbt Core en `transform/` sobre raw Meltano. Source primario de stg: **`raw_cap4_dev`** (`produccion_pozo_mes` `COUNT(*)` = 991844, año 2025 — handoff DE/Tutor). Prod twin: `raw_cap4`. Mart headline **`fct_barrilito_rate`**. SA `vm-pulse-dbt` **creada por Nico**; bindings OK. Next: Hito 3.
+**Hoy (Hito 2, P0+P1 en `main`):** dbt Core en `transform/` sobre raw Meltano. Source primario de stg: **`raw_cap4_dev`** (`produccion_pozo_mes` `COUNT(*)` = 991844, año 2025 — handoff DE/Tutor). Prod twin: `raw_cap4`. Mart headline **`fct_barrilito_rate`**. Rankings **`fct_company_month`** / **`fct_area_month`**. SA `vm-pulse-dbt` **creada por Nico**; bindings OK. Completaciones: empty (Adjunto IV no está en el job default). Next: Hito 3.
 
 ## 1. Contexto
 
@@ -70,7 +70,7 @@ flowchart LR
   P --> TAPS
   W --> TAPS
   F --> TAPS
-  TAPS["Meltano taps"] --> RAW["BQ raw<br/>partition DATE año-mes<br/>cluster empresa / sigla / cuenca"]
+  TAPS["Meltano taps"] --> RAW["BQ raw<br/>partition MONTH(_sdc_batched_at)<br/>cluster empresa / idpozo / cuenca"]
   RAW --> STG["stg_*<br/>rename, types, filtros VM"]
   STG --> INT["int_*<br/>joins, claves, unidades"]
   INT --> M1["mart fct_well_month"]
@@ -95,7 +95,7 @@ Nombres **confirmados**. Handoff Hito 2: `raw_cap4_dev.produccion_pozo_mes` `COU
 | `raw_cap4` | Twin de prod (mismo patrón de tabla; no es otro grano). **No existe todavía** | Meltano (prod, cuando se cree) |
 | `stg_cap4_dev` | Staging dbt (dev). Prod twin: `stg_cap4` | dbt (`vm-pulse-dbt`) |
 | `int_cap4_dev` | Intermediate dbt (dev). Prod twin: `int_cap4` | dbt (`vm-pulse-dbt`) |
-| `marts_cap4_dev` | Marts dbt (dev), incl. `fct_barrilito_rate`. Prod twin: `marts_cap4` | dbt (`vm-pulse-dbt`) |
+| `marts_cap4_dev` | Marts dbt (dev): `fct_barrilito_rate`, `fct_well_month`, `fct_company_month`, `fct_area_month`, dims. Prod twin: `marts_cap4` | dbt (`vm-pulse-dbt`) |
 
 Proyecto GCP: **`vaca-muerta-pulse`**. Location: **US**.
 

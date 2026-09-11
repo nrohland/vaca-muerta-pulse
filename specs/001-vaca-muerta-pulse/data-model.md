@@ -80,7 +80,7 @@ Tight no-VM: no-goal (spec). El raw carga **todas las cuencas/años del resource
 
 ## Grano 1 — Pozo-mes (producción)
 
-**Nombre DRAFT:** `fct_well_month`  
+**Nombre (contrato Hito 2):** `fct_well_month`  
 **Grano:** una fila = `idpozo` × `anio` × `mes` (CONFIRMED único en 2025).
 
 | | |
@@ -146,14 +146,14 @@ Estabilidad de ids entre años = UNKNOWN (solo 2025 cargado).
 
 Hito 1 **no** carga este stream en el job default. Hito 2 **no** agrega `fct_completions` (no hay tabla raw en el job default). Hito 3 no debe inventar curvas si el mart todavía no existe; empty state. El source ya no es UNKNOWN.
 
-## Grano 5 — Barrilito / headline rate (DRAFT)
+## Grano 5 — Barrilito / headline rate (contrato Hito 2)
 
 Contrato para el contador de portada. **No hay sensores.** La tasa sale del último mes oficial de Capítulo IV (~últimos 30 días de DDJJ), no de telemetría.
 
 **Nombre (contrato Hito 2):** `fct_barrilito_rate`  
 **Alias retirado:** `mart_barrilito_headline` — no existe en YAML ni en BQ.
 
-**Grano:** una fila = **un snapshot de producto** para el **último mes Capítulo IV** disponible, agregado al recorte Pulse (**total Vaca Muerta no convencional**, no por empresa ni por pozo). Desglose por `idempresa` no es el headline v1 (P1).
+**Grano:** una fila = **un snapshot de producto** para el **último mes Capítulo IV** disponible, agregado al recorte Pulse (**total Vaca Muerta no convencional**, no por empresa ni por pozo). El ranking por `idempresa` / área vive en `fct_company_month` / `fct_area_month`, no en este mart.
 
 | | |
 | --- | --- |
@@ -162,9 +162,9 @@ Contrato para el contador de portada. **No hay sensores.** La tasa sale del últ
 | Medidas | `prod_pet_m3` (suma), `tef_sum`, `days_in_month`, `rate_m3_dia` / `rate_m3_per_day`, `rate_bbl_dia` / `rate_bbl_per_day`, `rate_method`, frescura (`source_batched_at_max`, `fecha_data_max`), `disclaimer` |
 | Partition / cluster | Mart chico (una fila o histórico mensual corto). No heredar la partición raw `_sdc_batched_at` como grano |
 
-### Fórmula DRAFT (tasa diaria)
+### Fórmula (tasa diaria)
 
-Cap. IV trae petróleo en **m³** al mes (source `prod_pet`; en stg/marts DRAFT: `prod_pet_m3`). Se busca una tasa **por día** para que el Front interpole el contador.
+Cap. IV trae petróleo en **m³** al mes (source `prod_pet`; en stg/marts: `prod_pet_m3`). Se busca una tasa **por día** para que el Front interpole el contador.
 
 **Preferida** (cuando `tef` es usable como días y `sum(tef) > 0`):
 
@@ -189,7 +189,7 @@ bbl = m³ × 6.28981077
 rate_bbl_dia = rate_m3_dia × 6.28981077
 ```
 
-El Front **no** recalcula el factor. El mart expone `rate_bbl_dia`. `rate_method` DRAFT: `tef_weighted` | `calendar_days`.
+El Front **no** recalcula el factor. El mart expone `rate_bbl_dia`. `rate_method`: `tef_weighted` | `calendar_days`.
 
 | Método | Estado | Por qué |
 | --- | --- | --- |
