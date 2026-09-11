@@ -1,75 +1,30 @@
 #!/usr/bin/env bash
-# Provision Hito 2 BigQuery IAM + datasets for dbt.
-# Run as Nicolás (project owner) — the Meltano SA cannot enable IAM APIs
-# or create service accounts.
+# Wrapper for provision_hito2_bq.py — Hito 2 datasets + vm-pulse-dbt SA.
 #
-# Does NOT create or print a key. If you need a JSON for laptop/CI, create
-# it locally and store it as GitHub secret GCP_SA_KEY_DBT (not GCP_SA_KEY).
+# Who runs this: Nicolás (GCP owner / IAM admin).
+# The Meltano SA cannot enable iam.googleapis.com or create service accounts.
+#
+# Never prints key material. --create-key writes a gitignored JSON; do not commit it.
+#
+# Examples:
+#   bash transform/scripts/provision_hito2_bq.sh --verify-only
+#   bash transform/scripts/provision_hito2_bq.sh --dry-run
+#   bash transform/scripts/provision_hito2_bq.sh --unset-table-expiration --tighten-acl
+#   bash transform/scripts/provision_hito2_bq.sh --create-key transform/.secrets/vm-pulse-dbt.json
 set -euo pipefail
 
-PROJECT="${DBT_BIGQUERY_PROJECT:-${BIGQUERY_PROJECT:?set BIGQUERY_PROJECT}}"
-LOCATION="${BIGQUERY_LOCATION:-US}"
-SA_ID="vm-pulse-dbt"
-SA_EMAIL="${SA_ID}@${PROJECT}.iam.gserviceaccount.com"
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-echo "[hito2] project=${PROJECT} location=${LOCATION} sa=${SA_EMAIL}"
-
-echo "[hito2] enable IAM + Resource Manager APIs"
-gcloud services enable \
-  iam.googleapis.com \
-  cloudresourcemanager.googleapis.com \
-  --project="${PROJECT}"
-
-echo "[hito2] create SA if missing"
-if gcloud iam service-accounts describe "${SA_EMAIL}" --project="${PROJECT}" >/dev/null 2>&1; then
-  echo "[hito2] SA already exists"
-else
-  gcloud iam service-accounts create "${SA_ID}" \
-    --project="${PROJECT}" \
-    --display-name="vm-pulse-dbt" \
-    --description="Hito 2 dbt: read raw_*, write stg/int/marts. Not Meltano."
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "[provision] ERROR: python3 is required" >&2
+  exit 1
 fi
 
-echo "[hito2] project role bigquery.jobUser"
-gcloud projects add-iam-policy-binding "${PROJECT}" \
-  --member="serviceAccount:${SA_EMAIL}" \
-  --role="roles/bigquery.jobUser" \
-  --condition=None
-
-echo "[hito2] datasets US (IF NOT EXISTS)"
-for ds in stg_cap4_dev int_cap4_dev marts_cap4_dev; do
-  if bq --project_id="${PROJECT}" ls -d "${PROJECT}:${ds}" >/dev/null 2>&1; then
-    echo "[hito2] dataset ${ds} exists"
-  else
-    bq --location="${LOCATION}" mk -d --data_location="${LOCATION}" \
-      --description="Hito 2 dbt (dev). Meltano does not write here." \
-      "${PROJECT}:${ds}"
-  fi
-done
-
-echo "[hito2] dataset IAM"
-if bq --project_id="${PROJECT}" ls -d "${PROJECT}:raw_cap4_dev" >/dev/null 2>&1; then
-  bq add-iam-policy-binding \
-    --member="serviceAccount:${SA_EMAIL}" \
-    --role="roles/bigquery.dataViewer" \
-    "${PROJECT}:raw_cap4_dev"
-else
-  echo "[hito2] skip raw_cap4_dev (missing)"
+# google-cloud-bigquery is already used by extraction/. Offer a hint, don't pip-install blindly.
+if ! python3 -c "import google.cloud.bigquery, google.auth" 2>/dev/null; then
+  echo "[provision] ERROR: need google-cloud-bigquery + google-auth." >&2
+  echo "  pip install google-cloud-bigquery google-auth" >&2
+  exit 1
 fi
-if bq --project_id="${PROJECT}" ls -d "${PROJECT}:raw_cap4" >/dev/null 2>&1; then
-  bq add-iam-policy-binding \
-    --member="serviceAccount:${SA_EMAIL}" \
-    --role="roles/bigquery.dataViewer" \
-    "${PROJECT}:raw_cap4"
-else
-  echo "[hito2] skip raw_cap4 (does not exist yet)"
-fi
-for ds in stg_cap4_dev int_cap4_dev marts_cap4_dev; do
-  bq add-iam-policy-binding \
-    --member="serviceAccount:${SA_EMAIL}" \
-    --role="roles/bigquery.dataEditor" \
-    "${PROJECT}:${ds}"
-done
 
-echo "[hito2] done. Do NOT run: gcloud iam service-accounts keys create"
-echo "[hito2] If you need a key: create it outside git, store GCP_SA_KEY_DBT in GH Secrets."
+exec python3 "$script_dir/provision_hito2_bq.py" "$@"

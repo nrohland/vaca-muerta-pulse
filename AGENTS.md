@@ -34,7 +34,7 @@ No busques la app Next todavía: no está. Meltano **sí** está en `extraction/
 | `specs/` | todos (AE lidera granos) | 0+ | fuente de verdad de producto |
 | `docs/` | todos (DE lidera BQ/Meltano) | 0+ | arquitectura + ADRs |
 | `extraction/` | **DE** | 1 | Meltano + tap CKAN DataStore → target-bigquery |
-| `transform/` | **AE** | 2 | dbt Core `stg` → `int` → `marts` (Barrilito `fct_barrilito_rate`) |
+| `transform/` | **AE** | 2 | dbt Core `stg` → `int` → `marts` (Barrilito `fct_barrilito_rate`) + IAM/datasets (`vm-pulse-dbt`) |
 | `apps/web/` | **Front** | 3 | placeholder Next + Tremor |
 
 No pongas modelos dbt en `extraction/`, ni taps Singer en `transform/`, ni queries a `raw_*` desde el front.

@@ -3,7 +3,7 @@
 Criterios de aceptación: [plan.md](plan.md). Marca UI: **Barrilito** (repo `vaca-muerta-pulse`).
 
 - **Hito 1** (abajo): owner **DE**, folder [`extraction/`](../../extraction/README.md). Cadencia extract **mensual**; no cambiar `meltano.yml` en un PR de marca/producto.
-- **Hito 2 / 3:** Hito 2 código en `transform/` (este árbol). Hito 3 Next **sin tachar**.
+- **Hito 2 / 3:** Hito 2 código en `transform/` (modelos Barrilito + IAM/datasets). Hito 3 Next **sin tachar**.
 
 Tachá en el PR que complete el ítem. Año 2025 cargado 2026-09-10: `COUNT(*)` **991 844** (delta 0 vs Datastore). Evidencia: [extraction/docs/hito-1-full-year-2025-load.md](../../extraction/docs/hito-1-full-year-2025-load.md). Smoke 500 previo: [extraction/docs/hito-1-post-merge-smoke.md](../../extraction/docs/hito-1-post-merge-smoke.md).
 
@@ -66,13 +66,14 @@ Tachá en el PR que complete el ítem. Año 2025 cargado 2026-09-10: `COUNT(*)` 
 
 ## Hito 2 — IAM + datasets BQ (DE, prereq de dbt)
 
-Evidencia: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.md). Hecho en main (PR #11). Este PR agrega los modelos.
+Evidencia: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.md). Scripts: [provision_hito2_bq.sh](../../transform/scripts/provision_hito2_bq.sh), [materialize-dbt-sa-key.sh](../../transform/scripts/materialize-dbt-sa-key.sh). SA + bindings: Nico (PR #11). Modelos Barrilito: PR #10.
 
 - [x] Datasets US: `stg_cap4_dev`, `int_cap4_dev`, `marts_cap4_dev`.
 - [x] `raw_cap4_dev` existe; `raw_cap4` no.
-- [x] SA `vm-pulse-dbt` creada (Nico) + auth `GCP_SA_KEY_DBT`.
-- [x] Roles: `jobUser`; `dataViewer` en `raw_cap4_dev`; `dataEditor` en stg/int/marts.
+- [x] SA `vm-pulse-dbt` **creada por Nico** + auth `GCP_SA_KEY_DBT` (distinto de Meltano `GCP_SA_KEY`).
+- [x] Roles: `jobUser`; `dataViewer` (READER) en `raw_cap4_dev`; `dataEditor` (WRITER) en stg/int/marts.
 - [x] Docs + `.env.example` con nombres (`DBT_BIGQUERY_PROJECT`, `DBT_DATASET_*`, `GCP_SA_KEY_DBT`).
+- [x] Default table expiration 60d en datasets dbt — documentado; Nico puede `--unset-table-expiration`.
 
 ## Hito 2 — tasa Barrilito (AE, `transform/`)
 

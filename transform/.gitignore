@@ -2,6 +2,7 @@
 target/
 dbt_packages/
 dbt_internal_packages/
+dbt_modules/
 logs/
 .user.yml
 .venv/
@@ -9,5 +10,7 @@ logs/
 # Local profiles / env — never commit keys or a real profiles.yml
 profiles.yml
 .env
+.secrets/
+vm-pulse-dbt.json
 *.json
 !package-lock.yml

@@ -71,6 +71,8 @@ Producto UI: **Barrilito** (repo `vaca-muerta-pulse`). El contador “live” es
 
 **Incluye:** sources sobre raw, staging (rename, types, filtro VM; materializar `periodo` como grano de negocio), intermediate (claves, unidades), marts de [data-model.md](data-model.md) **incluido** el mart DRAFT de headline (`fct_barrilito_rate` / `mart_barrilito_headline`), tests, factor `bbl = m³ × 6.28981077` en SQL **y** en YAML de métricas.
 
+**Ops BQ (2026-09-10):** datasets US `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev` **existen**. `raw_cap4_dev` existe; `raw_cap4` no. SA `vm-pulse-dbt` **creada por Nico**; bindings OK (`jobUser` + READER raw / WRITER stg-int-marts). Secret `GCP_SA_KEY_DBT`. Evidencia: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.md).
+
 **No incluye:** Meltano nuevo salvo un bug de contrato; UI; sensores ni grano intradía; convertir en el tap.
 
 ### Aceptación
