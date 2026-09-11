@@ -93,7 +93,7 @@ SA de dbt (nombre, **docs only**): **`vm-pulse-dbt`**. El JSON de la key **nunca
 
 ## Warehouse IAM (confirmado 2026-09-10)
 
-**Sí hay que usar la SA `vm-pulse-dbt`.** No reutilices la SA ni la key de Meltano (`vm-pulse-meltano` / `GCP_SA_KEY`).
+**Sí hay que usar la SA `vm-pulse-dbt` (creada por Nico; bindings OK).** No reutilices la SA ni la key de Meltano (`vm-pulse-meltano` / `GCP_SA_KEY`).
 
 | Por qué | Detalle |
 | --- | --- |
@@ -120,6 +120,22 @@ Roles de `vm-pulse-dbt@$BIGQUERY_PROJECT.iam.gserviceaccount.com` (**verificados
 
 La SA de Meltano quedó **OWNER** de los datasets dbt porque los creó. No escribe modelos ahí.
 
+### Scripts IAM (sin secretos)
+
+| Script | Para qué |
+| --- | --- |
+| [scripts/provision_hito2_bq.sh](scripts/provision_hito2_bq.sh) | `--verify-only` lista datasets + SA; Nico: grants / `--unset-table-expiration` / `--tighten-acl` |
+| [scripts/provision_hito2_bq.py](scripts/provision_hito2_bq.py) | implementación (bq + REST IAM) |
+| [scripts/materialize-dbt-sa-key.sh](scripts/materialize-dbt-sa-key.sh) | runtime: `GCP_SA_KEY_DBT` → `.secrets/vm-pulse-dbt.json` |
+
+El script de dbt **rechaza** `GCP_SA_KEY` de Meltano a propósito. SA `vm-pulse-dbt` **creada por Nico**; bindings OK.
+
+```bash
+export GCP_SA_KEY_DBT='<JSON completo de vm-pulse-dbt>'
+export GOOGLE_APPLICATION_CREDENTIALS="$(bash scripts/materialize-dbt-sa-key.sh)"
+bash scripts/provision_hito2_bq.sh --verify-only
+```
+
 ---
 
 ## Env (nombres, cero keys)
@@ -138,10 +154,17 @@ Copiá [`.env.example`](.env.example) a `transform/.env` (gitignored) o exportá
 | `GOOGLE_APPLICATION_CREDENTIALS` | Path a un JSON **gitignored** (p.ej. `./.secrets/vm-pulse-dbt.json`) |
 | `GCP_SA_KEY_DBT` | Secret de CI / Cloud: JSON **completo** de la key de `vm-pulse-dbt`. **No** es `GCP_SA_KEY` (Meltano). |
 
+Local, si ya tenés la key (Nico la creó; preferible ADC / WIF):
+
 ```bash
 cd transform
 export BIGQUERY_PROJECT=vaca-muerta-pulse
 # Exige GCP_SA_KEY_DBT. No cae a Meltano GCP_SA_KEY.
+mkdir -p .secrets                          # .secrets/ está gitignored
+# el JSON vive acá o en GH Secrets — nunca en el commit
+export GOOGLE_APPLICATION_CREDENTIALS="$PWD/.secrets/vm-pulse-dbt.json"
+# o, si el secret está en el entorno (NO copies a GCP_SA_KEY):
+export GCP_SA_KEY_DBT='<JSON completo de vm-pulse-dbt>'
 export GOOGLE_APPLICATION_CREDENTIALS="$(bash scripts/materialize-dbt-sa-key.sh)"
 ```
 
@@ -189,10 +212,10 @@ Targets: `dev` (default) → `raw_cap4_dev` / `stg_cap4_dev` / `int_cap4_dev` / 
 Mismo patrón que Meltano, **otro** secret:
 
 1. Add secrets → **`GCP_SA_KEY_DBT`** = JSON **entero** de `{` a `}` de `vm-pulse-dbt`.
-2. Opcional PEM: también **`GCP_SA_CLIENT_EMAIL_DBT`**.
-3. `bash transform/scripts/materialize-dbt-sa-key.sh` escribe `transform/.secrets/vm-pulse-dbt.json` (gitignored).
+2. Opcional PEM: también **`GCP_SA_DBT_CLIENT_EMAIL`** = `vm-pulse-dbt@<project-id>.iam.gserviceaccount.com` (o `BIGQUERY_PROJECT`).
+3. `bash transform/scripts/materialize-dbt-sa-key.sh` escribe `transform/.secrets/vm-pulse-dbt.json` (gitignored) y **rechaza** `GCP_SA_KEY` de Meltano.
 
-No pegues `GCP_SA_KEY` (Meltano) acá.
+No pegues `GCP_SA_KEY` (Meltano) acá. Este PR **no** descarga ni commitea un JSON de SA.
 
 ---
 

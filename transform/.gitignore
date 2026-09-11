@@ -2,6 +2,7 @@
 target/
 dbt_packages/
 dbt_internal_packages/
+dbt_modules/
 logs/
 .user.yml
 .venv/
@@ -10,5 +11,6 @@ logs/
 profiles.yml
 .env
 .secrets/
+vm-pulse-dbt.json
 *.json
 !package-lock.yml
