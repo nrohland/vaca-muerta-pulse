@@ -225,7 +225,7 @@ No pegues `GCP_SA_KEY` (Meltano) acá. Este PR **no** descarga ni commitea un JS
 source raw_cap4.produccion_pozo_mes   (físico: raw_cap4_dev; twin prod: raw_cap4 — aún no existe)
   → stg_produccion_pozo_mes     (view en stg_cap4_dev: cast, periodo, filtro VM, dedupe)
   → int_produccion_vm_noconv    (view en int_cap4_dev: surrogate + days_in_month)
-  → fct_well_month              (tabla en marts_cap4_dev, partition periodo)
+  → fct_well_month              (tabla en marts_cap4_dev, cluster empresa/pozo; sin partition-by-periodo en sandbox 60d)
   → fct_barrilito_rate          (1 fila en marts_cap4_dev)
 ```
 
@@ -260,7 +260,8 @@ Evaluator (caro; no es el `dbt build` default). Los modelos del paquete están `
 
 - Staging es **view**; el primer `dbt build` de `fct_well_month` lee **991844** filas de `raw_cap4_dev.produccion_pozo_mes` (año 2025, ~338 MiB). No hagas `select *` de raw.
 - Partición raw = `_sdc_batched_at` MONTH — **no** sirve para filtrar el mes Cap. IV (`periodo` vive en stg).
-- Preferí dry-run BQ, `dbt show --limit`, `dbt run --select stg+`, luego `dbt build --select fct_barrilito_rate+`.
+- `fct_well_month` **no** se particiona por `periodo` en sandbox: el cap de 60 días vacía la tabla al escribir meses 2025. Cluster `idempresa, idpozo`.
+- Preferí dry-run BQ, `dbt show --limit`, `dbt run --select stg+`, luego `dbt build --select +fct_barrilito_rate` (el `+` a la izquierda incluye stg/int/well-month).
 - Recorte VM en stg (~34k well-months en el sample DataStore 2025); el scan de raw sigue siendo el año entero si la view no predica partición.
 - Si un dry-run estima ≫ 1 TiB, **STOP**.
 

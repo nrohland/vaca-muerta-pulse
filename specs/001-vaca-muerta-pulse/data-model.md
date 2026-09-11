@@ -91,6 +91,7 @@ Tight no-VM: no-goal (spec). El raw carga **todas las cuencas/años del resource
 | Partition raw | **CONFIRMED (loader):** `PARTITION BY TIMESTAMP_TRUNC(_sdc_batched_at, MONTH)` — instante de batch Meltano, **no** el mes de producción |
 | Cluster raw | `empresa`, `idpozo`, `cuenca` — cableado en Meltano |
 | Grano de negocio | **`periodo`** (DATE `YYYY-MM-01`, lo agrega el tap). `stg` **materializa** `periodo` para filtros/agregados. No usar `_sdc_batched_at` como mes Cap. IV |
+| Partition mart `fct_well_month` | **No** `PARTITION BY periodo` en sandbox: el cap de 60 días expira particiones cuya fecha de columna es el mes Cap. IV 2025, y la tabla queda en 0 filas al materializar. Cluster `idempresa, idpozo`. Revisitar partition-by-periodo con billing. |
 
 **Re-emit / rectificativas:** snapshot anual. Prod: `DELETE WHERE anio=@year` + append. Staging **dedupea** `idpozo+anio+mes` (2025 tenía 0 dupes; otros años UNKNOWN): prioriza `rectificado = t`, luego el batch Singer más reciente. El último mes Cap. IV (input de Barrilito) puede **reexpresarse** en un load posterior.
 
