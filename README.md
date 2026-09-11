@@ -6,7 +6,7 @@ Dashboard público de **storytelling** sobre producción y completaciones no con
 
 Este repo es un **data product** de portfolio, **spec-driven**: primero specs y ADRs, después Meltano / dbt / Next.
 
-> **Hito 2 (este árbol):** dbt Core en [`transform/`](transform/README.md) (`fct_barrilito_rate`). Meltano en [`extraction/`](extraction/README.md) → BigQuery `raw_cap4_dev` (año 2025: `COUNT(*)` **991 844**, delta 0). Next sigue sin implementar. `dbt build` contra BQ usa SA `vm-pulse-dbt` (secret `GCP_SA_KEY_DBT`, fuera de git).
+> **Hito 2 (este árbol):** dbt Core en [`transform/`](transform/README.md) (`fct_barrilito_rate` + empresa/área). Meltano en [`extraction/`](extraction/README.md) → BigQuery `raw_cap4_dev` (año 2025: `COUNT(*)` **991 844**, delta 0). Next sigue sin implementar. Spike de portada: [`apps/spike/`](apps/spike/README.md). `dbt build` contra BQ usa SA `vm-pulse-dbt` (secret `GCP_SA_KEY_DBT`, fuera de git).
 
 | Si sos… | Empezá por |
 | --- | --- |

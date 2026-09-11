@@ -1,0 +1,4 @@
+# Spike only. Not the Hito 3 Next app. No dbt, no Meltano.
+pandas>=2.0,<3
+matplotlib>=3.8,<4
+jupyter>=1.0,<2

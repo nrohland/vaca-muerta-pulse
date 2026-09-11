@@ -110,6 +110,8 @@ Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 2–3. Código:
 
 No implementar Next/Tremor acá ni en Hito 2. Owner: **Front**. Spec: R6 / R6b.
 
+Spike de portada (no tilda estas casillas): [`apps/spike/`](../../apps/spike/README.md). Reloj diario + tokens. [ADR 0002](../../docs/adrs/0002-ui-spike-notebook.md).
+
 - [ ] Headline = contador de barriles interpolado desde `rate_bbl_dia` del mart (aspecto “extrayéndose” en vivo).
 - [ ] Disclaimer **MUST** visible junto al contador: *simulación a partir de datos mensuales oficiales*.
 - [ ] Copy: no afirmar telemetría, SCADA, ni que Capítulo IV sea tiempo real / alta frecuencia.

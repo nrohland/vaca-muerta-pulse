@@ -53,7 +53,7 @@ Detalle de *por qué* abajo. El dibujo del flujo: [architecture.md](../architect
 - Tremor cubre KPI + series temporales con poco CSS custom, suficiente para producción/completaciones.
 - Next permite (Hito 3) leer marts en server components sin exponer SA al browser.
 
-**Trade-off:** más setup que Streamlit. Streamlit acelera un spike interno; no es el artefacto de portfolio ni un front público durable. Un cambio a otro kit de charts no exige cambiar Next si el ADR de UI se abre aparte.
+**Trade-off:** más setup que Streamlit. Streamlit (o un notebook) acelera un spike interno; no es el artefacto de portfolio ni un front público durable. Spike vivo: [ADR 0002](0002-ui-spike-notebook.md) + [`apps/spike/`](../../apps/spike/README.md). Un cambio a otro kit de charts no exige cambiar Next si el ADR de UI se abre aparte.
 
 ## Consecuencias
 
