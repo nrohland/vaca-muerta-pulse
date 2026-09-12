@@ -69,6 +69,14 @@ QUERIES = {
         join top5 using (idempresa)
         order by c.periodo, c.prod_pet_m3 desc
     """,
+    "completions_month.csv": """
+        select
+          periodo, anio, mes,
+          job_count, well_count, etapas,
+          arena_tn, agua_inyectada_m3
+        from `vaca-muerta-pulse.marts_cap4_dev.fct_completions_month`
+        order by periodo
+    """,
 }
 
 

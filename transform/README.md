@@ -15,6 +15,7 @@ IAM / datasets (DE, PR #11): [docs/hito-2-bq-iam.md](docs/hito-2-bq-iam.md). Sec
 | | |
 | --- | --- |
 | **Primario (stg, target `dev`)** | `vaca-muerta-pulse.raw_cap4_dev.produccion_pozo_mes` |
+| **Companion Adjunto IV** | `raw_cap4_dev.fracturas_adjunto_iv` (job `cap4-fracturas`; no es Cap. IV) |
 | **`COUNT(*)`** | **991844** (año 2025 completo). Handoff DE/Tutor + [evidencia Hito 1](../extraction/docs/hito-1-full-year-2025-load.md). Este PR de AE **no** re-consultó `INFORMATION_SCHEMA` ni inventó más evidencia de warehouse. |
 | Twin prod | `raw_cap4.produccion_pozo_mes` (mismo grano / mismo nombre de tabla). **El dataset `raw_cap4` no existe todavía.** `DBT_TARGET=prod` o `DBT_DATASET_RAW=raw_cap4` cuando DE lo cree. |
 | Match source | Datastore 2025 resource `d774b5d7-0756-48fe-88f2-8729b57b22da` total 991 844 |
@@ -55,7 +56,7 @@ Leé **solo** marts. Headline = este mart, una fila.
 
 **Frescura:** Capítulo IV es **mensual**. `periodo` es el último mes de DDJJ en el mart de pozo-mes. `_sdc_batched_at` es cuándo Meltano bateó — no lo uses como mes de producción.
 
-Well-month (series): `fct_well_month`, grano `idpozo+anio+mes`, recorte VM ya aplicado. Rankings Hito 3: `fct_company_month` / `dim_company` y `fct_area_month` / `dim_area`. Completaciones = empty state (Adjunto IV no está en el job Meltano default).
+Well-month (series): `fct_well_month`, grano `idpozo+anio+mes`, recorte VM ya aplicado. Rankings Hito 3: `fct_company_month` / `dim_company` y `fct_area_month` / `dim_area`. Completaciones: `fct_completions` / `fct_completions_month` (**Adjunto IV**, no Cap. IV).
 
 ### Query de sample
 
@@ -87,7 +88,22 @@ Leé estos marts para ranking y filtros. El contador interpolado **sigue** salie
 | `dim_area` | `idareapermisoconcesion` | `marts_cap4_dev` |
 | `fct_area_month` | `idareapermisoconcesion` × `periodo` | `marts_cap4_dev` |
 
-Área preferida = permiso/concesión (`areapermisoconcesion`). `areayacimiento` no es este mart. Completaciones no están.
+Área preferida = permiso/concesión (`areapermisoconcesion`). `areayacimiento` no es este mart.
+
+### Completaciones (Adjunto IV, no Cap. IV)
+
+| Mart | Grano | Dataset BQ (dev) |
+| --- | --- | --- |
+| `fct_completions` | `id_base_fractura_adjiv` | `marts_cap4_dev` |
+| `fct_completions_month` | mes de `fecha_inicio` | `marts_cap4_dev` |
+
+Copy MUST: Adjunto IV. `cantidad_fracturas` = etapas. Join a `fct_well_month` por `idpozo` = UNKNOWN. No interpolar fracturas como el Barrilito.
+
+```sql
+select periodo, job_count, etapas, well_count
+from `vaca-muerta-pulse.marts_cap4_dev.fct_completions_month`
+order by periodo;
+```
 
 Muestras: [analyses/sample_company_month.sql](analyses/sample_company_month.sql), [analyses/sample_area_month.sql](analyses/sample_area_month.sql).
 
@@ -217,6 +233,8 @@ dbt debug
 dbt build --select +fct_barrilito_rate
 # Rankings empresa / área (leen fct_well_month; no re-scan de raw si la tabla ya existe):
 dbt build --select dim_company dim_area fct_company_month fct_area_month
+# Adjunto IV (no es Cap. IV; pide raw fracturas_adjunto_iv):
+dbt build --select stg_fracturas_adjunto_iv+
 dbt test
 dbt show --select fct_barrilito_rate --limit 5
 dbt show --select fct_company_month --limit 5

@@ -2,7 +2,7 @@
 
 Vista C4-ish del data product. Stack y *por qué*: [ADR 0001](adrs/0001-stack-choices.md). Producto: [spec.md](../specs/001-vaca-muerta-pulse/spec.md).
 
-**Hoy (Hito 2, P0+P1 en `main`):** dbt Core en `transform/` sobre raw Meltano. Source primario de stg: **`raw_cap4_dev`** (`produccion_pozo_mes` `COUNT(*)` = 991844, año 2025 — handoff DE/Tutor). Prod twin: `raw_cap4`. Mart headline **`fct_barrilito_rate`**. Rankings **`fct_company_month`** / **`fct_area_month`**. SA `vm-pulse-dbt` **creada por Nico**; bindings OK. Completaciones: empty (Adjunto IV no está en el job default). Spike de portada: [`apps/spike/`](../apps/spike/README.md) ([ADR 0002](adrs/0002-ui-spike-notebook.md)). Next: Hito 3.
+**Hoy (Hito 2, P0+P1 + Adjunto IV en curso):** dbt Core en `transform/` sobre raw Meltano. Source primario de stg: **`raw_cap4_dev`** (`produccion_pozo_mes` `COUNT(*)` = 991844, año 2025). Companion: `fracturas_adjunto_iv` (Adjunto IV, job `cap4-fracturas`). Prod twin: `raw_cap4`. Mart headline **`fct_barrilito_rate`**. Rankings **`fct_company_month`** / **`fct_area_month`**. Completaciones **`fct_completions`**. SA `vm-pulse-dbt` **creada por Nico**; bindings OK. Spike de portada: [`apps/spike/`](../apps/spike/README.md) ([ADR 0002](adrs/0002-ui-spike-notebook.md)). Next: Hito 3.
 
 ## 1. Contexto
 
@@ -27,7 +27,7 @@ Límites:
 - No autenticamos usuarios finales (producto público).
 - No somos el origen de verdad: si SE corrige una DDJJ, re-ingerimos.
 - No hay streaming; cadencia **mensual** (publicación del Capítulo IV).
-- El extract default es **solo** producción Cap. IV. Datasets hermanos (Adjunto IV, perforación, comercio exterior, ductos) existen en el mismo CKAN; no están en el job. Ver [data-model.md](../specs/001-vaca-muerta-pulse/data-model.md) § Fuentes hermanas.
+- El extract default es **solo** producción Cap. IV. Adjunto IV entra por el job **aparte** `cap4-fracturas`. Perforación, comercio exterior, ductos siguen fuera. Ver [data-model.md](../specs/001-vaca-muerta-pulse/data-model.md) § Fuentes hermanas.
 
 ## 2. Contenedores
 
@@ -63,28 +63,28 @@ El browser **no** habla con CKAN ni con `raw_*`.
 
 ```mermaid
 flowchart LR
-  subgraph Sources["Sources Capítulo IV"]
-    P["Producción pozo-mes<br/>CKAN DataStore / CSVs por año"]
+  subgraph Sources["Sources Nación / SE"]
+    P["Producción pozo-mes Cap. IV<br/>CKAN DataStore / CSVs por año"]
     W["Capítulo IV - Pozos<br/>coords; no en job default"]
-    F["Adjunto IV fracturas<br/>resource encontrado; no en job default"]
+    F["Adjunto IV fracturas<br/>job cap4-fracturas (aparte)"]
   end
   P --> TAPS
   W --> TAPS
   F --> TAPS
-  TAPS["Meltano taps"] --> RAW["BQ raw<br/>partition MONTH(_sdc_batched_at)<br/>cluster empresa / idpozo / cuenca"]
+  TAPS["Meltano taps"] --> RAW["BQ raw<br/>partition MONTH(_sdc_batched_at)<br/>prod cluster empresa/idpozo/cuenca<br/>Adjunto IV cluster idpozo/cuenca/empresa_informante"]
   RAW --> STG["stg_*<br/>rename, types, filtros VM"]
   STG --> INT["int_*<br/>joins, claves, unidades"]
   INT --> M1["mart fct_well_month"]
   M1 --> M4["mart fct_barrilito_rate"]
   M1 --> M2["marts empresa / área"]
-  INT --> M3["mart completaciones (empty Hito 3)"]
+  STG --> M3["mart fct_completions"]
   M1 --> WEB["Dashboard"]
   M2 --> WEB
   M3 --> WEB
   M4 --> WEB
 ```
 
-El nodo raw del diagrama coincide con `extraction/meltano.yml`: partición **MONTH(`_sdc_batched_at`)** (no `periodo`); cluster **`empresa`, `idpozo`, `cuenca`** (no `sigla`). Intento de producto `PARTITION BY DATE(periodo)`: [extraction/sql/intended_partition.sql](../extraction/sql/intended_partition.sql).
+El nodo raw de **producción** coincide con `extraction/meltano.yml`: partición **MONTH(`_sdc_batched_at`)** (no `periodo`); cluster **`empresa`, `idpozo`, `cuenca`**. Adjunto IV: mismo MONTH de load, cluster **`idpozo`, `cuenca`, `empresa_informante`** (no hay `empresa`). Intento de producto `PARTITION BY DATE(periodo)`: [extraction/sql/intended_partition.sql](../extraction/sql/intended_partition.sql).
 
 Filtro de producto (CONFIRMED en sample 2025 DataStore; aplicar en `stg`/`int`, no en el tap): `formacion = 'vaca muerta'` y `tipo_de_recurso = 'NO CONVENCIONAL'`. Detalle en [data-model.md](../specs/001-vaca-muerta-pulse/data-model.md).
 
@@ -94,11 +94,11 @@ Nombres **confirmados**. Handoff Hito 2: `raw_cap4_dev.produccion_pozo_mes` `COU
 
 | Dataset | Contenido | Quién escribe |
 | --- | --- | --- |
-| `raw_cap4_dev` | **Primario Hito 2 / stg.** Tabla `produccion_pozo_mes`, `COUNT(*)` = 991844 (año 2025, handoff DE/Tutor). **append** (reload = TRUNCATE o DELETE year) | Meltano (`vm-pulse-meltano`) |
+| `raw_cap4_dev` | **Primario Hito 2 / stg.** Tabla `produccion_pozo_mes`, `COUNT(*)` = 991844 (año 2025, handoff DE/Tutor). Companion `fracturas_adjunto_iv` (Adjunto IV). **append** (reload = TRUNCATE o DELETE year) | Meltano (`vm-pulse-meltano`); loader Python de fracturas usa ADC/`GCP_SA_KEY_DBT` si Meltano no está |
 | `raw_cap4` | Twin de prod (mismo patrón de tabla; no es otro grano). **No existe todavía** | Meltano (prod, cuando se cree) |
 | `stg_cap4_dev` | Staging dbt (dev). Prod twin: `stg_cap4` | dbt (`vm-pulse-dbt`) |
 | `int_cap4_dev` | Intermediate dbt (dev). Prod twin: `int_cap4` | dbt (`vm-pulse-dbt`) |
-| `marts_cap4_dev` | Marts dbt (dev): `fct_barrilito_rate`, `fct_well_month`, `fct_company_month`, `fct_area_month`, dims. Prod twin: `marts_cap4` | dbt (`vm-pulse-dbt`) |
+| `marts_cap4_dev` | Marts dbt (dev): `fct_barrilito_rate`, `fct_well_month`, `fct_company_month`, `fct_area_month`, dims, `fct_completions`. Prod twin: `marts_cap4` | dbt (`vm-pulse-dbt`) |
 
 Proyecto GCP: **`vaca-muerta-pulse`**. Location: **US**.
 
@@ -112,7 +112,7 @@ Tablas raw de hechos de producción (`produccion_pozo_mes`):
 - **No overwrite:** `CREATE OR REPLACE TABLE AS SELECT *` de z3z1ma @090dad06 deja `new=none` y BQ rechaza reemplazar la tabla particionada. Dev y prod hacen **append**.
 - **CLUSTER BY** (orden cableado en `meltano.yml`): `empresa`, `idpozo`, `cuenca`.
 
-Completaciones (Adjunto IV): grano evento (`id_base_fractura_adjiv`); partición candidata `fecha_inicio_fractura`. Stream en el tap, **no** seleccionado en el job default de Hito 1.
+Completaciones (Adjunto IV): grano evento (`id_base_fractura_adjiv`); **no** particionar por `fecha_inicio_fractura` en sandbox. Stream en el tap, **deseleccionado** en `cap4-produccion`. Load: job `cap4-fracturas`.
 
 ## 5. Costo y cuota (cheap/free-tier)
 
@@ -129,5 +129,5 @@ Diagrama de confianza: el SA de Meltano (`vm-pulse-meltano`) escribe `raw_*`; el
 ## 7. Lo que no está en v1
 
 - CDC sub-diario, Airflow/Composer, dbt Cloud, auth de usuarios, GIS pesado, cuenca fuera de Vaca Muerta como producto (el raw puede aterrizar más amplio y filtrar en `stg`).
-- Load de fuentes hermanas (perforación SESCO, comercio exterior, ductos Res. 319/93, Brent, seed Oldelval). Adjunto IV: stream en el tap, **no** en el job default.
+- Load de fuentes hermanas restantes (perforación SESCO, comercio exterior, ductos Res. 319/93, Brent, seed Oldelval). Adjunto IV: job `cap4-fracturas` (no el default de producción).
 - Rigs live (NCS/IAPG), breakeven, o cualquier KPI que el Front invente sin mart + URL de source.

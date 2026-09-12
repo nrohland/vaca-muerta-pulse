@@ -19,11 +19,19 @@ environments:
             config:
               dataset: raw_cap4_dev
               overwrite: false
+          - name: target-bigquery--fracturas
+            config:
+              dataset: raw_cap4_dev
+              overwrite: false
   - name: prod
     config:
       plugins:
         loaders:
           - name: target-bigquery
+            config:
+              dataset: raw_cap4
+              overwrite: false
+          - name: target-bigquery--fracturas
             config:
               dataset: raw_cap4
               overwrite: false
@@ -64,6 +72,13 @@ plugins:
         pozos_resource_id: cb5c0f04-7835-45cd-b982-3e25ca7d7751
         fracturas_resource_id: 2280ad92-6ed3-403e-a095-50139863ab0d
         page_size: 32000
+    # Completions only. Default extractor stays production-only.
+    - name: tap-ckan-datastore--fracturas
+      inherit_from: tap-ckan-datastore
+      select:
+        - fracturas_adjunto_iv.*
+        - "!produccion_pozo_mes.*"
+        - "!capitulo_iv_pozos.*"
   loaders:
     - name: target-bigquery
       variant: z3z1ma
@@ -117,7 +132,21 @@ plugins:
         upsert: false
         overwrite: false
 
+    # Adjunto IV: no `empresa`. Default clustering_fields would fail CREATE.
+    - name: target-bigquery--fracturas
+      inherit_from: target-bigquery
+      config:
+        clustering_fields:
+          - idpozo
+          - cuenca
+          - empresa_informante
+
 jobs:
   - name: cap4-produccion
     tasks:
       - tap-ckan-datastore target-bigquery
+  # Completions only. Does not replace cap4-produccion. Pre-create the table
+  # (sql/create_raw_fracturas_adjunto_iv.sql) so APPEND keeps cluster.
+  - name: cap4-fracturas
+    tasks:
+      - tap-ckan-datastore--fracturas target-bigquery--fracturas
