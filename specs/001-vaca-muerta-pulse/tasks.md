@@ -112,8 +112,8 @@ El mart publicado el 2026-09-11 usaba `sum/sum(tef)` como `rate_bbl_dia` (~260 b
 
 - [x] Spec + data-model: headline = `sum(prod_pet_m3) / days_in_month`; productividad en columnas aparte.
 - [x] `fct_barrilito_rate` SQL + unit tests (divergencia tef vs calendario).
-- [x] Spike `apps/spike/barrilito_cuenca.ipynb` sobre los CSV existentes (sin GCP).
-- [ ] `dbt build --select fct_barrilito_rate` en warehouse cuando haya SA (Nico). El CSV `headline.csv` sigue con `rate_method=tef_weighted` hasta ese refresh.
+- [x] Spike `apps/spike/barrilito_cuenca.ipynb` sobre los CSV de marts.
+- [x] `dbt build --select fct_barrilito_rate` 2026-09-12: 3 unit tests PASS + model + data tests. `periodo=2025-12-01`, `rate_method=calendar_days`, `rate_bbl_dia≈590393`, `productivity_bbl_dia≈259.8`. Job model `876b1821-715d-40ce-a94e-9057c235df1c` (~2.2 MiB). CSV `headline.csv` re-exportado.
 
 ---
 

@@ -19,7 +19,7 @@ pip install -r requirements.txt
 jupyter notebook barrilito_cuenca.ipynb
 ```
 
-No hace falta GCP: los CSV ya están en [`data/`](data/SOURCE.md). Cero secretos. El notebook **v2 no lee** `headline.rate_bbl_dia` (sigue siendo el grano viejo hasta que Nico corra `dbt build` + `export_snapshots.py`).
+No hace falta GCP: los CSV ya están en [`data/`](data/SOURCE.md). Cero secretos. `headline.rate_bbl_dia` es la tasa de **cuenca** (`calendar_days`).
 
 Refresh opcional (SA `vm-pulse-dbt`, **no** Meltano `GCP_SA_KEY`):
 
@@ -31,7 +31,7 @@ python export_snapshots.py
 
 ## Qué queda fijado acá (v2)
 
-- Headline: `rate_bbl_cuenca = prod_pet_m3 × 6.28981077 / days_in_month`.
+- Headline: `fct_barrilito_rate.rate_bbl_dia` = `prod_pet_m3 × 6.28981077 / days_in_month`.
 - Productividad: `prod × factor / tef_sum` como KPI, **no** como ritmo del contador.
 - Reloj diario: `barriles_hoy = rate_bbl_cuenca × segundos_desde_00:00_ART / 86400`.
 - Disclaimer MUST pegado al número: *simulación a partir de datos mensuales oficiales*.

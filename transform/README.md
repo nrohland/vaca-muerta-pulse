@@ -222,7 +222,7 @@ dbt show --select fct_barrilito_rate --limit 5
 dbt show --select fct_company_month --limit 5
 ```
 
-`dbt build --select +fct_barrilito_rate` y `dbt test` **verdes** 2026-09-11 contra BigQuery. Headline de ese build era `tef_weighted` (~260 bbl/día) — **grano incorrecto**. Contrato revisado: `calendar_days` de cuenca. Rebuild pendiente. Source schema: `env_var('DBT_RAW_DATASET', 'raw_cap4_dev')` en `_sources.yml` — **no** pongas `{{ env_var() }}` dentro de `vars:` (dbt lo deja sin renderizar).
+`dbt build --select fct_barrilito_rate` **verde** 2026-09-12 contra BigQuery: unit tests + model + data tests. Headline `calendar_days`, `rate_bbl_dia` ≈ 590 393 bbl/día; `productivity_bbl_dia` ≈ 259.8. Job model `876b1821-715d-40ce-a94e-9057c235df1c` (~2.2 MiB). El build 2026-09-11 con `tef_weighted` como portada quedó obsoleto. Source schema: `env_var('DBT_RAW_DATASET', 'raw_cap4_dev')` en `_sources.yml` — **no** pongas `{{ env_var() }}` dentro de `vars:` (dbt lo deja sin renderizar).
 
 Unit tests del mart (`test_type:unit`) también necesitan adapter BQ (tablas temporales). Están escritos; hay que correrlos con SA.
 
