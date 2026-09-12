@@ -27,6 +27,7 @@ Límites:
 - No autenticamos usuarios finales (producto público).
 - No somos el origen de verdad: si SE corrige una DDJJ, re-ingerimos.
 - No hay streaming; cadencia **mensual** (publicación del Capítulo IV).
+- El extract default es **solo** producción Cap. IV. Datasets hermanos (Adjunto IV, perforación, comercio exterior, ductos) existen en el mismo CKAN; no están en el job. Ver [data-model.md](../specs/001-vaca-muerta-pulse/data-model.md) § Fuentes hermanas.
 
 ## 2. Contenedores
 
@@ -128,3 +129,5 @@ Diagrama de confianza: el SA de Meltano (`vm-pulse-meltano`) escribe `raw_*`; el
 ## 7. Lo que no está en v1
 
 - CDC sub-diario, Airflow/Composer, dbt Cloud, auth de usuarios, GIS pesado, cuenca fuera de Vaca Muerta como producto (el raw puede aterrizar más amplio y filtrar en `stg`).
+- Load de fuentes hermanas (perforación SESCO, comercio exterior, ductos Res. 319/93, Brent, seed Oldelval). Adjunto IV: stream en el tap, **no** en el job default.
+- Rigs live (NCS/IAPG), breakeven, o cualquier KPI que el Front invente sin mart + URL de source.

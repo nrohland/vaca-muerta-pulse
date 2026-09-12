@@ -34,7 +34,7 @@ Los datos de Capítulo IV son **públicos y ricos**, pero malos para contar una 
 - CSVs anuales pesados (DDJJ abiertas y cerradas), publicados en [Datos Argentina](https://datos.gob.ar/dataset/energia-produccion-petroleo-gas-por-pozo-capitulo-iv) / CKAN de Energía.
 - Grano poco obvio (pozo × mes, a veces por formación productiva).
 - Unidades mixtas (petróleo y agua en m³, gas en miles de m³).
-- Completaciones / fracturas en **otro** recurso, no siempre alineado al padrón de pozos.
+- Completaciones / fracturas en **otro** recurso (Adjunto IV), no siempre alineado al padrón de pozos. Rigs, Brent, exportaciones y oleoductos tampoco salen del anual de producción: ver [mapa de fuentes](specs/001-vaca-muerta-pulse/spec.md).
 - Consultas oficiales ([reporte avanzado SE](https://www.se.gob.ar/datosupstream/consulta_avanzada/reporte.php)) útiles para un pozo, no para una narrativa de cuenca.
 - El dato **no** es alta frecuencia: no hay feed público de barriles por segundo.
 

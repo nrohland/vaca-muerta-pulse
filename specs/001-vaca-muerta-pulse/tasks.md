@@ -117,3 +117,16 @@ Spike de portada (no tilda estas casillas): [`apps/spike/`](../../apps/spike/REA
 - [ ] Copy: no afirmar telemetría, SCADA, ni que Capítulo IV sea tiempo real / alta frecuencia.
 - [ ] Petróleo de headline en **bbl**; m³ disponible en otras vistas si el mart lo expone.
 - [ ] README de `apps/web/` documenta mart de tasa + disclaimer (sin secretos en el cliente).
+- [ ] Copy Hito 3 no pinta rigs / Brent / exportaciones / oleoductos / breakeven como Capítulo IV (mapa: [spec.md](spec.md)).
+
+## Post-v1 — fuentes hermanas (descubrimiento 2026-09-11; no implementar acá)
+
+Owner futuro: **DE** (tap) + **AE** (grano) + spec/ADR **antes** del código. IDs: [`extraction/resources/sibling-sources.yml`](../../extraction/resources/sibling-sources.yml).
+
+- [x] Mapear Adjunto IV, perforación SESCO, distribución de petróleo, comercio exterior, ductos Res. 319/93 contra CKAN (totales / campos / caveats).
+- [ ] Load Adjunto IV (job **aparte** del default de producción) + `fct_completions`.
+- [ ] Decidir si perforación `cantidad` mensual entra como actividad (copy: no “rigs live”).
+- [ ] Decidir comercio exterior vs distribución (destinos ≠ offtake de yacimiento).
+- [ ] Si hay capacidad Oldelval/Otasa: seed citada (URL+fecha), no scrape de PDF en el tap.
+- [ ] Brent: tap de enriquecimiento + copy “macro, no SE” — o no-goal si no hay ADR.
+- [x] **Breakeven:** no-goal. No hay source público reproducible; no KPI ni “margen”.
