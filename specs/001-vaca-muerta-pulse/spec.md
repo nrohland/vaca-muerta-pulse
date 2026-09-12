@@ -26,7 +26,7 @@ El identificador técnico del repo sigue siendo `vaca-muerta-pulse`.
 | Marca | **Barrilito** en UI y copy | Renombrar el repo |
 | Headline | Contador de barriles “extrayéndose” con aspecto live | Telemetría de pozo / SCADA / alta frecuencia |
 | Verdad del dato | Capítulo IV **mensual** oficial | Un feed intradía de Secretaría de Energía |
-| Tasa | Mart Hito 2: promedio ponderado del último mes Cap. IV → **bbl/día** | Inventar sensores o un grano horario |
+| Tasa | Mart: **bbl/día de cuenca** = `sum(prod_pet_m3) / días del mes` del último mes Cap. IV | Productividad `sum/sum(tef)` como headline; sensores |
 | Front | Interpola esa tasa en el contador | Afirmar “producción en este segundo” sin disclaimer |
 | Disclaimer **MUST** | Texto visible: *simulación a partir de datos mensuales oficiales* | Disclaimer solo en un footer escondido o en el README |
 
@@ -57,7 +57,7 @@ Prioridad **P0** = Hitos 1–3. **P1** = después, sin bloquear Barrilito v1.
 
 ### Producto / UI (P0, Hito 3)
 
-- R6. **Headline Barrilito:** contador interpolado de barriles “extrayéndose” a partir de la tasa `bbl/día` del mart (último mes Cap. IV / ~últimos 30 días oficiales). Aspecto live; verdad mensual.
+- R6. **Headline Barrilito:** contador interpolado de barriles “extrayéndose” a partir de la tasa **de cuenca** `bbl/día` del mart (`sum(prod_pet_m3) / days_in_month` del último mes Cap. IV). Aspecto live; verdad mensual. No usar `sum/sum(tef)` como ritmo de portada.
 - R6b. El disclaimer **MUST** está a la vista junto al contador (no solo en un about): *simulación a partir de datos mensuales oficiales*.
 - R7. KPIs del último período disponible (producción petróleo/gas, pozos activos o equivalente) **además** del headline; serie temporal (cuenca VM / no convencional) y ranking de empresas.
 - R8. Vista de área (concesión / yacimiento — **elegir un grano de área** cuando se cierre el UNKNOWN).

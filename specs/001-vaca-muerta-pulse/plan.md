@@ -83,13 +83,13 @@ Producto UI: **Barrilito** (repo `vaca-muerta-pulse`). El contador “live” es
 - [x] Marts de empresa y área; grano de área ya no UNKNOWN (o P1 explícito). — `fct_company_month` + `dim_company` (grano `idempresa+periodo`); `fct_area_month` + `dim_area` (grano preferido `idareapermisoconcesion+periodo`). Estabilidad de ids entre años = UNKNOWN (solo 2025).
 - [x] Completaciones: mart **o** no-goal actualizado en spec. — **sin mart** (Adjunto IV no está en el job Meltano default); Hito 3 empty state. Source documentado.
 - [x] **Mart Barrilito:** `fct_barrilito_rate`, una fila = snapshot VM no conv. último mes Cap. IV (total Pulse). Tasa **bbl/día**.
-- [x] **Fórmula** en modelo + data-model: preferred `sum(prod_pet_m3) / nullif(sum(tef), 0)`; fallback `days_in_month`. Unit tests fixtures `tef = 0`. Warehouse 2025 Pulse: `tef` en [0, 31], 0 nulls; headline `tef_weighted`.
+- [x] **Fórmula (cerrada 2026-09-11, revisada 2026-09-11 noche):** headline **de cuenca** `sum(prod_pet_m3) / days_in_month` (`calendar_days`). `sum/sum(tef)` queda como `productivity_*`, no Barrilito. El check original (`tef_weighted` como portada) estaba mal de grano. Spike: [`apps/spike/barrilito_cuenca.ipynb`](../../apps/spike/barrilito_cuenca.ipynb).
 - [x] Conversión `bbl = m³ × 6.28981077` en el mart **y** en YAML de métricas (mismo factor).
 - [x] `stg` usa `periodo`. No tratar `_sdc_batched_at` como mes de producción.
 - [x] `dbt test` verde en CI o instrucciones locales inequívocas. — CI: `dbt deps` + `dbt parse`. Warehouse 2026-09-11: `dbt build --select +fct_barrilito_rate` PASS=33 y `dbt test` PASS=29 contra `raw_cap4_dev` (SA `vm-pulse-dbt`). `fct_barrilito_rate` 1 fila.
 - [x] Front puede basarse en nombres de marts documentados (`transform/README.md` + data-model), incluida la tasa Barrilito y los rankings empresa/área.
 
-**Spike de portada (no cierra Hito 3):** [`apps/spike/`](../../apps/spike/README.md) — notebook + CSV acotados de marts. Interpolación = reloj diario. [ADR 0002](../../docs/adrs/0002-ui-spike-notebook.md).
+**Spike de portada (no cierra Hito 3):** [`apps/spike/barrilito_cuenca.ipynb`](../../apps/spike/README.md) — tasa de **cuenca**. El notebook v1 (`barrilito_spike.ipynb`) usó productividad por pozo-día (~260 bbl/día) como headline; queda como archivo histórico. Interpolación = reloj diario. [ADR 0002](../../docs/adrs/0002-ui-spike-notebook.md).
 
 ---
 

@@ -14,6 +14,7 @@ Un notebook + snapshots CSV acotados en [`apps/spike/`](../../apps/spike/README.
 
 - Lee marts (o sus CSV), nunca `raw_*`.
 - Fija: reloj diario, paleta, copy MUST, empty de completaciones.
+- Headline del spike **v2**: `prod_pet_m3 / days_in_month` (cuenca). v1 usó `prod / tef` por error.
 - **No** es el artefacto público ni un cambio de stack.
 
 Streamlit u otro kit de charts pueden reusar el mismo `data/` si hace falta; tampoco serían Hito 3.
@@ -22,5 +23,6 @@ Streamlit u otro kit de charts pueden reusar el mismo `data/` si hace falta; tam
 
 - `apps/web/` sigue vacío hasta el PR de Next.
 - Aceptación Hito 3 no se tilda con este spike.
-- Un Front que copie tokens/fórmula desde el notebook no recalcula `6.28981077`.
+- Un Front que copie tokens/fórmula desde el notebook **v2** (`barrilito_cuenca.ipynb`) no recalcula `6.28981077` y usa **tasa de cuenca**, no productividad.
+- El notebook v1 (`barrilito_spike.ipynb`) interpoló `sum/sum(tef)` (~260 bbl/día). Queda histórico; no copiar su `rate_bbl_dia`.
 - Si el spike se volviera el producto, haría falta un ADR que **sí** reemplace el 0001 (no es este).

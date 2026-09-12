@@ -2,7 +2,12 @@
 
 **No es Hito 3.** Owner: AE / producto. El dashboard público sigue en [`apps/web/`](../web/README.md) (Next.js + Tremor, vacío hasta el hito).
 
-Este folder es un **spike**: notebook + CSVs chicos de marts para fijar interpolación, copy, gráficos y tokens. ADR: [0002](../../docs/adrs/0002-ui-spike-notebook.md). No reemplaza el [0001](../../docs/adrs/0001-stack-choices.md).
+Este folder es un **spike**: notebooks + CSVs chicos de marts para fijar interpolación, copy, gráficos y tokens. ADR: [0002](../../docs/adrs/0002-ui-spike-notebook.md). No reemplaza el [0001](../../docs/adrs/0001-stack-choices.md).
+
+| Notebook | Headline | Usar |
+| --- | --- | --- |
+| [`barrilito_cuenca.ipynb`](barrilito_cuenca.ipynb) | **bbl/día de cuenca** = `prod_pet_m3 / days_in_month` (~590k en dic-2025) | **Sí** — definición actual |
+| [`barrilito_spike.ipynb`](barrilito_spike.ipynb) | usaba `rate_bbl_dia` del mart = `prod / tef` (~260 bbl/pozo-día) | Histórico; no copiar al Front |
 
 ## Cómo correr
 
@@ -11,10 +16,10 @@ cd apps/spike
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-jupyter notebook barrilito_spike.ipynb
+jupyter notebook barrilito_cuenca.ipynb
 ```
 
-No hace falta GCP: los CSV ya están en [`data/`](data/SOURCE.md). Cero secretos.
+No hace falta GCP: los CSV ya están en [`data/`](data/SOURCE.md). Cero secretos. `headline.rate_bbl_dia` es la tasa de **cuenca** (`calendar_days`).
 
 Refresh opcional (SA `vm-pulse-dbt`, **no** Meltano `GCP_SA_KEY`):
 
@@ -24,16 +29,18 @@ pip install google-cloud-bigquery pandas pyarrow
 python export_snapshots.py
 ```
 
-## Qué queda fijado acá
+## Qué queda fijado acá (v2)
 
-- Reloj diario: `barriles_hoy = rate_bbl_dia × segundos_desde_00:00_ART / 86400`.
+- Headline: `fct_barrilito_rate.rate_bbl_dia` = `prod_pet_m3 × 6.28981077 / days_in_month`.
+- Productividad: `prod × factor / tef_sum` como KPI, **no** como ritmo del contador.
+- Reloj diario: `barriles_hoy = rate_bbl_cuenca × segundos_desde_00:00_ART / 86400`.
 - Disclaimer MUST pegado al número: *simulación a partir de datos mensuales oficiales*.
-- Petróleo headline en **bbl**; volumen DDJJ en **m³**.
-- Ranking empresas + áreas (permiso/concesión). Completaciones = “sin dato”.
-- Paleta y mapa de componentes → Tremor (celda 8 del notebook).
+- Copy: **último mes oficial** (dic-2025), no “últimos 30 días” como si Cap. IV fuera diario.
+- Completaciones / rigs / Brent / export / oleoductos / breakeven = no están en estos CSV.
 
 ## Qué no es
 
 - No es Streamlit como producto.
 - No lee `raw_*`.
 - No cierra aceptación de [plan.md](../../specs/001-vaca-muerta-pulse/plan.md) Hito 3.
+- No arranca Next.
