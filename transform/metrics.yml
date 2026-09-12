@@ -24,6 +24,6 @@ metrics:
     label: Barrilito rate m³/día
     column: rate_m3_dia
     unit: m3/día
-    formula: sum(prod_pet_m3) / nullif(sum(tef), 0); else / days_in_month
+    formula: sum(prod_pet_m3) / days_in_month(periodo)
     m3_to_bbl: 6.28981077
     description: Same rate in cubic metres per day (tooltip / other views).

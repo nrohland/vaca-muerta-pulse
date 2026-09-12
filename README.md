@@ -6,7 +6,7 @@ Dashboard público de **storytelling** sobre producción y completaciones no con
 
 Este repo es un **data product** de portfolio, **spec-driven**: primero specs y ADRs, después Meltano / dbt / Next.
 
-> **Hito 2 (este árbol):** dbt Core en [`transform/`](transform/README.md) (`fct_barrilito_rate` + empresa/área). Meltano en [`extraction/`](extraction/README.md) → BigQuery `raw_cap4_dev` (año 2025: `COUNT(*)` **991 844**, delta 0). Next sigue sin implementar. Spike de portada: [`apps/spike/`](apps/spike/README.md). `dbt build` contra BQ usa SA `vm-pulse-dbt` (secret `GCP_SA_KEY_DBT`, fuera de git).
+> **Hito 2 (este árbol):** dbt Core en [`transform/`](transform/README.md) (`fct_barrilito_rate` + empresa/área). Meltano en [`extraction/`](extraction/README.md) → BigQuery `raw_cap4_dev` (año 2025: `COUNT(*)` **991 844**, delta 0). Next sigue sin implementar. Spike de portada (tasa de **cuenca**): [`apps/spike/barrilito_cuenca.ipynb`](apps/spike/barrilito_cuenca.ipynb). `dbt build` contra BQ usa SA `vm-pulse-dbt` (secret `GCP_SA_KEY_DBT`, fuera de git).
 
 | Si sos… | Empezá por |
 | --- | --- |
@@ -19,7 +19,7 @@ Este repo es un **data product** de portfolio, **spec-driven**: primero specs y 
 
 La portada de Barrilito es un contador de barriles que *parece* **extrayéndose en tiempo real**.
 
-La verdad: Capítulo IV es **mensual** y oficial. El “live” es una **simulación honesta**: el Front interpola una tasa **bbl/día** calculada en el mart (Hito 2) a partir del último mes Cap. IV / ~últimos 30 días de DDJJ. **No es telemetría** ni un sensor de pozo.
+La verdad: Capítulo IV es **mensual** y oficial. El “live” es una **simulación honesta**: el Front interpola una tasa **bbl/día de cuenca** (`sum(prod_pet_m3) / días del mes`) calculada en el mart a partir del último mes Cap. IV. **No es telemetría** ni un sensor de pozo. `sum/sum(tef)` es productividad, no el headline.
 
 El extract Meltano sigue **mensual** (owner DE). La UI **MUST** mostrar: *simulación a partir de datos mensuales oficiales*.
 

@@ -24,13 +24,10 @@ with
     rated as (
         select
             *,
-            coalesce(
-                prod_pet_m3 / nullif(tef_sum, 0),
-                prod_pet_m3 / nullif(days_in_month, 0)
-            ) as rate_m3_dia,
-            case
-                when tef_sum > 0 then "tef_weighted" else "calendar_days"
-            end as rate_method
+            -- Headline = basin calendar rate, not well-day productivity.
+            prod_pet_m3 / nullif(days_in_month, 0) as rate_m3_dia,
+            prod_pet_m3 / nullif(tef_sum, 0) as productivity_m3_dia,
+            "calendar_days" as rate_method
         from aggregated
     )
 
@@ -46,6 +43,8 @@ select
     rate_m3_dia as rate_m3_per_day,
     {{ m3_to_bbl("rate_m3_dia") }} as rate_bbl_dia,
     {{ m3_to_bbl("rate_m3_dia") }} as rate_bbl_per_day,
+    productivity_m3_dia,
+    {{ m3_to_bbl("productivity_m3_dia") }} as productivity_bbl_dia,
     rate_method,
     source_batched_at_max,
     fecha_data_max,

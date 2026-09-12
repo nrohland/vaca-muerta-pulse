@@ -7,6 +7,7 @@ select
     mes,
     rate_bbl_dia,
     rate_m3_dia,
+    productivity_bbl_dia,
     rate_method,
     prod_pet_m3,
     tef_sum,

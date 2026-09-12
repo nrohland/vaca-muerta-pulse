@@ -40,9 +40,10 @@ Leé **solo** marts. Headline = este mart, una fila.
 
 | Columna | Uso |
 | --- | --- |
-| `rate_bbl_dia` | Insumo del contador interpolado (bbl/día). Alias `rate_bbl_per_day` = el mismo valor |
+| `rate_bbl_dia` | Insumo del contador interpolado (**bbl/día de cuenca** = `prod / days_in_month`). Alias `rate_bbl_per_day` |
 | `rate_m3_dia` | Misma tasa en m³/día (tooltip). Alias `rate_m3_per_day` |
-| `rate_method` | `tef_weighted` (preferida) o `calendar_days` (fallback) |
+| `productivity_bbl_dia` | Productividad por pozo-día (`prod / tef`). **No** interpolar el contador con esta columna |
+| `rate_method` | `calendar_days` (headline de cuenca) |
 | `periodo`, `anio`, `mes` | Mes oficial Cap. IV (`periodo` = DATE `YYYY-MM-01`) |
 | `prod_pet_m3`, `tef_sum`, `days_in_month` | Numerador / denominadores |
 | `source_batched_at_max`, `fecha_data_max` | Frescura del load (no son el mes de producción) |
@@ -65,6 +66,7 @@ select
   mes,
   rate_bbl_dia,
   rate_m3_dia,
+  productivity_bbl_dia,
   rate_method,
   source_batched_at_max,
   fecha_data_max,
@@ -220,7 +222,7 @@ dbt show --select fct_barrilito_rate --limit 5
 dbt show --select fct_company_month --limit 5
 ```
 
-`dbt build --select +fct_barrilito_rate` y `dbt test` **verdes** 2026-09-11 contra BigQuery (SA `vm-pulse-dbt`, secret `GCP_SA_KEY_DBT`; no se usó Meltano `GCP_SA_KEY`). `fct_well_month` = 34051 filas; `fct_barrilito_rate` = 1 fila (`periodo` 2025-12-01, `rate_method=tef_weighted`). Source schema: `env_var('DBT_RAW_DATASET', 'raw_cap4_dev')` en `_sources.yml` — **no** pongas `{{ env_var() }}` dentro de `vars:` (dbt lo deja sin renderizar).
+`dbt build --select +fct_barrilito_rate` y `dbt test` **verdes** 2026-09-11 contra BigQuery. Headline de ese build era `tef_weighted` (~260 bbl/día) — **grano incorrecto**. Contrato revisado: `calendar_days` de cuenca. Rebuild pendiente. Source schema: `env_var('DBT_RAW_DATASET', 'raw_cap4_dev')` en `_sources.yml` — **no** pongas `{{ env_var() }}` dentro de `vars:` (dbt lo deja sin renderizar).
 
 Unit tests del mart (`test_type:unit`) también necesitan adapter BQ (tablas temporales). Están escritos; hay que correrlos con SA.
 
@@ -252,7 +254,7 @@ source raw_cap4.produccion_pozo_mes   (físico: raw_cap4_dev; twin prod: raw_cap
 
 Filtro de producto en **stg** (strings CONFIRMED): `formacion = 'vaca muerta'` y `tipo_de_recurso = 'NO CONVENCIONAL'`.
 
-Tasa: `sum(prod_pet_m3) / nullif(sum(tef), 0)` si `tef_sum > 0`; si no, `/ days_in_month`. Warehouse 2025 Pulse: `tef` en [0, 31], 0 nulls; headline `tef_weighted`. Definición oficial / otros años = UNKNOWN.
+Tasa headline: `sum(prod_pet_m3) / days_in_month`. Productividad (no portada): `sum(prod_pet_m3) / nullif(sum(tef), 0)`. Warehouse 2025 Pulse dic: cuenca ~590k bbl/día; productividad ~260 bbl/pozo-día. Definición oficial de `tef` / otros años = UNKNOWN.
 
 ---
 

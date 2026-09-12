@@ -89,7 +89,7 @@ Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 5. Código: [`t
 - [x] Source primario: `raw_cap4_dev.produccion_pozo_mes`. **`COUNT(*)` = 991844** (año 2025) — handoff DE/Tutor. Twin prod: `raw_cap4`. Este PR no re-consultó `INFORMATION_SCHEMA`.
 - [x] Test de reconciliación SQL: `prod_pet_m3` Barrilito vs suma de `fct_well_month` del mismo `periodo` (corre con `dbt test` cuando hay warehouse).
 - [x] Actualizar [data-model.md](data-model.md): contrato `fct_barrilito_rate`; tef no promovido a CONFIRMED. Sin sensores ni grano intradía.
-- [x] `dbt build` / `dbt test` contra BigQuery — 2026-09-11, SA `vm-pulse-dbt` / `GCP_SA_KEY_DBT`. `fct_well_month` **34051** filas; `fct_barrilito_rate` **1 fila** (`periodo` 2025-12-01, `rate_method=tef_weighted`). `dbt build --select +fct_barrilito_rate` PASS=33; `dbt test` PASS=29. Evidencia sin keys: job well-month `aeb65940-5766-4d3d-ad1d-6177c03fa2da` (258.9 MiB); job mart `a6ed973a-8881-4856-a038-1276c452606c`.
+- [x] `dbt build` / `dbt test` contra BigQuery — 2026-09-11, SA `vm-pulse-dbt` / `GCP_SA_KEY_DBT`. `fct_well_month` **34051** filas; `fct_barrilito_rate` **1 fila** (`periodo` 2025-12-01, entonces `rate_method=tef_weighted` — **grano de portada incorrecto**). Revisión: headline = `prod / days_in_month`; ver spike `barrilito_cuenca.ipynb`. Rebuild BQ pendiente (unit tests cubren el SQL).
 
 ## Hito 2 — marts empresa / área (AE, `transform/`)
 
@@ -106,11 +106,22 @@ Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 2–3. Código:
 
 ---
 
+## Hito 2 — revisión grano Barrilito (AE)
+
+El mart publicado el 2026-09-11 usaba `sum/sum(tef)` como `rate_bbl_dia` (~260 bbl/día = productividad). La portada pide **tasa de cuenca**.
+
+- [x] Spec + data-model: headline = `sum(prod_pet_m3) / days_in_month`; productividad en columnas aparte.
+- [x] `fct_barrilito_rate` SQL + unit tests (divergencia tef vs calendario).
+- [x] Spike `apps/spike/barrilito_cuenca.ipynb` sobre los CSV existentes (sin GCP).
+- [ ] `dbt build --select fct_barrilito_rate` en warehouse cuando haya SA (Nico). El CSV `headline.csv` sigue con `rate_method=tef_weighted` hasta ese refresh.
+
+---
+
 ## Hito 3 — contador + disclaimer (Front, `apps/web/`) — nota only
 
 No implementar Next/Tremor acá ni en Hito 2. Owner: **Front**. Spec: R6 / R6b.
 
-Spike de portada (no tilda estas casillas): [`apps/spike/`](../../apps/spike/README.md). Reloj diario + tokens. [ADR 0002](../../docs/adrs/0002-ui-spike-notebook.md).
+Spike de portada (no tilda estas casillas): [`apps/spike/barrilito_cuenca.ipynb`](../../apps/spike/README.md). Tasa de cuenca + reloj diario. [ADR 0002](../../docs/adrs/0002-ui-spike-notebook.md). El v1 (`barrilito_spike.ipynb`) no se copia al Front.
 
 - [ ] Headline = contador de barriles interpolado desde `rate_bbl_dia` del mart (aspecto “extrayéndose” en vivo).
 - [ ] Disclaimer **MUST** visible junto al contador: *simulación a partir de datos mensuales oficiales*.

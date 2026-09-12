@@ -13,7 +13,7 @@ QUERIES = {
         select
           periodo, anio, mes,
           prod_pet_m3, tef_sum, days_in_month, well_month_row_count,
-          rate_m3_dia, rate_bbl_dia, rate_method,
+          rate_m3_dia, rate_bbl_dia, productivity_m3_dia, productivity_bbl_dia, rate_method,
           is_simulation, disclaimer,
           source_batched_at_max, fecha_data_max
         from `vaca-muerta-pulse.marts_cap4_dev.fct_barrilito_rate`

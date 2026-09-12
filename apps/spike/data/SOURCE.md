@@ -4,7 +4,7 @@ Extracto **acotado** de marts Hito 2 (`marts_cap4_dev`), 2026-09-11. No es dump 
 
 | Archivo | Grano | Filas | Mart origen |
 | --- | --- | ---: | --- |
-| `headline.csv` | 1 fila Pulse | 1 | `fct_barrilito_rate` |
+`headline.csv` se exportó **antes** de la revisión de grano: `rate_bbl_dia` / `rate_method=tef_weighted` son **productividad** (~260 bbl/pozo-día). El spike v2 (`barrilito_cuenca.ipynb`) recalcula la tasa de cuenca desde `prod_pet_m3 / days_in_month`. Después de `dbt build` + este script, `rate_bbl_dia` pasa a ser cuenca y aparecen `productivity_*`.
 | `monthly_pulse.csv` | mes × recorte VM | 12 | suma de `fct_company_month` |
 | `company_latest.csv` | empresa × último mes | 22 | `fct_company_month` |
 | `area_latest.csv` | área × último mes | 83 | `fct_area_month` |

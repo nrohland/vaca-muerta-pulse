@@ -159,28 +159,28 @@ Contrato para el contador de portada. **No hay sensores.** La tasa sale del últ
 | --- | --- |
 | Clave | `periodo` del último mes Cap. IV (una fila). Sin surrogate `as_of_date` (no hizo falta). |
 | Recorte | Mismo filtro que el resto del Pulse: `formacion = 'vaca muerta'` y `tipo_de_recurso = 'NO CONVENCIONAL'` (en `stg_produccion_pozo_mes`) |
-| Medidas | `prod_pet_m3` (suma), `tef_sum`, `days_in_month`, `rate_m3_dia` / `rate_m3_per_day`, `rate_bbl_dia` / `rate_bbl_per_day`, `rate_method`, frescura (`source_batched_at_max`, `fecha_data_max`), `disclaimer` |
+| Medidas | `prod_pet_m3` (suma), `tef_sum`, `days_in_month`, `rate_m3_dia` / `rate_bbl_dia` (**cuenca** / `days_in_month`), `productivity_m3_dia` / `productivity_bbl_dia` (`sum/sum(tef)`, no headline), `rate_method=calendar_days`, frescura, `disclaimer` |
 | Partition / cluster | Mart chico (una fila o histórico mensual corto). No heredar la partición raw `_sdc_batched_at` como grano |
 
 ### Fórmula (tasa diaria)
 
-Cap. IV trae petróleo en **m³** al mes (source `prod_pet`; en stg/marts: `prod_pet_m3`). Se busca una tasa **por día** para que el Front interpole el contador.
+Cap. IV trae petróleo en **m³** al mes (source `prod_pet`; en stg/marts: `prod_pet_m3`). Se busca una tasa **por día de cuenca** para que el Front interpole el contador.
 
-**Preferida** (cuando `tef` es usable como días y `sum(tef) > 0`):
-
-```text
-rate_m3_dia = sum(prod_pet_m3) / nullif(sum(tef), 0)
-```
-
-Es un promedio **ponderado por tiempo efectivo** sobre el último mes Cap. IV (~30 días de DDJJ), no una ventana rodante de producción horaria. Sample 2025: `tef` *parece* días (31.0 en enero no-conv) — **CONFIRMED plausible**. Warehouse Pulse 2025 (`fct_well_month`, 34051 filas): 0 nulls, min 0, max 31.0, 6115 ceros, 27936 > 0. El modelo **implementa** preferred + fallback (`tef_sum > 0` → `tef_weighted`, si no `calendar_days`) y unit tests con fixtures. Corrida 2026-09-11: headline `rate_method = tef_weighted`. Definición oficial de `tef` como días / otros años sigue **UNKNOWN**.
-
-**Fallback** (si `tef` no es usable):
+**Headline Barrilito** (siempre; `rate_method = calendar_days`):
 
 ```text
 rate_m3_dia = sum(prod_pet_m3) / days_in_month(periodo)
 ```
 
-Días de calendario del último mes Cap. IV. Siempre definible; sesga si muchos pozos no produjeron el mes entero.
+Es la producción declarada del recorte Pulse **dividida por los días calendario del mes**. Dic-2025 Pulse (~2.91e6 m³ / 31) ≈ **590 000 bbl/día**. Eso es el orden de magnitud de “Vaca Muerta produce ~600k bbl/día”, no un promedio por pozo.
+
+**Productividad** (KPI aparte; **no** es el headline):
+
+```text
+productivity_m3_dia = sum(prod_pet_m3) / nullif(sum(tef), 0)
+```
+
+`tef` *parece* días por pozo (warehouse Pulse 2025: 0 nulls, min 0, max 31.0). `sum(prod)/sum(tef)` ≈ **260 bbl/día por pozo-día** en dic-2025. El spike v1 (`apps/spike/barrilito_spike.ipynb`) usó esta cifra como portada por error. Definición oficial de `tef` / otros años = **UNKNOWN**.
 
 **Conversión (factor fijo; el mismo en SQL y en YAML de métricas dbt):**
 
@@ -189,21 +189,22 @@ bbl = m³ × 6.28981077
 rate_bbl_dia = rate_m3_dia × 6.28981077
 ```
 
-El Front **no** recalcula el factor. El mart expone `rate_bbl_dia`. `rate_method`: `tef_weighted` | `calendar_days`.
+El Front **no** recalcula el factor. El mart expone `rate_bbl_dia` (cuenca) y `productivity_bbl_dia` (pozo-día). `rate_method`: `calendar_days`.
 
 | Método | Estado | Por qué |
 | --- | --- | --- |
-| `sum(prod_pet_m3) / nullif(sum(tef), 0)` | **Preferido**, cableado (`rate_method = tef_weighted`). Warehouse 2025 Pulse: `tef` en [0, 31], `tef_sum` del headline > 0 | Pondera pozos que realmente “estuvieron on” |
-| `sum(prod_pet_m3) / days_in_month` | Fallback cableado (`calendar_days`) | No depende de `tef`; asume el mes calendario lleno |
+| `sum(prod_pet_m3) / days_in_month` | **Headline**, cableado (`calendar_days`) | Ritmo de cuenca comparable a cifras públicas (~600k bbl/día) |
+| `sum(prod_pet_m3) / nullif(sum(tef), 0)` | Columna `productivity_*`, no Barrilito | Productividad media por pozo-día; el spike v1 la usó mal como portada |
 | Sensores / SCADA / grano horario | **Fuera de diseño** | Cap. IV no lo publica |
 
 ### Caveats (no promover a CONFIRMED)
 
-- **Grano mensual:** “~últimos 30 días” = último `periodo` de Capítulo IV, no 30 días móviles de telemetría.
-- **`tef` = 0** en abandonados / sin tiempo efectivo: incluirlos en el numerador con petróleo 0 está bien; un `sum(tef) = 0` obliga al fallback. Warehouse 2025 Pulse: **6115** well-months con `tef = 0` (de 34051).
+- **Grano mensual:** último `periodo` de Capítulo IV, no 30 días móviles de telemetría. Copy: **último mes oficial**.
+- **`tef` = 0:** no cambia el headline (el denominador es `days_in_month`). Sí anula `productivity_*` si `tef_sum = 0`. Warehouse 2025 Pulse: **6115** well-months con `tef = 0` (de 34051).
 - **Rectificativas / re-emit:** el último mes puede corregirse en un load posterior. El contador sigue al mart, no a un cache eterno.
 - **Partición raw vs negocio:** filtrar el mes de producción por `periodo` (stg), nunca por `_sdc_batched_at`.
-- **Agregado total:** el headline no es “Barrilito por empresa”. Sumar el recorte Pulse entero.
+- **Agregado total:** el headline no es “Barrilito por empresa” ni “por pozo”. Sumar el recorte Pulse entero y dividir por **días del mes**.
+- **Productividad ≠ portada:** `sum/sum(tef)` ~260 bbl/pozo-día en dic-2025. No interpolar el contador con esa cifra.
 
 ## Dimensión pozo
 
