@@ -101,7 +101,7 @@ Owner: **AE**. Contrato: [data-model.md](data-model.md) § Grano 2–3. Código:
 - [x] `dim_area` = DISTINCT del hecho. Estabilidad de ids entre años = UNKNOWN (solo 2025).
 - [x] Sin `PARTITION BY periodo` (sandbox 60d). Cluster `idempresa` / `idareapermisoconcesion`.
 - [x] Tests: unique combo, not_null, relationships a dims, reconciliación `sum(prod_pet_m3)` vs `fct_well_month` por `periodo`.
-- [x] Completaciones: **no** en este PR (Adjunto IV sigue fuera del job Meltano default).
+- [x] Completaciones: **no** en el PR de rankings (Adjunto IV sigue fuera del job Meltano default). Load + marts: job `cap4-fracturas` / `fct_completions`.
 - [x] Warehouse 2026-09-11 (SA `vm-pulse-dbt`, sin Meltano `GCP_SA_KEY`): `dbt build` de estos 4 modelos + tests **PASS=32** en 16.3 s. `dim_company` **24** filas; `dim_area` **83**; `fct_company_month` **242** (sparse); `fct_area_month` **981**. Dic-2025 `sum(prod_pet_m3)` = Barrilito **2 909 815.325** m³. Jobs US: company `6750284a-7942-4c4e-b97e-cc8a1c404551` (~3.5 MiB); area `caa17abd-e62f-44a0-b564-4cde970f8564` (~3.8 MiB).
 
 ---
@@ -114,6 +114,16 @@ El mart publicado el 2026-09-11 usaba `sum/sum(tef)` como `rate_bbl_dia` (~260 b
 - [x] `fct_barrilito_rate` SQL + unit tests (divergencia tef vs calendario).
 - [x] Spike `apps/spike/barrilito_cuenca.ipynb` sobre los CSV de marts.
 - [x] `dbt build --select fct_barrilito_rate` 2026-09-12: 3 unit tests PASS + model + data tests. `periodo=2025-12-01`, `rate_method=calendar_days`, `rate_bbl_dia≈590393`, `productivity_bbl_dia≈259.8`. Job model `876b1821-715d-40ce-a94e-9057c235df1c` (~2.2 MiB). CSV `headline.csv` re-exportado.
+
+## Hito 2 — Adjunto IV / `fct_completions` (AE + DE)
+
+Owner: **DE** (job aparte) + **AE** (marts). No Next.js. No perforación / comercio / Brent en este PR.
+
+- [x] Job Meltano `cap4-fracturas` (extractor inherit; `cap4-produccion` sigue sin el stream).
+- [x] Pre-create CLUSTER `idpozo, cuenca, empresa_informante` (no hay `empresa`).
+- [x] `stg_fracturas_adjunto_iv` filtro Pulse `formacion_productiva` + `tipo_reservorio`.
+- [x] `fct_completions` grano `id_base_fractura_adjiv`; `fct_completions_month` por `fecha_inicio`.
+- [x] Spike chart de etapas; copy Adjunto IV. Join pozo-mes = UNKNOWN (sin `relationships`).
 
 ---
 
@@ -135,7 +145,7 @@ Spike de portada (no tilda estas casillas): [`apps/spike/barrilito_cuenca.ipynb`
 Owner futuro: **DE** (tap) + **AE** (grano) + spec/ADR **antes** del código. IDs: [`extraction/resources/sibling-sources.yml`](../../extraction/resources/sibling-sources.yml).
 
 - [x] Mapear Adjunto IV, perforación SESCO, distribución de petróleo, comercio exterior, ductos Res. 319/93 contra CKAN (totales / campos / caveats).
-- [ ] Load Adjunto IV (job **aparte** del default de producción) + `fct_completions`.
+- [x] Load Adjunto IV (job **aparte** del default de producción) + `fct_completions`.
 - [ ] Decidir si perforación `cantidad` mensual entra como actividad (copy: no “rigs live”).
 - [ ] Decidir comercio exterior vs distribución (destinos ≠ offtake de yacimiento).
 - [ ] Si hay capacidad Oldelval/Otasa: seed citada (URL+fecha), no scrape de PDF en el tap.

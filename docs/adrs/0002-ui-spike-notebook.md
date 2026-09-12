@@ -13,7 +13,7 @@ Hito 2 dejó marts listos (`fct_barrilito_rate`, empresa, área). Hito 3 es Next
 Un notebook + snapshots CSV acotados en [`apps/spike/`](../../apps/spike/README.md):
 
 - Lee marts (o sus CSV), nunca `raw_*`.
-- Fija: reloj diario, paleta, copy MUST, empty de completaciones.
+- Fija: reloj diario, paleta, copy MUST, chart de etapas Adjunto IV (`fct_completions_month`).
 - Headline del spike **v2**: `prod_pet_m3 / days_in_month` (cuenca). v1 usó `prod / tef` por error.
 - **No** es el artefacto público ni un cambio de stack.
 

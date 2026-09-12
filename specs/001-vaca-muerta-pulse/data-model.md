@@ -8,7 +8,7 @@ Leyenda:
 - **DRAFT** = diseño de producto; falta evidencia en warehouse / dbt.
 - **UNKNOWN** = no afirmar. Cerrar en Hito 2 con tests sobre más años o marcar no-goal.
 
-Nombres de marts (`fct_*`, `dim_*`) siguen **DRAFT** salvo los publicados en Hito 2: **`fct_barrilito_rate`**, **`fct_well_month`**, **`fct_company_month`**, **`dim_company`**, **`fct_area_month`**, **`dim_area`**. El alias `mart_barrilito_headline` no se usa.
+Nombres de marts (`fct_*`, `dim_*`) siguen **DRAFT** salvo los publicados en Hito 2: **`fct_barrilito_rate`**, **`fct_well_month`**, **`fct_company_month`**, **`dim_company`**, **`fct_area_month`**, **`dim_area`**, **`fct_completions`**, **`fct_completions_month`**. El alias `mart_barrilito_headline` no se usa.
 
 Datasets físicos dbt (dev, US, Hito 2 IAM): `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev`. Source raw Hito 2: `raw_cap4_dev`. Detalle: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.md).
 
@@ -19,7 +19,7 @@ Datasets físicos dbt (dev, US, Hito 2 IAM): `stg_cap4_dev` / `int_cap4_dev` / `
 | Producción pozo-mes anual, CKAN DataStore / CSV | Hecho pozo-mes | **CONFIRMED.** Package `produccion-de-petroleo-y-gas-por-pozo`. Default 2025: `d774b5d7-0756-48fe-88f2-8729b57b22da` (total Datastore 991 844 al 2026-09-10). IDs por año: [`extraction/resources/cap4.yml`](../../extraction/resources/cap4.yml) |
 | Capítulo IV - Pozos `cb5c0f04-7835-45cd-b982-3e25ca7d7751` | Dim pozo + geojson | **CONFIRMED que existe.** No está en el `meltano run` default (Hito 1). Coords **no** vienen en el anual de producción |
 | Padrón primera producción `5578dd48-…` | `(idpozo, anio, mes)` | **CONFIRMED** schema mínimo; no es dim completa |
-| Fracturas Adjunto IV `2280ad92-6ed3-403e-a095-50139863ab0d` | Hecho de actividad | **CONFIRMED resource.** ~4890 filas. Stream en el tap, deseleccionado en Hito 1 default |
+| Fracturas Adjunto IV `2280ad92-6ed3-403e-a095-50139863ab0d` | Hecho de actividad | **CONFIRMED resource + load.** ~4890 filas. Job Meltano `cap4-fracturas` (no el default de producción) |
 | Consulta avanzada SE (HTML) | No es source de Meltano | Fuera de diseño |
 
 Dataset portal: [energia-produccion-petroleo-gas-por-pozo-capitulo-iv](https://datos.gob.ar/dataset/energia-produccion-petroleo-gas-por-pozo-capitulo-iv) · origen [datos.energia.gob.ar](https://datos.energia.gob.ar/dataset/produccion-de-petroleo-y-gas-por-pozo).
@@ -28,11 +28,11 @@ Dataset portal: [energia-produccion-petroleo-gas-por-pozo-capitulo-iv](https://d
 
 ### Fuentes hermanas (Nación / SE; **no** Capítulo IV)
 
-Harvest 2026-09-11. IDs: [`extraction/resources/sibling-sources.yml`](../../extraction/resources/sibling-sources.yml). **Ninguna** está en el `meltano run` default. Un KPI de estos temas en UI exige load (o seed citada) **y** copy del source real. Relato de producto: [spec.md](spec.md) § Mapa de fuentes.
+Harvest 2026-09-11. IDs: [`extraction/resources/sibling-sources.yml`](../../extraction/resources/sibling-sources.yml). Adjunto IV entra por el job **aparte** `cap4-fracturas`. El resto **no** está en Meltano. Un KPI de estos temas en UI exige load (o seed citada) **y** copy del source real. Relato de producto: [spec.md](spec.md) § Mapa de fuentes.
 
 | Recurso | Qué es | Qué no es | Estado v1 |
 | --- | --- | --- | --- |
-| Adjunto IV `2280ad92-…` (~4890 filas). `cantidad_fracturas`, `arena_bombeada_*_tn`, `agua_inyectada_m3` | Etapas / insumos de fractura por pozo (fechas `fecha_inicio_fractura`) | Producción; rigs | Resource CONFIRMED; **no** cargado. Grano 4 |
+| Adjunto IV `2280ad92-…` (~4890 filas). `cantidad_fracturas`, `arena_bombeada_*_tn`, `agua_inyectada_m3` | Etapas / insumos de fractura por pozo (fechas `fecha_inicio_fractura`) | Producción; rigs | Resource CONFIRMED; **cargado** (`cap4-fracturas` / loader Python). Grano 4 |
 | [Perforación de pozos](https://datos.energia.gob.ar/dataset/perforacion-de-pozos-de-petroleo-gas) `af6838ef-…` “Pozos en Perforación” (477 446 filas). Grano `empresa × área × concepto × anio/mes`, campo `cantidad` | Conteo **mensual** SESCO de pozos en perforación (sample 2025 Neuquina: conceptos Explotación / Servicio) | Rigs activos intradía; Baker Hughes / NCS / IAPG | Package CONFIRMED. P1. Copy prohibida: “rigs ahora” |
 | [Distribución de petróleo](https://datos.energia.gob.ar/dataset/distribucion-de-petroleo) `d9948c4a-…` (104 628). Conceptos CONFIRMED: *A Propias Destilerías*, *Entregado a Terceros*, *Stock en Yacimiento* (m³) | Offtake SESCO desde yacimiento | País de destino de exportación | Package CONFIRMED. P1 |
 | Comercio exterior `ea145b70-…` “Importaciones / Exportaciones a partir del 2016” (1 378 842). Campos: `tipodecomercializacion` (`Exportación` / `Importación`), `producto`, `cantidad`, `monto`, `pais`, `empresa`, mes | Volúmenes y destinos **nacionales** (sample 2025 exp. con cantidad≠0: Chile, Paraguay, Brasil, EE.UU., …). Productos mezclan crudos por cuenca (`Cuenca Neuquina - Neuquen (Medanito)(m3)`) y combustibles | Recorte Pulse / Cap. IV; Brent | Resource CONFIRMED DataStore. P1. Join a VM = UNKNOWN |
@@ -155,18 +155,19 @@ Estabilidad de ids entre años = UNKNOWN (solo 2025 cargado).
 
 ## Grano 4 — Completaciones
 
-**Nombre DRAFT:** `fct_completions`  
+**Nombre (contrato):** `fct_completions` (job) + `fct_completions_month` (mes de `fecha_inicio`)  
 **Source CONFIRMED:** Adjunto IV `2280ad92-6ed3-403e-a095-50139863ab0d`.
 
 | | |
 | --- | --- |
 | Grano | Una fila por `id_base_fractura_adjiv` (job). `cantidad_fracturas` = etapas (CONFIRMED en sample) |
-| Join a producción | `idpozo` y `sigla` presentes. Calidad del join = UNKNOWN hasta Hito 2 |
+| Join a producción | `idpozo` y `sigla` presentes. Calidad del join = **UNKNOWN** (sin test `relationships` a `fct_well_month`) |
 | Arena / agua / presión | `arena_bombeada_*_tn`, `agua_inyectada_m3`, `presion_maxima_psi`, `longitud_rama_horizontal_m` CONFIRMED en schema |
-| Fechas | `fecha_inicio_fractura`, `fecha_fin_fractura` |
-| Formación | `formacion_productiva` (sample: minúsculas, p.ej. `los molles`) — string exacto VM = UNKNOWN hasta distinct |
+| Fechas | `fecha_inicio_fractura`, `fecha_fin_fractura`. Mart DATE `fecha_inicio` = start. `anio`/`mes`/`periodo` del source pueden ser carga — **no** son el mes de fractura |
+| Formación | `formacion_productiva` = `vaca muerta` (minúsculas, CONFIRMED). Recorte Pulse: **y** `tipo_reservorio = 'NO CONVENCIONAL'` (excluye VM CONVENCIONAL / NO DISCRIMINADO, igual que producción) |
+| Partition / cluster | **No** `PARTITION BY fecha_inicio` en sandbox. Raw: MONTH(`_sdc_batched_at`) + CLUSTER `idpozo, cuenca, empresa_informante`. Mart: cluster `idpozo` |
 
-Hito 1 **no** carga este stream en el job default. Hito 2 **no** agrega `fct_completions` (no hay tabla raw en el job default). Hito 3 no debe inventar curvas si el mart todavía no existe; empty state. El source ya no es UNKNOWN.
+Job Meltano default (`cap4-produccion`) **sigue** deseleccionando el stream. Load = job **`cap4-fracturas`** (o `scripts/load_fracturas_datastore.py` si no hay SA Meltano). Hito 3 lee estos marts; copy MUST Adjunto IV.
 
 ## Grano 5 — Barrilito / headline rate (contrato Hito 2)
 

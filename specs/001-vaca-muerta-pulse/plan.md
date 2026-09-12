@@ -57,7 +57,7 @@ Producto UI: **Barrilito** (repo `vaca-muerta-pulse`). El contador “live” es
 - [x] Existe tabla raw de producción pozo-mes en BQ; **partition** y **cluster** verificables (`INFORMATION_SCHEMA` o console). — MONTH(`_sdc_batched_at`)+CLUSTER `empresa,idpozo,cuenca`; `COUNT(*)` = 991 844
 - [x] Load reproducible contra un resource público documentado (URL + id CKAN o patrón de CSV anual). — 2025 `d774b5d7-…`; append `overwrite:false` + `--recreate` en sandbox
 - [x] Conteos de smoke: filas del sample vs source (tolerancia y duplicados documentados). — Datastore 991 844 vs BQ 991 844 (delta 0)
-- [ ] Completaciones: **o** tabla raw + source documentado, **o** `data-model.md` actualizado a “sin source en v1” (no silenciar el UNKNOWN). — source Adjunto IV documentado; tabla raw no cargada (job default, deseleccionado)
+- [x] Completaciones: **o** tabla raw + source documentado, **o** `data-model.md` actualizado a “sin source en v1” (no silenciar el UNKNOWN). — source Adjunto IV documentado; job **`cap4-fracturas`** (no el default); tabla `raw_cap4_dev.fracturas_adjunto_iv`
 - [x] Ningún secreto en el PR; presupuesto/alerta GCP mencionada en `extraction/README.md`. — docs sí; sandbox 60 días de expiración documentado
 - [x] `data-model.md`: columnas reales del tap reemplazan la lista draft donde haya evidencia. — hecho vía DataStore + COUNT BQ del año
 
@@ -73,15 +73,15 @@ Producto UI: **Barrilito** (repo `vaca-muerta-pulse`). El contador “live” es
 
 **Ops BQ (2026-09-10):** datasets US `stg_cap4_dev` / `int_cap4_dev` / `marts_cap4_dev` **existen**. `raw_cap4_dev` existe; `raw_cap4` no. SA `vm-pulse-dbt` **creada por Nico**; bindings OK (`jobUser` + READER raw / WRITER stg-int-marts). Secret `GCP_SA_KEY_DBT`. Evidencia: [transform/docs/hito-2-bq-iam.md](../../transform/docs/hito-2-bq-iam.md).
 
-**No incluye:** Meltano nuevo salvo un bug de contrato; UI; sensores ni grano intradía; convertir en el tap; taps de fuentes hermanas (Adjunto IV load, perforación, comercio exterior, Brent).
+**No incluye:** Meltano nuevo salvo un bug de contrato o el job **aparte** `cap4-fracturas` (Adjunto IV). UI; sensores ni grano intradía; convertir en el tap; taps de perforación / comercio exterior / Brent.
 
 ### Aceptación
 
-- [x] `dbt_project.yml` + `stg` / `int` / `marts` (nombres alineados al data-model). — `stg_produccion_pozo_mes`, `int_produccion_vm_noconv`, `fct_well_month`, `fct_barrilito_rate`, `fct_company_month`, `dim_company`, `fct_area_month`, `dim_area`
+- [x] `dbt_project.yml` + `stg` / `int` / `marts` (nombres alineados al data-model). — `stg_produccion_pozo_mes`, `stg_fracturas_adjunto_iv`, `int_produccion_vm_noconv`, `fct_well_month`, `fct_barrilito_rate`, `fct_company_month`, `dim_company`, `fct_area_month`, `dim_area`, `fct_completions`, `fct_completions_month`
 - [x] Tests `unique`/`not_null` en claves de `fct_well_month` (YAML; corren con warehouse).
 - [x] Filtro VM no convencional aplicado en `stg` y documentado (strings confirmados).
 - [x] Marts de empresa y área; grano de área ya no UNKNOWN (o P1 explícito). — `fct_company_month` + `dim_company` (grano `idempresa+periodo`); `fct_area_month` + `dim_area` (grano preferido `idareapermisoconcesion+periodo`). Estabilidad de ids entre años = UNKNOWN (solo 2025).
-- [x] Completaciones: mart **o** no-goal actualizado en spec. — **sin mart** (Adjunto IV no está en el job Meltano default); Hito 3 empty state. Source documentado.
+- [x] Completaciones: mart **o** no-goal actualizado en spec. — **`fct_completions`** + `fct_completions_month` (Adjunto IV; no Cap. IV).
 - [x] **Mart Barrilito:** `fct_barrilito_rate`, una fila = snapshot VM no conv. último mes Cap. IV (total Pulse). Tasa **bbl/día**.
 - [x] **Fórmula (cerrada 2026-09-11, revisada 2026-09-11 noche):** headline **de cuenca** `sum(prod_pet_m3) / days_in_month` (`calendar_days`). `sum/sum(tef)` queda como `productivity_*`, no Barrilito. El check original (`tef_weighted` como portada) estaba mal de grano. Spike: [`apps/spike/barrilito_cuenca.ipynb`](../../apps/spike/barrilito_cuenca.ipynb).
 - [x] Conversión `bbl = m³ × 6.28981077` en el mart **y** en YAML de métricas (mismo factor).

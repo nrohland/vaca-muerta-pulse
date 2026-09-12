@@ -1,0 +1,58 @@
+version: 2
+
+models:
+  - name: fct_completions
+    description: >
+      Public Adjunto IV fact. One row = one fracture job
+      (`id_base_fractura_adjiv`) in the Pulse cut (Vaca Muerta, no
+      convencional).
+
+      **Not Capítulo IV.** Copy and Front must say Adjunto IV. Stages =
+      `cantidad_fracturas`. Business date = `fecha_inicio`.
+
+      Join to `fct_well_month` on `idpozo` is UNKNOWN — no relationship
+      test. Clustered by `idpozo`. Not partitioned by start date while
+      the GCP sandbox forces 60-day partition expiration.
+    columns:
+      - name: id_base_fractura_adjiv
+        description: Adjunto IV job id. Grain.
+        data_tests:
+          - unique
+          - not_null
+      - name: cantidad_fracturas
+        description: Stages in the job.
+        data_tests:
+          - not_null
+      - name: formacion_productiva
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["vaca muerta"]
+      - name: tipo_reservorio
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["NO CONVENCIONAL"]
+      - name: fecha_inicio
+        description: DATE of fracture start (from fecha_inicio_fractura).
+      - name: arena_bombeada_tn
+        description: Nacional + importada tonnes (may be null if either side is null).
+
+  - name: fct_completions_month
+    description: >
+      Adjunto IV jobs rolled to the month of `fecha_inicio`. Grain =
+      `periodo` (DATE YYYY-MM-01). Use for the spike / Hito 3 chart of
+      etapas. Not Cap. IV month. Not live rigs.
+    columns:
+      - name: periodo
+        description: First day of the fracture-start month.
+        data_tests:
+          - unique
+          - not_null
+      - name: etapas
+        description: Sum of cantidad_fracturas in that start month.
+        data_tests:
+          - not_null
+      - name: job_count
+        data_tests:
+          - not_null
