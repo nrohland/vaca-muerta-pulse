@@ -233,6 +233,8 @@ dbt debug
 dbt build --select +fct_barrilito_rate
 # Rankings empresa / área (leen fct_well_month; no re-scan de raw si la tabla ya existe):
 dbt build --select dim_company dim_area fct_company_month fct_area_month
+# Adjunto IV (no es Cap. IV; pide raw fracturas_adjunto_iv):
+dbt build --select stg_fracturas_adjunto_iv+
 dbt test
 dbt show --select fct_barrilito_rate --limit 5
 dbt show --select fct_company_month --limit 5

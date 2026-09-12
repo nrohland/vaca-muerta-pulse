@@ -166,6 +166,7 @@ Estabilidad de ids entre años = UNKNOWN (solo 2025 cargado).
 | Fechas | `fecha_inicio_fractura`, `fecha_fin_fractura`. Mart DATE `fecha_inicio` = start. `anio`/`mes`/`periodo` del source pueden ser carga — **no** son el mes de fractura |
 | Formación | `formacion_productiva` = `vaca muerta` (minúsculas, CONFIRMED). Recorte Pulse: **y** `tipo_reservorio = 'NO CONVENCIONAL'` (excluye VM CONVENCIONAL / NO DISCRIMINADO, igual que producción) |
 | Partition / cluster | **No** `PARTITION BY fecha_inicio` en sandbox. Raw: MONTH(`_sdc_batched_at`) + CLUSTER `idpozo, cuenca, empresa_informante`. Mart: cluster `idpozo` |
+| Warehouse 2026-09-12 | Raw **4890**; Pulse stg / `fct_completions` **2999** (2995 SHALE + 2 TIGHT + 2 blank); `fct_completions_month` **176** meses, **105 345** etapas (`2011-12` → `2026-12`). Load job `b7361833-12c9-453e-889a-746ef97008f8`. Evidencia: [extraction/docs/hito-2-adjunto-iv-load.md](../../extraction/docs/hito-2-adjunto-iv-load.md) |
 
 Job Meltano default (`cap4-produccion`) **sigue** deseleccionando el stream. Load = job **`cap4-fracturas`** (o `scripts/load_fracturas_datastore.py` si no hay SA Meltano). Hito 3 lee estos marts; copy MUST Adjunto IV.
 

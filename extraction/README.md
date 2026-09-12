@@ -278,7 +278,7 @@ Hay una familia paralela **DDJJ abiertas y cerradas** (otro UUID por año) — n
 
 ## Smoke / año 2025 (estado)
 
-Evidencia anual 2026-09-10 (SA materializada en runtime, **sin** secrets en git): [docs/hito-1-full-year-2025-load.md](docs/hito-1-full-year-2025-load.md). Smoke 500 previo (post-merge PR #5): [docs/hito-1-post-merge-smoke.md](docs/hito-1-post-merge-smoke.md). Costo (extrapolación + medido): [docs/hito-1-full-year-cost.md](docs/hito-1-full-year-cost.md).
+Evidencia anual 2026-09-10 (SA materializada en runtime, **sin** secrets en git): [docs/hito-1-full-year-2025-load.md](docs/hito-1-full-year-2025-load.md). Smoke 500 previo (post-merge PR #5): [docs/hito-1-post-merge-smoke.md](docs/hito-1-post-merge-smoke.md). Costo (extrapolación + medido): [docs/hito-1-full-year-cost.md](docs/hito-1-full-year-cost.md). Adjunto IV 2026-09-12: [docs/hito-2-adjunto-iv-load.md](docs/hito-2-adjunto-iv-load.md).
 
 | Check | Resultado |
 | --- | --- |

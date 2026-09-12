@@ -124,6 +124,7 @@ Owner: **DE** (job aparte) + **AE** (marts). No Next.js. No perforación / comer
 - [x] `stg_fracturas_adjunto_iv` filtro Pulse `formacion_productiva` + `tipo_reservorio`.
 - [x] `fct_completions` grano `id_base_fractura_adjiv`; `fct_completions_month` por `fecha_inicio`.
 - [x] Spike chart de etapas; copy Adjunto IV. Join pozo-mes = UNKNOWN (sin `relationships`).
+- [x] Warehouse 2026-09-12: raw **4890**; Pulse **2999**; month **176**; etapas **105 345**. `dbt build --select stg_fracturas_adjunto_iv+` PASS=17. Evidencia: [extraction/docs/hito-2-adjunto-iv-load.md](../../extraction/docs/hito-2-adjunto-iv-load.md).
 
 ---
 
