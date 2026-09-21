@@ -1,6 +1,6 @@
 # Sibling Nación / SE open-data packages — NOT Capítulo IV production.
 # Harvested 2026-09-11 via package_show / datastore_search on datos.energia.gob.ar.
-# Public UUIDs, not secrets. None of these are in the default Meltano job (cap4-produccion).
+# Public CKAN UUIDs, not secrets. Production is cap4-produccion; Adjunto IV is cap4-fracturas.
 # Product contract: specs/001-vaca-muerta-pulse/data-model.md § Fuentes hermanas.
 
 # --- Completions (already in cap4.yml fracturas; repeated here for the source map) ---
@@ -13,7 +13,8 @@ fracturas_adjunto_iv:
   datastore_total_2026_09_11: 4890
   grain: one row per id_base_fractura_adjiv; cantidad_fracturas = stages
   in_default_meltano_job: false
-  notes: Stream fracturas_adjunto_iv exists in the tap, deselected.
+  meltano_job: cap4-fracturas
+  notes: Stream fracturas_adjunto_iv exists in the tap, deselected in cap4-produccion. Load via cap4-fracturas or scripts/load_fracturas_datastore.py.
 
 # --- Drilling activity (monthly wells in perforation, not live rig count) ---
 perforacion_pozos:

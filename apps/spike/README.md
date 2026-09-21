@@ -36,7 +36,7 @@ python export_snapshots.py
 - Reloj diario: `barriles_hoy = rate_bbl_cuenca × segundos_desde_00:00_ART / 86400`.
 - Disclaimer MUST pegado al número: *simulación a partir de datos mensuales oficiales*.
 - Copy: **último mes oficial** (dic-2025), no “últimos 30 días” como si Cap. IV fuera diario.
-- Completaciones / rigs / Brent / export / oleoductos / breakeven = no están en estos CSV.
+- Completaciones: `fct_completions_month` (Adjunto IV). Rigs / Brent / export / oleoductos / breakeven = no están en estos CSV.
 
 ## Qué no es
 

@@ -106,4 +106,4 @@ fracturas:
   portal: https://datos.energia.gob.ar/dataset/datos-de-fractura-de-pozos-adjunto-iv
   datos_gob_ar: https://datos.gob.ar/dataset/energia-datos-fractura-pozos-hidrocarburos-adjunto-iv
   resource_id: 2280ad92-6ed3-403e-a095-50139863ab0d
-  notes: Adjunto IV daily CSV. Stream fracturas_adjunto_iv exists but is deselected in Hito 1 default job.
+  notes: Adjunto IV. Stream fracturas_adjunto_iv deselected in cap4-produccion. Load job cap4-fracturas.

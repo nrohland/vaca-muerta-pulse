@@ -11,7 +11,7 @@ Argentina publica el **Capítulo IV** (producción de petróleo y gas por pozo) 
 
 - La unidad de análisis (pozo-mes, a veces por formación) no está explicada para un lector no-upstream.
 - Petróleo/agua en m³ y gas en miles de m³ conviven sin narrativa.
-- Completaciones (fracturas / intervenciones) viven en **otro** recurso del mismo portal (Adjunto IV) y casi nunca se cruzan en una historia única (“producción sube porque se fracturó más”). Rigs, Brent, exportaciones y oleoductos **tampoco** están en el anual de producción: o son datasets SESCO hermanos, o son enriquecimiento / seed, o no hay source público.
+- Completaciones (fracturas / intervenciones) viven en **otro** recurso del mismo portal (Adjunto IV). El mart `fct_completions` no es Capítulo IV: copy MUST dice Adjunto IV. Rigs, Brent, exportaciones y oleoductos **tampoco** están en el anual de producción.
 - Las herramientas oficiales sirven para consultar un área o un pozo, no para una portada: *qué empresas, qué áreas, qué ritmo de actividad*.
 - El dato oficial es **mensual**. No hay telemetría pública de barriles por segundo.
 
@@ -61,7 +61,7 @@ Prioridad **P0** = Hitos 1–3. **P1** = después, sin bloquear Barrilito v1.
 - R6b. El disclaimer **MUST** está a la vista junto al contador (no solo en un about): *simulación a partir de datos mensuales oficiales*.
 - R7. KPIs del último período disponible (producción petróleo/gas, pozos activos o equivalente) **además** del headline; serie temporal (cuenca VM / no convencional) y ranking de empresas.
 - R8. Vista de área (concesión / yacimiento — **elegir un grano de área** cuando se cierre el UNKNOWN).
-- R9. Vista de completaciones **si** hay source; source Adjunto IV **encontrado** (Hito 1, no cargado en el job default). Si el mart no está, la UI dice “sin dato”.
+- R9. Vista de completaciones desde **Adjunto IV** (`fct_completions` / `fct_completions_month`). Copy MUST: Adjunto IV, no Capítulo IV. Join a pozo-mes = UNKNOWN.
 - R10. Copy en español; números con unidad visible. Petróleo del headline en **bbl**; m³ disponible en otras vistas / tooltip.
 
 ### Ingeniería (P0)
@@ -74,7 +74,7 @@ Prioridad **P0** = Hitos 1–3. **P1** = después, sin bloquear Barrilito v1.
 
 - API pública versionada, auth, mapas GIS pesados, cuenca extra, alertas Slack, dbt Cloud, i18n inglés de UI, desglose Barrilito por empresa como headline.
 - **Fuentes hermanas SE / enriquecimiento** (cada una pide spec/ADR + Meltano **antes** de un KPI en UI). Catálogo y evidencia CKAN: [data-model.md](data-model.md) § Fuentes hermanas. No entran en Hito 3.
-  - Adjunto IV → `fct_completions` (R9; resource ya en el tap, job aparte).
+  - Adjunto IV → `fct_completions` (R9; job Meltano `cap4-fracturas`, **aparte** de producción). **Este PR carga el mart.**
   - Perforación SESCO → actividad mensual de pozos en perforación (proxy, **no** rigs live).
   - Comercio exterior SESCO → volúmenes / destinos (recorte nacional; no es VM-only).
   - Seed de capacidad midstream (Oldelval / Otasa) con URL + fecha de cita, contrastada a producción Cap. IV.
@@ -87,7 +87,7 @@ La portada v1 **solo** afirma lo que sale de Capítulo IV (producción pozo-mes)
 | Tema | ¿Dónde vive de verdad? | v1 / Hito 3 | Cómo se puede decir en UI |
 | --- | --- | --- | --- |
 | Producción pozo-mes, empresas, áreas, Barrilito | Capítulo IV (job Meltano default) | **In-scope** | Oficial SE, mensual |
-| Etapas de fractura, arena, agua | [Adjunto IV](https://datos.gob.ar/dataset/energia-datos-fractura-pozos-hidrocarburos-adjunto-iv) | Source **encontrado**, no cargado | Empty state, o mart cuando haya load |
+| Etapas de fractura, arena, agua | [Adjunto IV](https://datos.gob.ar/dataset/energia-datos-fractura-pozos-hidrocarburos-adjunto-iv) | **In-scope** (`fct_completions`) | “Etapas, Adjunto IV” — **nunca** “dato Cap. IV” |
 | Pozos en perforación (mensual) | [Perforación de pozos](https://datos.energia.gob.ar/dataset/perforacion-de-pozos-de-petroleo-y-gas) | P1 | “Pozos en perforación, SESCO mensual” — **nunca** “rigs activos ahora” |
 | Rigs live (NCS / IAPG / EconoJournal) | Consultoras / prensa de nicho | **No-goal** | No es dato abierto de producto |
 | Destinos / volúmenes de comercio | SESCO Comercio exterior (`ea145b70-…`); no el anual de producción | P1 | “Comercio exterior SE”, no Cap. IV |

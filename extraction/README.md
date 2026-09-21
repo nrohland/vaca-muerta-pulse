@@ -42,6 +42,13 @@ python scripts/prepare_year_load.py --dataset raw_cap4_dev
 # Año completo 2025: NO setear TAP_CKAN_DATASTORE_MAX_RECORDS (~991_844 filas)
 ALLOW_FULL_YEAR_LOAD=true MELTANO_ENVIRONMENT=dev meltano run cap4-produccion
 
+# Adjunto IV (~4890 filas). NO corre en cap4-produccion.
+python scripts/prepare_fracturas_load.py --dataset raw_cap4_dev
+MELTANO_ENVIRONMENT=dev meltano run cap4-fracturas
+# Sin SA Meltano (ADC / GCP_SA_KEY_DBT):
+python scripts/prepare_fracturas_load.py --dataset raw_cap4_dev --recreate
+python scripts/load_fracturas_datastore.py
+
 # Dev reload de un año: TRUNCATE (conserva partition+cluster) y append
 python scripts/prepare_year_load.py --dataset raw_cap4_dev --truncate
 MELTANO_ENVIRONMENT=dev meltano run cap4-produccion
@@ -174,7 +181,7 @@ bq --location=US mk -d --data_location=US vaca-muerta-pulse:raw_cap4_dev
 | --- | --- |
 | `produccion_pozo_mes` | `raw_cap4.produccion_pozo_mes` (prod) / `raw_cap4_dev.produccion_pozo_mes` (dev) |
 | `capitulo_iv_pozos` | `…capitulo_iv_pozos` (no seleccionado) |
-| `fracturas_adjunto_iv` | `…fracturas_adjunto_iv` (no seleccionado) |
+| `fracturas_adjunto_iv` | `…fracturas_adjunto_iv` (job `cap4-fracturas`; **no** en `cap4-produccion`) |
 
 El tap agrega `periodo` (`YYYY-MM-01`) desde `anio`+`mes`. No convierte m³→bbl.
 
@@ -185,7 +192,7 @@ El tap agrega `periodo` (`YYYY-MM-01`) desde `anio`+`mes`. No convierte m³→bb
 
 ### CLUSTER BY (orden)
 
-`empresa`, `idpozo`, `cuenca` — cableado en `meltano.yml` (`clustering_fields`). Coincide con filtros de storytelling (empresa / pozo / cuenca Neuquina). Máximo 4 columnas en BQ; `sigla` queda afuera a propósito (`idpozo` ya identifica formación productiva).
+`empresa`, `idpozo`, `cuenca` — cableado en `meltano.yml` (`clustering_fields`) **solo** para producción. Adjunto IV no tiene `empresa`: cluster `idpozo`, `cuenca`, `empresa_informante` (loader `target-bigquery--fracturas` + [sql/create_raw_fracturas_adjunto_iv.sql](sql/create_raw_fracturas_adjunto_iv.sql)).
 
 ### Re-emit del CSV anual (Bug 1 — no usar overwrite)
 
@@ -248,7 +255,7 @@ Hay una familia paralela **DDJJ abiertas y cerradas** (otro UUID por año) — n
 
 **Padrón aparte:** `Capítulo IV - Pozos` `cb5c0f04-7835-45cd-b982-3e25ca7d7751` (geojson / geom, fechas Adjunto IV de perf/terminación). El recurso “padrón con fecha de primera producción” `5578dd48-…` es solo `(idpozo, anio, mes)`. **Tap extra no entra en el `meltano run` default** — Hito 1 no lo carga; Hito 2 arma `dim_well` si hace falta.
 
-**Completaciones:** source **encontrado** — [Datos de fractura (Adjunto IV)](https://datos.energia.gob.ar/dataset/datos-de-fractura-de-pozos-adjunto-iv) resource `2280ad92-6ed3-403e-a095-50139863ab0d` (~4890 filas). Grano: una fila por `id_base_fractura_adjiv` con `cantidad_fracturas` (etapas). Join: `idpozo` / `sigla`. **No** está en el job default; load residual post-SA. No es no-goal: el source existe.
+**Completaciones:** [Datos de fractura (Adjunto IV)](https://datos.energia.gob.ar/dataset/datos-de-fractura-de-pozos-adjunto-iv) resource `2280ad92-6ed3-403e-a095-50139863ab0d` (~4890 filas). Grano: una fila por `id_base_fractura_adjiv` con `cantidad_fracturas` (etapas). Join: `idpozo` / `sigla` (calidad UNKNOWN). **No** está en `cap4-produccion`. Load: `meltano run cap4-fracturas` o `scripts/load_fracturas_datastore.py`. Pre-create: `scripts/prepare_fracturas_load.py`. dbt: `fct_completions`. Copy: Adjunto IV, no Cap. IV.
 
 **Otras tablas SE (no Cap. IV, no en el job):** perforación mensual, distribución de petróleo, comercio exterior, ductos Res. 319/93. IDs y caveats (rigs ≠ pozos en perforación; distribución ≠ destinos de export; Brent no es SE): [`resources/sibling-sources.yml`](resources/sibling-sources.yml) + [data-model.md](../specs/001-vaca-muerta-pulse/data-model.md) § Fuentes hermanas. Un tap nuevo = spec/ADR **antes** del `meltano.yml`.
 
@@ -271,7 +278,7 @@ Hay una familia paralela **DDJJ abiertas y cerradas** (otro UUID por año) — n
 
 ## Smoke / año 2025 (estado)
 
-Evidencia anual 2026-09-10 (SA materializada en runtime, **sin** secrets en git): [docs/hito-1-full-year-2025-load.md](docs/hito-1-full-year-2025-load.md). Smoke 500 previo (post-merge PR #5): [docs/hito-1-post-merge-smoke.md](docs/hito-1-post-merge-smoke.md). Costo (extrapolación + medido): [docs/hito-1-full-year-cost.md](docs/hito-1-full-year-cost.md).
+Evidencia anual 2026-09-10 (SA materializada en runtime, **sin** secrets en git): [docs/hito-1-full-year-2025-load.md](docs/hito-1-full-year-2025-load.md). Smoke 500 previo (post-merge PR #5): [docs/hito-1-post-merge-smoke.md](docs/hito-1-post-merge-smoke.md). Costo (extrapolación + medido): [docs/hito-1-full-year-cost.md](docs/hito-1-full-year-cost.md). Adjunto IV 2026-09-12: [docs/hito-2-adjunto-iv-load.md](docs/hito-2-adjunto-iv-load.md).
 
 | Check | Resultado |
 | --- | --- |

@@ -13,7 +13,7 @@ models:
       Barrilito headline (`fct_barrilito_rate`) must reconcile `prod_pet_m3`
       to the sum of this table for the same `periodo`. Company / area marts
       (`fct_company_month`, `fct_area_month`) roll up from here.
-      Completions are not here — Adjunto IV is not in the default Meltano job.
+      Completions live in `fct_completions` (Adjunto IV), not this mart.
     columns:
       - name: well_month_id
         description: Surrogate of idpozo + anio + mes.

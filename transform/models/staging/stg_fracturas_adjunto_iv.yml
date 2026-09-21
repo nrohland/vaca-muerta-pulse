@@ -1,0 +1,52 @@
+version: 2
+
+models:
+  - name: stg_fracturas_adjunto_iv
+    description: >
+      Staging of Adjunto IV fracture jobs for the Pulse cut.
+
+      **Not Capítulo IV production.** Resource
+      `2280ad92-6ed3-403e-a095-50139863ab0d`. Grain after this model: one
+      row = `id_base_fractura_adjiv`. `cantidad_fracturas` = stages.
+
+      **Product filter (CONFIRMED CKAN 2026-09-12, applied here not in Meltano):**
+      `formacion_productiva = 'vaca muerta'` AND `tipo_reservorio = 'NO CONVENCIONAL'`.
+      Same literals as production staging. VM CONVENCIONAL / NO DISCRIMINADO
+      are out. Subtipo SHALE / TIGHT / blank stay if tipo is NO CONVENCIONAL.
+
+      **Business date:** `fecha_inicio` from `fecha_inicio_fractura`. Source
+      `anio` / `mes` / `periodo` are passed as `source_*` — they may be carga,
+      not fracture start.
+
+      Join to `fct_well_month` on `idpozo` is UNKNOWN quality. No hard
+      relationship test.
+    columns:
+      - name: id_base_fractura_adjiv
+        description: Adjunto IV job id. Grain.
+        data_tests:
+          - unique
+          - not_null
+      - name: formacion_productiva
+        description: After the product filter this is `vaca muerta`.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["vaca muerta"]
+      - name: tipo_reservorio
+        description: After the product filter this is `NO CONVENCIONAL`.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["NO CONVENCIONAL"]
+      - name: cantidad_fracturas
+        description: Stage count for the job (source name `cantidad_fracturas`).
+        data_tests:
+          - not_null
+      - name: fecha_inicio
+        description: DATE of fracture start. Use this, not source_periodo.
+      - name: source_periodo
+        description: >
+          First day of source anio+mes. UNKNOWN whether this is carga or
+          fracture month — Front must use fecha_inicio.
+      - name: source_batched_at
+        description: Singer / loader batch time. Not the fracture date.
