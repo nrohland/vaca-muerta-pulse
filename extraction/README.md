@@ -1,5 +1,7 @@
 # extraction/ — Meltano (Data Engineer)
 
+> Para candidatos históricos nuevos, usar [contrato y guía de candidato](docs/history-candidate-contract.md). Los comandos históricos de TRUNCATE/DELETE/recreate de abajo no son el flujo de candidato ni autorización de promoción.
+
 **Hito 1.** Ingesta Capítulo IV → BigQuery `raw_*`. Owner: **DE**. No hay dbt ni dashboard acá.
 
 Proyecto Meltano **adentro de este folder** (no en la raíz del git). Tap: Singer SDK contra el **CKAN DataStore** de [datos.energia.gob.ar](https://datos.energia.gob.ar) (API oficial, **sin** scraper del HTML de consulta avanzada). Loader: `target-bigquery` (z3z1ma).
@@ -299,7 +301,7 @@ export GOOGLE_APPLICATION_CREDENTIALS="$(bash scripts/materialize-sa-key.sh)"  #
 python scripts/prepare_year_load.py --dataset raw_cap4_dev --recreate
 unset TAP_CKAN_DATASTORE_MAX_RECORDS
 ALLOW_FULL_YEAR_LOAD=true MELTANO_ENVIRONMENT=dev meltano run cap4-produccion
-python scripts/compare_source_count.py --dataset raw_cap4_dev
+python scripts/compare_source_count.py --dataset raw_cap4_dev --year 2025
 ```
 
 ---
