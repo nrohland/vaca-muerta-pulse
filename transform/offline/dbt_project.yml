@@ -1,0 +1,18 @@
+name: vaca_muerta_pulse
+version: '1.0.0'
+config-version: 2
+profile: publication_offline
+model-paths: ['models']
+macro-paths: ['../macros']
+seed-paths: ['seeds']
+test-paths: ['tests', '../tests/publication']
+vars:
+  approved_period: '2024-05-01'
+  accepted_periods: ['2023-02-01', '2023-03-01', '2023-05-01', '2024-01-01', '2024-02-01', '2024-03-01', '2024-05-01']
+  m3_to_bbl: 6.28981077
+seeds:
+  vaca_muerta_pulse:
+    synthetic_well_month:
+      +column_types:
+        periodo: date
+        source_batched_at: timestamp

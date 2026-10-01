@@ -1,0 +1,23 @@
+version: 2
+models:
+  - name: fct_production_month
+    description: 'Approved complete snapshot totals. Grain: fluid (oil/gas) × periodo. Monthly volume in bbl or million_m3; rate per calendar day. Percentages use 0–100 scale. Missing calendar comparator or zero base yields null percentage.'
+    columns:
+      - name: periodo
+        data_tests: [not_null]
+      - name: fluid
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [oil, gas]
+  - name: fct_entity_growth
+    description: 'Grain: fluid × dimension (company/area) × entity_id × periodo. Complete snapshot union of current, exact YoY and MoM entities includes exits; absent entity zero only in explicitly accepted snapshot. Latest accepted name plus name_periodo and source_name preserve renames. Operator reflects monthly declared ownership.'
+    columns:
+      - name: entity_id
+        data_tests: [not_null]
+      - name: dimension
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [company, area]

@@ -1,15 +1,15 @@
 {% macro generate_schema_name(custom_schema_name, node) -%}
-    {# Dedicated BQ datasets (Nicolás / DE). Not `{profile}_{custom}`.
-       Dev (default): stg_cap4_dev / int_cap4_dev / marts_cap4_dev
-       Prod twin (target prod): stg_cap4 / int_cap4 / marts_cap4
-    #}
+    {# Candidate layers are isolated by a validated opt-in suffix.
+       Empty suffix preserves existing dev/prod dataset names exactly.
+       Raw dataset remains controlled independently by DBT_RAW_DATASET. #}
+    {%- set suffix = env_var('DBT_CANDIDATE_SUFFIX', '') -%}
+    {%- if suffix and not modules.re.fullmatch('[a-zA-Z0-9_]+', suffix) -%}
+        {{ exceptions.raise_compiler_error('DBT_CANDIDATE_SUFFIX must contain only a-z, A-Z, 0-9 or underscore') }}
+    {%- endif -%}
     {%- set is_prod = target.name == 'prod' -%}
-    {%- if custom_schema_name == 'stg' -%}
-        {{ 'stg_cap4' if is_prod else 'stg_cap4_dev' }}
-    {%- elif custom_schema_name == 'int' -%}
-        {{ 'int_cap4' if is_prod else 'int_cap4_dev' }}
-    {%- elif custom_schema_name == 'marts' -%}
-        {{ 'marts_cap4' if is_prod else 'marts_cap4_dev' }}
+    {%- if custom_schema_name in ['stg', 'int', 'marts'] -%}
+        {%- set base = custom_schema_name ~ '_cap4' ~ ('' if is_prod else '_dev') -%}
+        {{ base ~ ('_' ~ suffix if suffix else '') }}
     {%- elif custom_schema_name is none -%}
         {{ target.schema }}
     {%- else -%}

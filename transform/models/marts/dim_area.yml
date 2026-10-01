@@ -3,13 +3,14 @@ version: 2
 models:
   - name: dim_area
     description: >
-      Distinct permiso/concesión areas in the Pulse cut.
-
-      **Grain:** one row = `idareapermisoconcesion` (preferred area grain
-      from the data-model; columns CONFIRMED). Labels from
-      `any_value(areapermisoconcesion)`. 2025 warehouse cut: 83 areas,
-      1:1 with names. Inter-year id stability remains UNKNOWN (only 2025
-      is loaded). `areayacimiento` is a later drill-down, not this dim.
+      Grain: one row per idareapermisoconcesion. Display name areapermisoconcesion comes from the latest
+      observed well-month, with deterministic lexical tie-break. Historical
+      renames are allowed; the singular identity test rejects conflicting names
+      for one ID in the same month. name_periodo and historical_name_count
+      preserve traceability. This legacy dimension includes all observed months;
+      publication marts separately restrict names to accepted snapshots.
+      Cross-year ID stability still needs external evidence. No constant-portfolio
+      reconstruction is implied.
     columns:
       - name: idareapermisoconcesion
         description: Permiso/concesión area id. Primary key.
@@ -28,3 +29,7 @@ models:
         description: Earliest Cap. IV month this area appears in well-month.
       - name: last_periodo
         description: Latest Cap. IV month this area appears in well-month.
+      - name: name_periodo
+        description: Month of latest observed display name.
+      - name: historical_name_count
+        description: Number of observed distinct names for the stable source ID.

@@ -317,3 +317,7 @@ Evaluator (caro; no es el `dbt build` default). Los modelos del paquete están `
 - [docs/hito-2-bq-iam.md](docs/hito-2-bq-iam.md)
 - [extraction/README.md](../extraction/README.md) (raw, no transformar acá)
 - [extraction/docs/hito-1-full-year-2025-load.md](../extraction/docs/hito-1-full-year-2025-load.md)
+
+## Publicación estática revisada (spec 002)
+
+`fct_production_month` y `fct_entity_growth` añaden totales petróleo/gas y contribuciones calendario con aceptación explícita de snapshots. Contrato, comandos offline y export candidato en [publication/README.md](publication/README.md). El headline público nuevo usa tasas estáticas de estos marts; las instrucciones históricas de contador arriba corresponden al pipeline previo preservado y no al producto de spec 002.

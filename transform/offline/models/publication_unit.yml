@@ -1,0 +1,47 @@
+version: 2
+unit_tests:
+  - name: calendar_gap_leap_zero_base
+    model: fct_production_month
+    overrides:
+      vars:
+        approved_period: '2024-02-01'
+        accepted_periods: ['2023-02-01', '2024-01-01', '2024-02-01']
+    given:
+      - input: ref('synthetic_well_month')
+        rows:
+          - {idpozo: 1, periodo: '2023-02-01', prod_pet_m3: 0, prod_gas_km3: 0, idempresa: A, empresa: A, idareapermisoconcesion: X, areapermisoconcesion: X, source_batched_at: '2024-04-01 00:00:00'}
+          - {idpozo: 1, periodo: '2024-01-01', prod_pet_m3: 0, prod_gas_km3: 0, idempresa: A, empresa: A, idareapermisoconcesion: X, areapermisoconcesion: X, source_batched_at: '2024-04-01 00:00:00'}
+          - {idpozo: 1, periodo: '2024-02-01', prod_pet_m3: 290, prod_gas_km3: 2900, idempresa: A, empresa: A, idareapermisoconcesion: X, areapermisoconcesion: X, source_batched_at: '2024-04-01 00:00:00'}
+    expect:
+      rows:
+        - {fluid: oil, periodo: '2023-02-01', days_in_month: 28, yoy_volume_pct: null, mom_volume_pct: null, positive_producing_wells: 0}
+        - {fluid: gas, periodo: '2023-02-01', days_in_month: 28, yoy_volume_pct: null, mom_volume_pct: null, positive_producing_wells: 0}
+        - {fluid: oil, periodo: '2024-01-01', days_in_month: 31, yoy_volume_pct: null, mom_volume_pct: null, positive_producing_wells: 0}
+        - {fluid: gas, periodo: '2024-01-01', days_in_month: 31, yoy_volume_pct: null, mom_volume_pct: null, positive_producing_wells: 0}
+        - {fluid: oil, periodo: '2024-02-01', days_in_month: 29, yoy_volume_pct: null, mom_volume_pct: null, positive_producing_wells: 1}
+        - {fluid: gas, periodo: '2024-02-01', days_in_month: 29, yoy_volume_pct: null, mom_volume_pct: null, positive_producing_wells: 1}
+  - name: full_union_entry_exit
+    model: fct_entity_growth
+    overrides:
+      vars:
+        approved_period: '2024-02-01'
+        accepted_periods: ['2023-02-01', '2024-02-01']
+    given:
+      - input: ref('synthetic_well_month')
+        rows:
+          - {idpozo: 1, periodo: '2023-02-01', prod_pet_m3: 280, prod_gas_km3: 2800, idempresa: A, empresa: A, idareapermisoconcesion: A, areapermisoconcesion: A, source_batched_at: '2024-04-01 00:00:00'}
+          - {idpozo: 2, periodo: '2024-02-01', prod_pet_m3: 290, prod_gas_km3: 2900, idempresa: B, empresa: B, idareapermisoconcesion: B, areapermisoconcesion: B, source_batched_at: '2024-04-01 00:00:00'}
+    expect:
+      rows:
+        - {fluid: oil, dimension: company, entity_id: A, periodo: '2023-02-01', yoy_volume_pct: null, is_absent_current: false}
+        - {fluid: oil, dimension: company, entity_id: A, periodo: '2024-02-01', yoy_volume_pct: -100, is_absent_current: true}
+        - {fluid: oil, dimension: company, entity_id: B, periodo: '2024-02-01', yoy_volume_pct: null, is_absent_current: false}
+        - {fluid: oil, dimension: area, entity_id: A, periodo: '2023-02-01', yoy_volume_pct: null, is_absent_current: false}
+        - {fluid: oil, dimension: area, entity_id: A, periodo: '2024-02-01', yoy_volume_pct: -100, is_absent_current: true}
+        - {fluid: oil, dimension: area, entity_id: B, periodo: '2024-02-01', yoy_volume_pct: null, is_absent_current: false}
+        - {fluid: gas, dimension: company, entity_id: A, periodo: '2023-02-01', yoy_volume_pct: null, is_absent_current: false}
+        - {fluid: gas, dimension: company, entity_id: A, periodo: '2024-02-01', yoy_volume_pct: -100, is_absent_current: true}
+        - {fluid: gas, dimension: company, entity_id: B, periodo: '2024-02-01', yoy_volume_pct: null, is_absent_current: false}
+        - {fluid: gas, dimension: area, entity_id: A, periodo: '2023-02-01', yoy_volume_pct: null, is_absent_current: false}
+        - {fluid: gas, dimension: area, entity_id: A, periodo: '2024-02-01', yoy_volume_pct: -100, is_absent_current: true}
+        - {fluid: gas, dimension: area, entity_id: B, periodo: '2024-02-01', yoy_volume_pct: null, is_absent_current: false}
