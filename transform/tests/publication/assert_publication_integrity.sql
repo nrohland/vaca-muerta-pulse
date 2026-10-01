@@ -11,10 +11,10 @@ select cast(idempresa as {{ dbt.type_string() }}) from wells group by idempresa,
 union all
 select cast(idareapermisoconcesion as {{ dbt.type_string() }}) from wells group by idareapermisoconcesion,periodo having count(distinct areapermisoconcesion)>1
 union all
-select 'missing_approved_period' where not exists (
+select 'missing_approved_period' from (select 1 as guard) as approved_guard where not exists (
  select 1 from {{ ref('fct_production_month') }} where periodo=cast('{{ var("approved_period", "0001-01-01") }}' as date)
 )
 {% for p in var('accepted_periods', []) %}
 union all
-select 'missing_accepted_period' where not exists (select 1 from wells where periodo=cast('{{ p }}' as date))
+select 'missing_accepted_period' from (select 1 as guard) as accepted_guard where not exists (select 1 from wells where periodo=cast('{{ p }}' as date))
 {% endfor %}

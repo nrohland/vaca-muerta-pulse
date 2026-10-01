@@ -25,7 +25,7 @@ Con un runtime existente, exportar `DBT`/`PYTHON` como sus paths absolutos. Desd
 
 ```sh
 cp transform/offline/profiles.yml.example transform/offline/profiles.yml
-(cd transform/offline && "$DBT" build --no-partial-parse --profiles-dir . --select +fct_production_month +fct_entity_growth --quiet --warn-error-options '{"error": ["NoNodesForSelectionCriteria"]}')
+(cd transform/offline && "$DBT" build --indirect-selection cautious --no-partial-parse --profiles-dir . --select +fct_production_month +fct_entity_growth --quiet --warn-error-options '{"error": ["NoNodesForSelectionCriteria"]}')
 PYTHONDONTWRITEBYTECODE=1 "$PYTHON" -m unittest discover -s tests/transform -v
 ```
 
@@ -36,7 +36,7 @@ El build ejecuta seed sintético, dos modelos, unit tests dbt y checks de calend
 En `transform/`, instalar paquetes con `dbt deps`, usar perfil BigQuery existente y ejecutar (solo tras autorizar writes cloud):
 
 ```sh
-"$DBT" build --select fct_production_month fct_entity_growth --vars '{"approved_period":"2026-07-01","accepted_periods":["2026-06-01","2026-07-01"]}' --quiet --warn-error-options '{"error": ["NoNodesForSelectionCriteria"]}'
+"$DBT" build --indirect-selection cautious --select fct_production_month fct_entity_growth --vars '{"approved_period":"2026-07-01","accepted_periods":["2026-06-01","2026-07-01"]}' --quiet --warn-error-options '{"error": ["NoNodesForSelectionCriteria"]}'
 ```
 
 La lista aquí es ilustrativa: para YoY/series incluir todos los snapshots históricos aceptados. Estos modelos consumen `fct_well_month` ya construido; el selector no reconstruye extracción/completaciones. Los checks compartidos incluyen todos los volúmenes, tasas, comparadores y deltas. Unit tests corren offline contra el mismo SQL. BigQuery execution queda pendiente de verificación externa; pasar offline no demuestra warehouse ni publicación end-to-end.
@@ -65,7 +65,10 @@ export DBT_RAW_DATASET=raw_cap4_candidate_20261001
 export DBT_CANDIDATE_SUFFIX=candidate_20261001
 export DBT_BQ_DATASET=stg_cap4_dev_candidate_20261001
 (cd transform && "$DBT" deps --quiet)
-(cd transform && "$DBT" build --profiles-dir . --target dev_oauth --select +fct_production_month +fct_entity_growth --vars '{"approved_period":"2026-07-01","accepted_periods":["2026-06-01","2026-07-01"]}' --quiet --warn-error-options '{"error": ["NoNodesForSelectionCriteria"]}')
+(cd transform && "$DBT" build --indirect-selection cautious --profiles-dir . --target dev_oauth --select +fct_production_month +fct_entity_growth --vars '{"approved_period":"2026-07-01","accepted_periods":["2026-06-01","2026-07-01"]}' --quiet --warn-error-options '{"error": ["NoNodesForSelectionCriteria"]}')
 ```
 
 Aquí `+` incluye staging, intermediate y fct_well_month del raw candidato, sin reconstruir completaciones ni usar los marts viejos. La lista de aceptación de ejemplo es parcial: reemplazar por todos los snapshots completos revisados requeridos para historia/YoY. Dev/oauth escribe `stg_cap4_dev_candidate_20261001`, `int_cap4_dev_candidate_20261001` y `marts_cap4_dev_candidate_20261001`. Se preservan los datasets previos. Build/test cloud, reconciliación del raw corregido y aprobación manual siguen pendientes; pasar tests offline verifica fórmulas y aislamiento de nombres, no certifica esos datos.
+
+
+Los builds de publicación usan `--indirect-selection cautious`: un test con varias dependencias se incluye solo cuando todas están seleccionadas. Evita ejecutar reconciliaciones de marts legacy no construidos en un build acotado. Los gates de publicación permanecen seleccionados junto a sus dos marts y upstream; QA completa debe construir y probar también los marts legacy por separado o con el selector completo autorizado.
