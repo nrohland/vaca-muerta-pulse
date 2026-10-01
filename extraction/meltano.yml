@@ -59,6 +59,8 @@ plugins:
           kind: integer
         - name: max_records
           kind: integer
+        - name: reemit
+          kind: boolean
       select:
         - produccion_pozo_mes.*
         - "!capitulo_iv_pozos.*"

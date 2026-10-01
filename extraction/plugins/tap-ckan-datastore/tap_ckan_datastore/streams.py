@@ -3,6 +3,13 @@
 from __future__ import annotations
 
 from typing import Any, Iterable, Mapping
+from decimal import Decimal, InvalidOperation
+from datetime import datetime
+import math
+from jsonschema import Draft7Validator, FormatChecker
+import json
+import os
+from pathlib import Path
 
 import requests
 from singer_sdk.streams import Stream
@@ -48,18 +55,51 @@ SKIP_FIELDS = frozenset({"_id", "_full_text"})
 def _as_int(value: Any) -> int | None:
     if value is None or value == "":
         return None
-    return int(float(value))
+    if isinstance(value, bool):
+        raise ValueError("Boolean is not an integral identifier")
+    try:
+        number = Decimal(str(value))
+    except InvalidOperation as exc:
+        raise ValueError("Invalid integral value") from exc
+    if not number.is_finite() or number != number.to_integral_value():
+        raise ValueError("Expected finite integral value")
+    return int(number)
 
 
 def _periodo_from_anio_mes(row: Mapping[str, Any]) -> str | None:
-    try:
-        anio = _as_int(row.get("anio"))
-        mes = _as_int(row.get("mes"))
-    except (TypeError, ValueError):
-        return None
-    if anio is None or mes is None or not (1 <= mes <= 12):
-        return None
+    anio = _as_int(row.get("anio"))
+    mes = _as_int(row.get("mes"))
+    if anio is None or mes is None or not (1 <= anio <= 9999 and 1 <= mes <= 12):
+        raise ValueError("Invalid production year/month")
     return f"{anio:04d}-{mes:02d}-01"
+
+
+def field_contract(fields: list[dict]) -> dict[str, str]:
+    contract = {f["id"]: f["type"] for f in fields if f["id"] not in SKIP_FIELDS}
+    if len(contract) != len([f for f in fields if f["id"] not in SKIP_FIELDS]):
+        raise ValueError("Duplicate schema field")
+    return contract
+
+
+def validate_production_fields(fields: list[dict]) -> None:
+    expected = json.loads(Path(__file__).with_name("production_contract.json").read_text())
+    if field_contract(fields) != expected:
+        raise ValueError("Production source schema differs from reviewed contract")
+
+
+
+SOURCE_FORMATS = FormatChecker()
+
+
+@SOURCE_FORMATS.checks("date-time", raises=(ValueError, TypeError))
+def _source_timestamp(value: Any) -> bool:
+    # CKAN PostgreSQL timestamp has no timezone; do not invent one on raw rows.
+    if not isinstance(value, str):
+        return True
+    if "T" not in value and " " not in value:
+        return False
+    datetime.fromisoformat(value.replace("Z", "+00:00"))
+    return True
 
 
 class CkanDatastoreStream(Stream):
@@ -91,16 +131,21 @@ class CkanDatastoreStream(Stream):
             "resource_id": self.resource_id,
             "limit": limit,
             "offset": offset,
+            "sort": "_id asc",
+            "include_total": True,
+            "total_estimation_threshold": 0,
         }
         response = requests.get(url, params=params, timeout=120)
         response.raise_for_status()
         payload = response.json()
         if not payload.get("success"):
-            raise RuntimeError(f"CKAN datastore_search failed for {self.resource_id}: {payload}")
+            raise RuntimeError(f"CKAN datastore_search failed for {self.resource_id}")
         return payload["result"]
 
     def _schema_from_datastore(self) -> dict[str, Any]:
         result = self._datastore_search(limit=0)
+        if self.name == "produccion_pozo_mes":
+            validate_production_fields(result.get("fields", []))
         properties: dict[str, Any] = {}
         for field in result.get("fields", []):
             name = field.get("id")
@@ -118,6 +163,8 @@ class CkanDatastoreStream(Stream):
         return {
             "type": "object",
             "properties": properties,
+            "additionalProperties": False,
+            "required": list(properties) if self.name == "produccion_pozo_mes" else list(self.primary_keys),
         }
 
     @property
@@ -132,52 +179,83 @@ class CkanDatastoreStream(Stream):
         out = {k: v for k, v in row.items() if k not in SKIP_FIELDS}
         for name in INTEGER_FIELDS:
             if name in out:
-                try:
-                    out[name] = _as_int(out[name])
-                except (TypeError, ValueError):
-                    out[name] = None
+                out[name] = _as_int(out[name])
+        for key in self.primary_keys:
+            if out.get(key) is None:
+                raise ValueError(f"Missing required key {key}")
+        if self.name == "produccion_pozo_mes" and out["idpozo"] <= 0:
+            raise ValueError("idpozo must be positive")
         if self.add_periodo:
             out["periodo"] = _periodo_from_anio_mes(out)
+        if self.name == "produccion_pozo_mes":
+            for name, property_schema in self.schema["properties"].items():
+                value = out.get(name)
+                if value is not None and "number" in property_schema.get("type", []):
+                    if isinstance(value, bool):
+                        raise ValueError(f"Invalid numeric field {name}")
+                    try:
+                        number = float(value)
+                    except (ValueError, TypeError, OverflowError) as exc:
+                        raise ValueError(f"Invalid numeric field {name}") from exc
+                    if not math.isfinite(number):
+                        raise ValueError(f"Nonfinite numeric field {name}")
+                    out[name] = number
         return out
 
     def get_records(self, context: dict | None) -> Iterable[dict[str, Any]]:
         del context
-        offset = 0
-        emitted = 0
         max_records = self.config.get("max_records")
-        max_records_i = int(max_records) if max_records not in (None, "") else None
-        page_size = self.page_size
-        while True:
-            remaining = None
-            if max_records_i is not None:
-                remaining = max_records_i - emitted
-                if remaining <= 0:
-                    break
-            limit = page_size if remaining is None else min(page_size, remaining)
+        cap = _as_int(max_records)
+        if cap is not None and cap <= 0:
+            raise ValueError("max_records must be positive")
+        if cap is not None and (self.config.get("reemit") or os.environ.get("REEMIT", "").lower() == "true"):
+            raise ValueError("Capped reemit is forbidden")
+        page_size = _as_int(self.config.get("page_size", 32000))
+        if page_size is None or not 1 <= page_size <= 32000:
+            raise ValueError("page_size must be 1..32000")
+        initial = self._datastore_search(limit=0)
+        fields = initial.get("fields", [])
+        if self.name == "produccion_pozo_mes":
+            validate_production_fields(fields)
+        total = _as_int(initial.get("total"))
+        if total is None or total < 0 or initial.get("total_was_estimated"):
+            raise ValueError("Exact source total required")
+        expected = total if cap is None else min(total, cap)
+        offset = 0
+        previous_id = None
+        seen_keys = set()
+        validator = Draft7Validator(self.schema, format_checker=SOURCE_FORMATS)
+        while offset < expected:
+            limit = min(page_size, expected - offset)
             result = self._datastore_search(limit=limit, offset=offset)
+            if (_as_int(result.get("total")) != total or result.get("total_was_estimated")
+                    or field_contract(result.get("fields", [])) != field_contract(fields)):
+                raise ValueError("Source total/schema changed during paging")
             records = result.get("records") or []
-            total = result.get("total")
-            self.logger.info(
-                "datastore_search resource=%s offset=%s limit=%s page_rows=%s emitted_before=%s total=%s",
-                self.resource_id,
-                offset,
-                limit,
-                len(records),
-                emitted,
-                total,
-            )
-            if not records:
-                break
+            if not records or len(records) > limit or offset + len(records) > expected:
+                raise ValueError("Incomplete or oversized page")
             for row in records:
-                yield self._normalize(row)
-                emitted += 1
-                if max_records_i is not None and emitted >= max_records_i:
-                    return
+                row_id = _as_int(row.get("_id"))
+                if row_id is None or row_id <= 0 or (previous_id is not None and row_id <= previous_id):
+                    raise ValueError("Non-increasing _id across pages")
+                previous_id = row_id
+                normalized = self._normalize(row)
+                error = next(validator.iter_errors(normalized), None)
+                if error is not None:
+                    # Do not echo raw row values into logs on failure.
+                    field = ".".join(str(part) for part in error.path) or "record"
+                    raise ValueError(f"Record schema validation failed: {field} ({error.validator})")
+                key = tuple(normalized[k] for k in self.primary_keys)
+                if self.primary_keys and key in seen_keys:
+                    raise ValueError("Duplicate source grain")
+                seen_keys.add(key)
+                yield normalized
             offset += len(records)
-            if total is not None and offset >= int(total):
-                break
-            if len(records) < limit:
-                break
+        final = self._datastore_search(limit=0)
+        if (_as_int(final.get("total")) != total or final.get("total_was_estimated")
+                or field_contract(final.get("fields", [])) != field_contract(fields)):
+            raise ValueError("Source changed before verification")
+
 
 
 class ProduccionPozoMesStream(CkanDatastoreStream):

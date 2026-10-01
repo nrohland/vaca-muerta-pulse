@@ -14,6 +14,9 @@ from __future__ import annotations
 import argparse
 import os
 import sys
+import re
+from pathlib import Path
+import yaml
 
 import requests
 from google.cloud import bigquery
@@ -26,13 +29,15 @@ CKAN_URL = "https://datos.energia.gob.ar/api/3/action/datastore_search"
 def datastore_total(resource_id: str) -> int:
     resp = requests.get(
         CKAN_URL,
-        params={"resource_id": resource_id, "limit": 0},
+        params={"resource_id": resource_id, "limit": 0, "total_estimation_threshold": 0},
         timeout=120,
     )
     resp.raise_for_status()
     payload = resp.json()
     if not payload.get("success"):
-        raise RuntimeError(f"CKAN datastore_search failed: {payload}")
+        raise RuntimeError("CKAN datastore_search failed")
+    if payload["result"].get("total_was_estimated"):
+        raise ValueError("Exact CKAN count required")
     return int(payload["result"]["total"])
 
 
@@ -45,17 +50,27 @@ def main() -> int:
         "--resource-id",
         default=os.environ.get("TAP_CKAN_DATASTORE_PRODUCCION_RESOURCE_ID", DEFAULT_RESOURCE),
     )
+    parser.add_argument("--year", type=int, required=True, help="Year represented by the annual source resource")
     args = parser.parse_args()
+    if not 1 <= args.year <= 9999 or not re.fullmatch(r"[A-Za-z0-9_-]+", args.dataset) or (args.project and not re.fullmatch(r"[A-Za-z0-9_-]+", args.project)):
+        parser.error("Invalid year, project or dataset")
     if not args.project:
         print("ERROR: --project or BIGQUERY_PROJECT is required", file=sys.stderr)
         return 2
 
+    resources = yaml.safe_load((Path(__file__).resolve().parents[1] / "resources/cap4.yml").read_text())
+    chosen = {}
+    for entry in resources["produccion_anual"]:
+        chosen.setdefault(entry["year"], entry["resource_id"])
+    if chosen.get(args.year) != args.resource_id:
+        parser.error("Resource/year must match the reviewed annual catalog")
     source_total = datastore_total(args.resource_id)
     print(f"[compare] datastore resource={args.resource_id} total={source_total}")
 
     client = bigquery.Client(project=args.project, location=args.location)
     table_id = f"{args.project}.{args.dataset}.{TABLE}"
-    count = list(client.query(f"SELECT COUNT(*) AS row_count FROM `{table_id}`").result())[0].row_count
+    count_cfg = bigquery.QueryJobConfig(query_parameters=[bigquery.ScalarQueryParameter("year", "INT64", args.year)], maximum_bytes_billed=1024**3)
+    count = list(client.query(f"SELECT COUNT(*) AS row_count FROM `{table_id}` WHERE anio = @year", job_config=count_cfg).result())[0].row_count
     delta = int(count) - source_total
     print(f"[compare] bq {args.dataset}.{TABLE} count={count}")
     print(f"[compare] delta (bq - datastore)={delta}")
@@ -124,7 +139,10 @@ def main() -> int:
     """
     staging = [r.table_name for r in client.query(staging_sql).result()]
     print(f"[compare] staging_tables={staging or '(none)'}")
-    return 0
+    layout_ok = (getattr(tp, 'type_', None) == 'MONTH'
+                 and getattr(tp, 'field', None) == '_sdc_batched_at'
+                 and list(table.clustering_fields or []) == ['empresa', 'idpozo', 'cuenca'])
+    return 0 if delta == 0 and layout_ok and not staging else 1
 
 
 if __name__ == "__main__":

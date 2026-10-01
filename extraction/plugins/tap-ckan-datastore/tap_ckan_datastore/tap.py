@@ -58,6 +58,7 @@ class TapCkanDatastore(Tap):
             th.IntegerType,
             description="Optional cap for local smoke (unset in prod / full-year load).",
         ),
+        th.Property("reemit", th.BooleanType, default=False, description="Reject capped re-emission."),
     ).to_dict()
 
     def discover_streams(self) -> list[CkanDatastoreStream]:
