@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "status": "candidate",
+  "dbt_vars": {
+    "approved_period": "YYYY-MM-01",
+    "accepted_periods": [
+      "explicit complete snapshot months <= approved_period"
+    ]
+  },
+  "production_grain": [
+    "fluid",
+    "periodo"
+  ],
+  "entity_grain": [
+    "fluid",
+    "dimension",
+    "entity_id",
+    "periodo"
+  ],
+  "fluids": {
+    "oil": {
+      "volume_unit": "bbl",
+      "rate_unit": "bbl/d"
+    },
+    "gas": {
+      "volume_unit": "million_m3",
+      "rate_unit": "million_m3/d"
+    }
+  },
+  "percentage_scale": "0-100",
+  "fields": [
+    "volume",
+    "rate",
+    "yoy_volume",
+    "yoy_rate",
+    "mom_volume",
+    "mom_rate",
+    "yoy_volume_delta",
+    "yoy_rate_delta",
+    "mom_volume_delta",
+    "mom_rate_delta",
+    "yoy_volume_pct",
+    "yoy_rate_pct",
+    "mom_volume_pct",
+    "mom_rate_pct",
+    "positive_producing_wells",
+    "reported_well_rows",
+    "valid_volume_rows",
+    "coverage",
+    "is_complete",
+    "acceptance_basis"
+  ],
+  "source_manifest_required": [
+    "data_kind=official",
+    "approved_period",
+    "accepted_periods",
+    "accepted_at",
+    "commit",
+    "resources"
+  ],
+  "resource_fields": [
+    "id",
+    "url",
+    "sha256 OR hash_unavailable_reason"
+  ],
+  "entity_names": [
+    "entity_name=latest accepted name",
+    "name_periodo",
+    "source_name=name observed in current snapshot or null on exit"
+  ],
+  "source_loaded_at": "Raw load timestamp, not publication date of official source",
+  "export_input": "JSON arrays of complete dbt mart rows; DATE and TIMESTAMP serialized as ISO strings; actual dbt run_results.json",
+  "export_output": "version directory with release.json containing production/entities and manifest.json with candidate status and sha256; never overwrites release or approves it",
+  "total_concentration_fields": [
+    "top5_company_share_pct",
+    "yoy_top5_company_share_pct",
+    "top5_company_share_yoy_pp",
+    "top5_area_share_pct",
+    "yoy_top5_area_share_pct",
+    "top5_area_share_yoy_pp"
+  ],
+  "entity_prepared_fields": [
+    "volume_rank",
+    "top5_share_pct",
+    "yoy_top5_share_pct",
+    "top5_share_yoy_pp",
+    "yoy_contribution_selected",
+    "yoy_rest_rate_delta"
+  ],
+  "contribution_display": "Select rows where yoy_contribution_selected=true (top 5 positive and top 5 negative rate deltas, ID tie-break), append one Rest with shared yoy_rest_rate_delta from any row in fluid/dimension/periodo. All deltas available for download; client must not sum/recompute Rest."
+}

@@ -1,0 +1,7 @@
+publication_offline:
+  target: offline
+  outputs:
+    offline:
+      type: duckdb
+      path: target/synthetic_tests.duckdb
+      threads: 1
