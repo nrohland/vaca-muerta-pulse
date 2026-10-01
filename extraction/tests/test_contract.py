@@ -97,9 +97,28 @@ class ContractTests(unittest.TestCase):
             get.return_value.json.return_value = {'success': True, 'result': result()}
             s._datastore_search(limit=2, offset=2)
             params = get.call_args.kwargs['params']
-            self.assertEqual(params['sort'], '_id asc')
+            self.assertEqual(params['sort'], 'idpozo asc,anio asc,mes asc')
             self.assertEqual(params['offset'], 2)
-            self.assertEqual(params['total_estimation_threshold'], 0)
+            self.assertTrue(params['include_total'])
+            self.assertNotIn('total_estimation_threshold', params)
+
+    def test_official_shape_without_internal_id(self):
+        first, second = row(1), row(2)
+        del first['_id']
+        del second['_id']
+        self.assertEqual(len(self.run_pages([result(total=2), result([first], total=2), result([second], total=2), result(total=2)])), 2)
+        with self.assertRaises(ValueError):
+            self.run_pages([result(total=2), result([second], total=2), result([first], total=2)])
+
+    def test_count_uses_supported_exact_total_request(self):
+        compare = load_script('compare_source_count')
+        with patch.object(compare.requests, 'get') as get:
+            get.return_value.json.return_value = {'success': True, 'result': result()}
+            self.assertEqual(compare.datastore_total('fixture'), 3)
+            self.assertEqual(get.call_args.kwargs['params'], {'resource_id': 'fixture', 'limit': 0, 'include_total': True})
+            get.return_value.json.return_value = {'success': True, 'result': result() | {'total_was_estimated': True}}
+            with self.assertRaises(ValueError):
+                compare.datastore_total('fixture')
 
     def test_candidate_cleanup_and_no_overwrite(self):
         candidate = load_script('prepare_history_candidate')
