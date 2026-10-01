@@ -1,5 +1,9 @@
 # AGENTS.md
 
+## Alcance confirmado 2026-10-01
+
+Leer primero `specs/002-portfolio/spec.md` y `docs/adrs/0003-static-reviewed-releases.md`. Nicolás confirmó grill-me y antislop DURANTE. Esta spec sustituye la portada/contador de 001: tasa estática, petróleo/gas, YoY/MoM, 12 meses, contribuciones y top 5. Hito 3 está autorizado; no repetir la entrevista ni bloquear Next por instrucciones históricas de 001. Conservar roles/secretos/merge del resto de esta guía.
+
 Instrucciones para **coding agents** (y humanos que implementan). El relato de producto está en [README.md](README.md). Si hay conflicto entre “código útil” y esta guía, gana esta guía.
 
 ## 0. Qué es este repo ahora

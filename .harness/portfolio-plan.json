@@ -1,0 +1,200 @@
+{
+  "runId": "barrilito-portfolio-20261001",
+  "plan": {
+    "goal": "Publishable Barrilito oil/gas data product implementing confirmed grill-me with validated official monthly history and editorial Next UI",
+    "constraints": [
+      "Read AGENTS.md and spec002; user confirms implementation after grill-me and antislop DURING. No repeated questions or skill install wizard.",
+      "Stay within allowedChangedPaths. Do not run git commit/push/switch/merge, change IAM/billing or deploy; root manages review branches.",
+      "No secrets in source/log/output. No GCP writes or expensive queries in implementation steps.",
+      "Never fabricate data, passing tests, screenshots or warehouse execution. Keep pending external checks explicit.",
+      "One bounded step only. Work until its local checks pass. Do not implement future steps."
+    ],
+    "steps": [
+      {
+        "id": "extract-contract",
+        "objective": "Implement a validated Capítulo IV annual extraction candidate and Python tests. Reuse Singer tap, preserve production/grain/business separation. Add deterministic _id sorting, stable paging/counts, explicit schema contract, strict integral ids/year/month, mismatch/capped-reemit guards and verification. Add extraction/scripts/prepare_history_candidate.py to download official chosen annual resources safely with filters OPTIONAL for a local VM QA sample, retain source metadata/checksums and profile per-period/duplicates/schema; do not write GCP or replace tables. No metrics in extraction. Fix compare_source_count exit code and year predicate without weakening existing safeguards. Include reusable load-to-new-candidate guidance for BigQuery and fail closed before promotion.",
+        "dependencies": [],
+        "expected_output": "extraction/tests/test_contract.py plus bounded source/tests/docs in owned folders",
+        "acceptance_criteria": [
+          "Deliver the implemented artifact extraction/tests/test_contract.py with local meaningful tests passing",
+          "Document reproducible commands, data contracts and honest limits in the owned folders",
+          "Stay in allowed paths and preserve secrets/primary architecture"
+        ]
+      },
+      {
+        "id": "growth-marts",
+        "objective": "Implement oil/gas monthly total and entity growth dbt marts with documented grains. Daily oil bbl and gas million m3 are converted in dbt. Exact calendar joins for YoY/MoM; entity full union for entry/exit; no lag(12) on sparse. New models fct_production_month and fct_entity_growth (fluid, dimension, entity_id, periodo) should expose volume, rate, prior volume/rate, signed growth deltas and percentages, positive-producing wells, completeness/coverage. Explicit month acceptance comes from source/profile manifest or approved_period var; not max raw only. Historical names use id and latest name with traceability; fix dimensions tests rejecting legitimate renames (preserve identity integrity). Add dbt tests for reconciliation including rates/deltas, unit tests for missing months/leap/base-zero/entry-exit. Also build a portable offline dbt verification path (DuckDB, only these publication models, reuse SQL via macros/adapters; BigQuery remains primary), fed official normalized QA source or test fixture. No fake published data, no cloud writes. Include transform/publication/export_release.py to export these marts, validate aggregate reconciliation and build manifest/versioned JSON candidate, no business formulas outside dbt. Keep previous models/pipeline supported.",
+        "dependencies": [
+          "extract-contract"
+        ],
+        "expected_output": "transform/models/marts/fct_production_month.sql plus bounded source/tests/docs in owned folders",
+        "acceptance_criteria": [
+          "Deliver the implemented artifact transform/models/marts/fct_production_month.sql with local meaningful tests passing",
+          "Document reproducible commands, data contracts and honest limits in the owned folders",
+          "Stay in allowed paths and preserve secrets/primary architecture"
+        ]
+      },
+      {
+        "id": "editorial-web",
+        "objective": "Build production Next.js static export editorial Barrilito in apps/web. Read specs/002-portfolio and ADR 0003 first, confirmed grill-me and antislop DURING so do not interview again/install globals. Oil default / Gas switch changes EVERY metric, chart, contribution/table; units bbl/d+bbl and MMm3/d+MMm3. Initial trend12 months selector12/24/36/60, only valid available ranges. Recharts for line gaps and signed contributions. Latest accepted month, YoY primary MoM secondary; date/source visible. Top5 monthly production with volume YoY; dimension tabs company/area; contributions full dataset including negatives/rest. Top5 concentration share with pp YoY if available. Responsive editorial typographic hierarchy, light paper/ink and deliberate domain accent, no SaaS card grid or decorative gradients. Methodology/source/revisions/data download; keyboard labels/focus, accessible equivalent text/table, empty/error/loading. Strict runtime schema from export contract; no raw/GCP credentials, NO metric recomputation in frontend (format/sort/presentation only). If live candidate not yet present use honest empty state and test fixtures visibly isolated; do not pretend fixture is official. Add scoped conversational analytics deterministic prepared questions over public aggregates with source/formula/period and rejection outside scope. Add meaningful unit and browser test scripts and write design rationale. No changes outside apps/web. Install dependencies necessary from npm and run build/tests, screenshots only if possible. Do not deploy.",
+        "dependencies": [
+          "growth-marts"
+        ],
+        "expected_output": "apps/web/package.json plus bounded source/tests/docs in owned folders",
+        "acceptance_criteria": [
+          "Deliver the implemented artifact apps/web/package.json with local meaningful tests passing",
+          "Document reproducible commands, data contracts and honest limits in the owned folders",
+          "Stay in allowed paths and preserve secrets/primary architecture"
+        ]
+      },
+      {
+        "id": "reviewed-release",
+        "objective": "Implement CI and docs for official Capítulo IV candidate→dbt build/test→export→Next static build. Preserve old approved public release on failure; workflow_dispatch/manual first3 cycles, no destructive old cron while no ready promotion. Use existing Meltano as primary BQ path; least-privileged separate dbt credentials (never GCP_SA_KEY fallback); budgets maximum_bytes_billed where querying; optional reproducible local DuckDB verifier no warehouse replacement. Validate year/resource schema and manifest/versioning; GitHub Pages build/upload artifact with activation instructions (do not enable Pages/IAM/billing or deploy now). Candidate and approved artifacts must be explicit and publication cannot auto-approve empty/new months; manual acceptance input/version. Persist revision comparison metadata and aggregate JSON snapshots, not raw heavy. Pipeline integration tests meaningful failure preservation/reconciliation/manifest. README end-to-end commands and separate real versus pending checks. Fix stale root specs docs roadmap to point confirmed spec002, without erasing prior historical evidence. Security QA do not merge/approve PRs.",
+        "dependencies": [
+          "editorial-web"
+        ],
+        "expected_output": "publication/README.md plus bounded source/tests/docs in owned folders",
+        "acceptance_criteria": [
+          "Deliver the implemented artifact publication/README.md with local meaningful tests passing",
+          "Document reproducible commands, data contracts and honest limits in the owned folders",
+          "Stay in allowed paths and preserve secrets/primary architecture"
+        ]
+      }
+    ]
+  },
+  "policies": {
+    "extract-contract": {
+      "access": "write",
+      "allowedChangedPaths": [
+        "extraction/",
+        "tests/extraction/"
+      ],
+      "relevantFiles": [
+        "AGENTS.md",
+        "specs/002-portfolio/spec.md",
+        "docs/adrs/0003-static-reviewed-releases.md",
+        "extraction/README.md",
+        "extraction/meltano.yml",
+        "extraction/plugins/tap-ckan-datastore/tap_ckan_datastore/streams.py"
+      ],
+      "timeoutMs": 900000,
+      "verification": {
+        "filesExist": [
+          "extraction/tests/test_contract.py"
+        ],
+        "authorizedCommands": [
+          {
+            "command": "git",
+            "args": [
+              "diff",
+              "--check"
+            ]
+          }
+        ],
+        "semanticEvidence": "Inspect changed sources and documented meaningful checks. Validate only local implementation criteria, not unpublished/live cloud criteria. No metrics duplicated in frontend, no fabricated official data/checks. Identify material semantic omissions."
+      }
+    },
+    "growth-marts": {
+      "access": "write",
+      "allowedChangedPaths": [
+        "transform/",
+        "tests/transform/"
+      ],
+      "relevantFiles": [
+        "AGENTS.md",
+        "specs/002-portfolio/spec.md",
+        "docs/adrs/0003-static-reviewed-releases.md",
+        "transform/README.md",
+        "transform/models/marts/fct_well_month.sql",
+        "transform/models/marts/fct_company_month.sql",
+        "transform/models/marts/fct_area_month.sql",
+        "transform/dbt_project.yml"
+      ],
+      "timeoutMs": 900000,
+      "verification": {
+        "filesExist": [
+          "transform/models/marts/fct_production_month.sql"
+        ],
+        "authorizedCommands": [
+          {
+            "command": "git",
+            "args": [
+              "diff",
+              "--check"
+            ]
+          }
+        ],
+        "semanticEvidence": "Inspect changed sources and documented meaningful checks. Validate only local implementation criteria, not unpublished/live cloud criteria. No metrics duplicated in frontend, no fabricated official data/checks. Identify material semantic omissions."
+      }
+    },
+    "editorial-web": {
+      "access": "write",
+      "allowedChangedPaths": [
+        "apps/web/"
+      ],
+      "relevantFiles": [
+        "AGENTS.md",
+        "specs/002-portfolio/spec.md",
+        "docs/adrs/0003-static-reviewed-releases.md",
+        "transform/publication/export_release.py",
+        "transform/models/marts/fct_production_month.sql",
+        "transform/models/marts/fct_entity_growth.sql",
+        "apps/web/README.md"
+      ],
+      "timeoutMs": 900000,
+      "verification": {
+        "filesExist": [
+          "apps/web/package.json"
+        ],
+        "authorizedCommands": [
+          {
+            "command": "git",
+            "args": [
+              "diff",
+              "--check"
+            ]
+          }
+        ],
+        "semanticEvidence": "Inspect changed sources and documented meaningful checks. Validate only local implementation criteria, not unpublished/live cloud criteria. No metrics duplicated in frontend, no fabricated official data/checks. Identify material semantic omissions."
+      }
+    },
+    "reviewed-release": {
+      "access": "write",
+      "allowedChangedPaths": [
+        ".github/",
+        "publication/",
+        "tests/publication/",
+        "README.md",
+        "docs/",
+        "specs/",
+        ".gitignore"
+      ],
+      "relevantFiles": [
+        "AGENTS.md",
+        "specs/002-portfolio/spec.md",
+        "docs/adrs/0003-static-reviewed-releases.md",
+        "apps/web/README.md",
+        "extraction/README.md",
+        "transform/README.md",
+        ".github/workflows/extract-cap4.yml",
+        ".github/workflows/dbt-transform.yml"
+      ],
+      "timeoutMs": 900000,
+      "verification": {
+        "filesExist": [
+          "publication/README.md"
+        ],
+        "authorizedCommands": [
+          {
+            "command": "git",
+            "args": [
+              "diff",
+              "--check"
+            ]
+          }
+        ],
+        "semanticEvidence": "Inspect changed sources and documented meaningful checks. Validate only local implementation criteria, not unpublished/live cloud criteria. No metrics duplicated in frontend, no fabricated official data/checks. Identify material semantic omissions."
+      }
+    }
+  }
+}
