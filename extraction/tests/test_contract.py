@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'plugins/tap-ckan-datastore'))
-from tap_ckan_datastore.streams import ProduccionPozoMesStream, _as_int, _periodo_from_anio_mes
+from tap_ckan_datastore.streams import ProduccionPozoMesStream, _as_int, _periodo_from_anio_mes, validate_production_fields
 from tap_ckan_datastore.tap import TapCkanDatastore
 
 
@@ -39,6 +39,16 @@ def stream():
 
 
 class ContractTests(unittest.TestCase):
+    def test_reviewed_resource_schema_does_not_allow_unknown_additions(self):
+        fields = FIELDS + [{'id': 'id', 'type': 'numeric'}]
+        validate_production_fields(fields, '43a09dce-1742-44d0-bc13-f193deaab563')
+        with self.assertRaises(ValueError):
+            validate_production_fields(fields, 'd774b5d7-0756-48fe-88f2-8729b57b22da')
+        with self.assertRaises(ValueError):
+            validate_production_fields(fields + [{'id': 'unknown', 'type': 'text'}], '43a09dce-1742-44d0-bc13-f193deaab563')
+        with self.assertRaises(ValueError):
+            validate_production_fields(FIELDS, '43a09dce-1742-44d0-bc13-f193deaab563')
+
     def test_integrals_preserve_precision(self):
         self.assertEqual(_as_int('9007199254740993'), 9007199254740993)
         self.assertEqual(_as_int('3.0'), 3)

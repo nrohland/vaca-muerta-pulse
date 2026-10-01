@@ -35,6 +35,7 @@ CKAN_TYPE_TO_JSONSCHEMA: dict[str, dict[str, Any]] = {
 INTEGER_FIELDS = frozenset(
     {
         "idpozo",
+        "id",
         "anio",
         "mes",
         "idusuario",
@@ -81,8 +82,10 @@ def field_contract(fields: list[dict]) -> dict[str, str]:
     return contract
 
 
-def validate_production_fields(fields: list[dict]) -> None:
+def validate_production_fields(fields: list[dict], resource_id: str = "") -> None:
     expected = json.loads(Path(__file__).with_name("production_contract.json").read_text())
+    reviewed = json.loads(Path(__file__).with_name("production_resource_contracts.json").read_text())
+    expected.update(reviewed.get(resource_id, {}).get("additional_fields", {}))
     if field_contract(fields) != expected:
         raise ValueError("Production source schema differs from reviewed contract")
 
@@ -144,7 +147,7 @@ class CkanDatastoreStream(Stream):
     def _schema_from_datastore(self) -> dict[str, Any]:
         result = self._datastore_search(limit=0)
         if self.name == "produccion_pozo_mes":
-            validate_production_fields(result.get("fields", []))
+            validate_production_fields(result.get("fields", []), self.resource_id)
         properties: dict[str, Any] = {}
         for field in result.get("fields", []):
             name = field.get("id")
@@ -215,7 +218,7 @@ class CkanDatastoreStream(Stream):
         initial = self._datastore_search(limit=0)
         fields = initial.get("fields", [])
         if self.name == "produccion_pozo_mes":
-            validate_production_fields(fields)
+            validate_production_fields(fields, self.resource_id)
         total = _as_int(initial.get("total"))
         if total is None or total < 0 or initial.get("total_was_estimated"):
             raise ValueError("Exact source total required")

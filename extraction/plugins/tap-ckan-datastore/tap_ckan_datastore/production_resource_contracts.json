@@ -1,0 +1,8 @@
+{
+  "43a09dce-1742-44d0-bc13-f193deaab563": {
+    "year": 2024,
+    "reviewed_at": "2026-10-01",
+    "additional_fields": {"id": "numeric"},
+    "reason": "Official full annual resource exposes an additional identifier. Preserved as an integral field; well/year/month remains the business grain. Other additions still fail closed."
+  }
+}

@@ -4,6 +4,8 @@ El endpoint oficial usa una versión de CKAN que no admite `total_estimation_thr
 
 La fuente tampoco expone `_id`, incluso si se solicita explícitamente en `fields`. Por eso se ordena por la clave declarada del stream (`idpozo, anio, mes` para producción), cuya unicidad se exige, y se verifica orden estrictamente creciente entre páginas. La consulta live de 2026 devolvió siete meses consecutivos del pozo 212 seguidos del pozo 213. Este ajuste sustituye la propuesta de orden por `_id` del plan inicial basándose en la API real; conserva determinismo y falla ante claves repetidas/desordenadas.
 
+El recurso anual completo de 2024 (`43a09dce-1742-44d0-bc13-f193deaab563`, 983.551 filas) agrega `id` de tipo numeric respecto del contrato base de 2025/2026. Esa variante revisada vive en `production_resource_contracts.json`, se conserva y valida como entero, y se aplica sólo a ese recurso. No permite nuevas columnas arbitrarias ni sustituye el grano de negocio.
+
 La extracción conserva producción raw amplia. No calcula tasas, conversiones, rankings ni recorta la fuente a Vaca Muerta. El grano revisado es `idpozo, anio, mes`; no equivale al ID técnico `_id` de CKAN. Padrón y Adjunto IV conservan sus streams y sus claves propias.
 
 ## Ejecución local reproducible
