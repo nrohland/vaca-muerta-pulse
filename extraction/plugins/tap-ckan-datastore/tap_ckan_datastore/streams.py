@@ -35,6 +35,7 @@ CKAN_TYPE_TO_JSONSCHEMA: dict[str, dict[str, Any]] = {
 INTEGER_FIELDS = frozenset(
     {
         "idpozo",
+        "id",
         "anio",
         "mes",
         "idusuario",
@@ -81,8 +82,10 @@ def field_contract(fields: list[dict]) -> dict[str, str]:
     return contract
 
 
-def validate_production_fields(fields: list[dict]) -> None:
+def validate_production_fields(fields: list[dict], resource_id: str = "") -> None:
     expected = json.loads(Path(__file__).with_name("production_contract.json").read_text())
+    reviewed = json.loads(Path(__file__).with_name("production_resource_contracts.json").read_text())
+    expected.update(reviewed.get(resource_id, {}).get("additional_fields", {}))
     if field_contract(fields) != expected:
         raise ValueError("Production source schema differs from reviewed contract")
 
@@ -131,9 +134,8 @@ class CkanDatastoreStream(Stream):
             "resource_id": self.resource_id,
             "limit": limit,
             "offset": offset,
-            "sort": "_id asc",
+            "sort": ",".join(f"{key} asc" for key in self.primary_keys) if self.primary_keys else "_id asc",
             "include_total": True,
-            "total_estimation_threshold": 0,
         }
         response = requests.get(url, params=params, timeout=120)
         response.raise_for_status()
@@ -145,7 +147,7 @@ class CkanDatastoreStream(Stream):
     def _schema_from_datastore(self) -> dict[str, Any]:
         result = self._datastore_search(limit=0)
         if self.name == "produccion_pozo_mes":
-            validate_production_fields(result.get("fields", []))
+            validate_production_fields(result.get("fields", []), self.resource_id)
         properties: dict[str, Any] = {}
         for field in result.get("fields", []):
             name = field.get("id")
@@ -216,13 +218,13 @@ class CkanDatastoreStream(Stream):
         initial = self._datastore_search(limit=0)
         fields = initial.get("fields", [])
         if self.name == "produccion_pozo_mes":
-            validate_production_fields(fields)
+            validate_production_fields(fields, self.resource_id)
         total = _as_int(initial.get("total"))
         if total is None or total < 0 or initial.get("total_was_estimated"):
             raise ValueError("Exact source total required")
         expected = total if cap is None else min(total, cap)
         offset = 0
-        previous_id = None
+        previous_order_key = None
         seen_keys = set()
         validator = Draft7Validator(self.schema, format_checker=SOURCE_FORMATS)
         while offset < expected:
@@ -235,10 +237,6 @@ class CkanDatastoreStream(Stream):
             if not records or len(records) > limit or offset + len(records) > expected:
                 raise ValueError("Incomplete or oversized page")
             for row in records:
-                row_id = _as_int(row.get("_id"))
-                if row_id is None or row_id <= 0 or (previous_id is not None and row_id <= previous_id):
-                    raise ValueError("Non-increasing _id across pages")
-                previous_id = row_id
                 normalized = self._normalize(row)
                 error = next(validator.iter_errors(normalized), None)
                 if error is not None:
@@ -248,6 +246,12 @@ class CkanDatastoreStream(Stream):
                 key = tuple(normalized[k] for k in self.primary_keys)
                 if self.primary_keys and key in seen_keys:
                     raise ValueError("Duplicate source grain")
+                order_key = key if self.primary_keys else (_as_int(row.get("_id")),)
+                if any(value is None for value in order_key) or (
+                    previous_order_key is not None and order_key <= previous_order_key
+                ):
+                    raise ValueError("Non-increasing source key across pages")
+                previous_order_key = order_key
                 seen_keys.add(key)
                 yield normalized
             offset += len(records)

@@ -29,7 +29,7 @@ CKAN_URL = "https://datos.energia.gob.ar/api/3/action/datastore_search"
 def datastore_total(resource_id: str) -> int:
     resp = requests.get(
         CKAN_URL,
-        params={"resource_id": resource_id, "limit": 0, "total_estimation_threshold": 0},
+        params={"resource_id": resource_id, "limit": 0, "include_total": True},
         timeout=120,
     )
     resp.raise_for_status()
