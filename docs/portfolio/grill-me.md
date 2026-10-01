@@ -178,3 +178,7 @@ Propuesta de aceptación verificable, basada en el DoD del usuario: ejecución o
 - Definition of Done: pipeline oficial end-to-end y tests efectivos, UI funcional verificada desktop/mobile/teclado, métricas/rankings/contribuciones correctas para ambos fluidos, metodología/versiones, despliegue preparado sin costo fijo, README reproducible, evidencia de checks y QA/seguridad. Los bloqueos externos se reportan como pendientes; no se declara completo con fixtures o dbt parse.
 
 Las decisiones de las rondas 1 y 2 están registradas. Queda la confirmación del entendimiento compartido para iniciar implementación, según la skill requerida. El modo de antislop se propone DURANTE el desarrollo, alineado al brief de evitar UI genérica; no instalación global ni modificación automática de AGENTS.
+
+## Confirmación final
+
+Nicolás respondió «Confirmado». El acuerdo consolidado petróleo/gas y antislop DURANTE está aceptado. Implementación autorizada; no repetir grill-me.
