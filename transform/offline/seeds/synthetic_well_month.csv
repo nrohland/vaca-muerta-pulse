@@ -1,47 +1,47 @@
-idpozo,periodo,prod_pet_m3,prod_gas_km3,idempresa,empresa,idareapermisoconcesion,areapermisoconcesion,source_batched_at
-1,2023-02-01,280,2800,A,Old A,X,Old X,2024-04-01 00:00:00
-2,2023-02-01,0,0,B,B,Y,Y,2024-04-01 00:00:00
-1,2023-03-01,310,3100,A,Old A,X,Old X,2024-04-01 00:00:00
-2,2024-01-01,310,3100,B,B,Y,Y,2024-04-01 00:00:00
-2,2024-02-01,290,2900,B,B,Y,Y,2024-04-01 00:00:00
-3,2024-02-01,0,0,C,C,Z,Z,2024-04-01 00:00:00
-1,2024-03-01,620,6200,A,New A,X,New X,2024-04-01 00:00:00
-4,2024-06-01,999,9999,D,Unaccepted,D,Unaccepted,2024-04-01 00:00:00
-101,2023-05-01,100,1000,N1,N1,N1,N1,2024-06-01 00:00:00
-201,2024-05-01,200,2000,P1,P1,P1,P1,2024-06-01 00:00:00
-102,2023-05-01,100,1000,N2,N2,N2,N2,2024-06-01 00:00:00
-202,2024-05-01,200,2000,P2,P2,P2,P2,2024-06-01 00:00:00
-103,2023-05-01,100,1000,N3,N3,N3,N3,2024-06-01 00:00:00
-203,2024-05-01,200,2000,P3,P3,P3,P3,2024-06-01 00:00:00
-104,2023-05-01,100,1000,N4,N4,N4,N4,2024-06-01 00:00:00
-204,2024-05-01,200,2000,P4,P4,P4,P4,2024-06-01 00:00:00
-105,2023-05-01,100,1000,N5,N5,N5,N5,2024-06-01 00:00:00
-205,2024-05-01,200,2000,P5,P5,P5,P5,2024-06-01 00:00:00
-106,2023-05-01,100,1000,N6,N6,N6,N6,2024-06-01 00:00:00
-206,2024-05-01,200,2000,P6,P6,P6,P6,2024-06-01 00:00:00
-107,2023-05-01,100,1000,N7,N7,N7,N7,2024-06-01 00:00:00
-207,2024-05-01,200,2000,P7,P7,P7,P7,2024-06-01 00:00:00
-301,2023-04-01,10,100,PCN,PCN legal name,GROUPAREA,Group Area,2024-06-01 00:00:00
-302,2023-04-01,90,900,PLU,PLU legal name,GROUPAREA,Group Area,2024-06-01 00:00:00
-303,2023-04-01,110,1100,R1,R1 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00
-304,2023-04-01,100,1000,R2,R2 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00
-305,2023-04-01,90,900,R3,R3 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00
-306,2023-04-01,80,800,R4,R4 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00
-307,2023-04-01,70,700,R5,R5 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00
-308,2023-04-01,60,600,R6,R6 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00
-309,2023-04-01,40,400,EXX,EXX legal name,GROUPAREA,Group Area,2024-06-01 00:00:00
-310,2023-04-01,20,200,UNM,Unknown source Pluspetrol name,GROUPAREA,Group Area,2024-06-01 00:00:00
-301,2024-04-01,30,300,PCN,PCN legal name,GROUPAREA,Group Area,2024-06-01 00:00:00
-302,2024-04-01,90,900,PLU,PLU legal name,GROUPAREA,Group Area,2024-06-01 00:00:00
-303,2024-04-01,110,1100,R1,R1 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00
-304,2024-04-01,100,1000,R2,R2 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00
-305,2024-04-01,90,900,R3,R3 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00
-306,2024-04-01,80,800,R4,R4 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00
-307,2024-04-01,70,700,R5,R5 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00
-308,2024-04-01,60,600,R6,R6 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00
-309,2024-04-01,40,400,EXX,EXX legal name,GROUPAREA,Group Area,2024-06-01 00:00:00
-310,2024-04-01,20,200,UNM,Unknown source Pluspetrol name,GROUPAREA,Group Area,2024-06-01 00:00:00
-301,2023-03-01,0,0,PCN,PCN legal name,GROUPAREA,Group Area,2024-06-01 00:00:00
-302,2023-03-01,0,0,PLU,PLU legal name,GROUPAREA,Group Area,2024-06-01 00:00:00
-301,2024-03-01,0,0,PCN,PCN legal name,GROUPAREA,Group Area,2024-06-01 00:00:00
-302,2024-03-01,0,0,PLU,PLU legal name,GROUPAREA,Group Area,2024-06-01 00:00:00
+idpozo,periodo,prod_pet_m3,prod_gas_km3,idempresa,empresa,idareapermisoconcesion,areapermisoconcesion,source_batched_at,cuenca,sigla,tipoestado,tipopozo
+1,2023-02-01,280,2800,A,Old A,X,Old X,2024-04-01 00:00:00,Neuquina,PROD,production_status,production_type
+2,2023-02-01,0,0,B,B,Y,Y,2024-04-01 00:00:00,Neuquina,PROD,production_status,production_type
+1,2023-03-01,310,3100,A,Old A,X,Old X,2024-04-01 00:00:00,Neuquina,PROD,production_status,production_type
+2,2024-01-01,310,3100,B,B,Y,Y,2024-04-01 00:00:00,Neuquina,PROD,production_status,production_type
+2,2024-02-01,290,2900,B,B,Y,Y,2024-04-01 00:00:00,Neuquina,PROD,production_status,production_type
+3,2024-02-01,0,0,C,C,Z,Z,2024-04-01 00:00:00,Neuquina,PROD,production_status,production_type
+1,2024-03-01,620,6200,A,New A,X,New X,2024-04-01 00:00:00,Neuquina,PROD,production_status,production_type
+4,2024-06-01,999,9999,D,Unaccepted,D,Unaccepted,2024-04-01 00:00:00,Neuquina,PROD,production_status,production_type
+101,2023-05-01,100,1000,N1,N1,N1,N1,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+201,2024-05-01,200,2000,P1,P1,P1,P1,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+102,2023-05-01,100,1000,N2,N2,N2,N2,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+202,2024-05-01,200,2000,P2,P2,P2,P2,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+103,2023-05-01,100,1000,N3,N3,N3,N3,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+203,2024-05-01,200,2000,P3,P3,P3,P3,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+104,2023-05-01,100,1000,N4,N4,N4,N4,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+204,2024-05-01,200,2000,P4,P4,P4,P4,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+105,2023-05-01,100,1000,N5,N5,N5,N5,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+205,2024-05-01,200,2000,P5,P5,P5,P5,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+106,2023-05-01,100,1000,N6,N6,N6,N6,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+206,2024-05-01,200,2000,P6,P6,P6,P6,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+107,2023-05-01,100,1000,N7,N7,N7,N7,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+207,2024-05-01,200,2000,P7,P7,P7,P7,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+301,2023-04-01,10,100,PCN,PCN legal name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+302,2023-04-01,90,900,PLU,PLU legal name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+303,2023-04-01,110,1100,R1,R1 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+304,2023-04-01,100,1000,R2,R2 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+305,2023-04-01,90,900,R3,R3 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+306,2023-04-01,80,800,R4,R4 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+307,2023-04-01,70,700,R5,R5 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+308,2023-04-01,60,600,R6,R6 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+309,2023-04-01,40,400,EXX,EXX legal name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+310,2023-04-01,20,200,UNM,Unknown source Pluspetrol name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+301,2024-04-01,30,300,PCN,PCN legal name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+302,2024-04-01,90,900,PLU,PLU legal name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+303,2024-04-01,110,1100,R1,R1 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+304,2024-04-01,100,1000,R2,R2 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+305,2024-04-01,90,900,R3,R3 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+306,2024-04-01,80,800,R4,R4 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+307,2024-04-01,70,700,R5,R5 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+308,2024-04-01,60,600,R6,R6 legal name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+309,2024-04-01,40,400,EXX,EXX legal name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+310,2024-04-01,20,200,UNM,Unknown source Pluspetrol name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+301,2023-03-01,0,0,PCN,PCN legal name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+302,2023-03-01,0,0,PLU,PLU legal name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+301,2024-03-01,0,0,PCN,PCN legal name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type
+302,2024-03-01,0,0,PLU,PLU legal name,GROUPAREA,Group Area,2024-06-01 00:00:00,Neuquina,PROD,production_status,production_type

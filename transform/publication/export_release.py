@@ -134,7 +134,7 @@ def validate_dbt(results, grouped=False):
     require(all(v in ('success', 'pass') for v in statuses.values()), 'dbt run contains failed/skipped/warning checks')
 
 
-def export(production, entities, source_manifest, dbt_run_results, output_dir):
+def export(production, entities, source_manifest, dbt_run_results, output_dir, activity=None, operator_areas=None, geo_manifest=None, areas_geometry=None, map_coverage=None):
     totals, rows, source = read_json(production), read_json(entities), read_json(source_manifest)
     validate_rows(totals, rows, source)
     validate_dbt(read_json(dbt_run_results), grouped=all('operator_group_rule_version' in row for row in rows))
@@ -142,6 +142,15 @@ def export(production, entities, source_manifest, dbt_run_results, output_dir):
                'entities': sorted(rows, key=lambda r:(r['fluid'],r['dimension'],r['entity_id'],r['periodo']))}
     if rows and all('operator_group_rule_version' in row for row in rows):
         payload['operator_grouping'] = operator_group_definition()
+    mapped_inputs = (activity, operator_areas, geo_manifest, areas_geometry, map_coverage)
+    require(not any(mapped_inputs) or all(mapped_inputs), 'Partial mapped inputs forbidden')
+    map_files = {}
+    if all(mapped_inputs):
+        import importlib.util
+        module_spec = importlib.util.spec_from_file_location('map_export', Path(__file__).with_name('map_export.py'))
+        map_export = importlib.util.module_from_spec(module_spec)
+        module_spec.loader.exec_module(map_export)
+        payload['map'], map_files = map_export.prepare(read_json(activity), read_json(operator_areas), read_json(map_coverage), totals, rows, read_json(geo_manifest), areas_geometry, read_json(dbt_run_results))
     encoded = json.dumps(payload, sort_keys=True, ensure_ascii=False, allow_nan=False, separators=(',', ':')).encode()
     digest = hashlib.sha256(encoded).hexdigest()
     version = source['approved_period'] + '-' + digest[:12]
@@ -149,17 +158,23 @@ def export(production, entities, source_manifest, dbt_run_results, output_dir):
                 'generated_at': datetime.now(timezone.utc).isoformat(), 'source': source,
                 'input_sha256': {name: hashlib.sha256(Path(path).read_bytes()).hexdigest() for name,path in
                                  [('production',production),('entities',entities),('dbt_run_results',dbt_run_results)]}}
+    if all(mapped_inputs):
+        manifest['map'] = payload['map']
+        manifest['input_sha256'].update({name: hashlib.sha256(Path(path).read_bytes()).hexdigest() for name,path in zip(('activity','operator_areas','geo_manifest','areas_geometry','map_coverage'),mapped_inputs)})
     if 'operator_grouping' in payload:
         manifest['operator_grouping'] = payload['operator_grouping']
     directory = Path(output_dir)/version
     directory.mkdir(parents=True, exist_ok=False)
     try:
+        for name, data in map_files.items():
+            destination=directory/name
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(data)
         (directory/'release.json').write_bytes(encoded)
         (directory/'manifest.json').write_text(json.dumps(manifest, sort_keys=True, indent=2, ensure_ascii=False, allow_nan=False)+'\n')
     except BaseException:
-        for file in directory.iterdir():
-            file.unlink()
-        directory.rmdir()
+        import shutil
+        shutil.rmtree(directory)
         raise
     return directory
 
@@ -168,8 +183,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('production', 'entities', 'source-manifest', 'dbt-run-results', 'output-dir'):
         parser.add_argument('--'+name, required=True)
+    for name in ('activity', 'operator-areas', 'geo-manifest', 'areas-geometry', 'map-coverage'):
+        parser.add_argument('--'+name)
     args = parser.parse_args()
-    print(export(args.production, args.entities, args.source_manifest, args.dbt_run_results, args.output_dir))
+    print(export(args.production, args.entities, args.source_manifest, args.dbt_run_results, args.output_dir, args.activity, args.operator_areas, args.geo_manifest, args.areas_geometry, args.map_coverage))
 
 
 if __name__ == '__main__':
