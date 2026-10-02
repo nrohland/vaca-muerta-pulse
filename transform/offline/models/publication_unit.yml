@@ -12,6 +12,8 @@ unit_tests:
           - {idpozo: 1, periodo: '2023-02-01', prod_pet_m3: 0, prod_gas_km3: 0, idempresa: A, empresa: A, idareapermisoconcesion: X, areapermisoconcesion: X, source_batched_at: '2024-04-01 00:00:00'}
           - {idpozo: 1, periodo: '2024-01-01', prod_pet_m3: 0, prod_gas_km3: 0, idempresa: A, empresa: A, idareapermisoconcesion: X, areapermisoconcesion: X, source_batched_at: '2024-04-01 00:00:00'}
           - {idpozo: 1, periodo: '2024-02-01', prod_pet_m3: 290, prod_gas_km3: 2900, idempresa: A, empresa: A, idareapermisoconcesion: X, areapermisoconcesion: X, source_batched_at: '2024-04-01 00:00:00'}
+      - input: ref('operator_groups')
+        rows: []
     expect:
       rows:
         - {fluid: oil, periodo: '2023-02-01', days_in_month: 28, yoy_volume_pct: null, mom_volume_pct: null, positive_producing_wells: 0}
@@ -31,6 +33,8 @@ unit_tests:
         rows:
           - {idpozo: 1, periodo: '2023-02-01', prod_pet_m3: 280, prod_gas_km3: 2800, idempresa: A, empresa: A, idareapermisoconcesion: A, areapermisoconcesion: A, source_batched_at: '2024-04-01 00:00:00'}
           - {idpozo: 2, periodo: '2024-02-01', prod_pet_m3: 290, prod_gas_km3: 2900, idempresa: B, empresa: B, idareapermisoconcesion: B, areapermisoconcesion: B, source_batched_at: '2024-04-01 00:00:00'}
+      - input: ref('operator_groups')
+        rows: []
     expect:
       rows:
         - {fluid: oil, dimension: company, entity_id: A, periodo: '2023-02-01', yoy_volume_pct: null, is_absent_current: false}

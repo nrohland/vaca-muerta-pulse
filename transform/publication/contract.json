@@ -87,5 +87,22 @@
     "yoy_contribution_selected",
     "yoy_rest_rate_delta"
   ],
-  "contribution_display": "Select rows where yoy_contribution_selected=true (top 5 positive and top 5 negative rate deltas, ID tie-break), append one Rest with shared yoy_rest_rate_delta from any row in fluid/dimension/periodo. All deltas available for download; client must not sum/recompute Rest."
+  "contribution_display": "Select rows where yoy_contribution_selected=true (top 5 positive and top 5 negative rate deltas, ID tie-break), append one Rest with shared yoy_rest_rate_delta from any row in fluid/dimension/periodo. All deltas available for download; client must not sum/recompute Rest.",
+  "operator_grouping": {
+    "rule_version": "estrato-operator-groups-v1",
+    "mappings_seed": "transform/seeds/operator_groups.csv",
+    "effective_from": "2023-01-01",
+    "group_id": "PLUSPETROL",
+    "legal_ids": [
+      "PCN",
+      "PLU"
+    ],
+    "semantics": "Constant presentation mapping across retained history from Jan2023; no acquired-vendor restatement. Unknown IDs preserve source identity.",
+    "row_fields": [
+      "operator_group_rule_version",
+      "legal_operator_provenance (array of {idempresa, empresa}, current snapshot; null on absent-current and area rows)"
+    ],
+    "compatibility": "schema_version and all existing fields retained; grouped dbt exports append operator_grouping to release and manifest, legacy exports remain valid without grouping metadata.",
+    "future_drilldown": "Operator-by-area/map publication marts must apply this same mapping before aggregation and preserve legal provenance. Those marts are deferred; frontend must not regroup or calculate metrics."
+  }
 }

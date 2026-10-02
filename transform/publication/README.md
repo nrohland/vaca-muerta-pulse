@@ -72,3 +72,23 @@ Aquí `+` incluye staging, intermediate y fct_well_month del raw candidato, sin 
 
 
 Los builds de publicación usan `--indirect-selection cautious`: un test con varias dependencias se incluye solo cuando todas están seleccionadas. Evita ejecutar reconciliaciones de marts legacy no construidos en un build acotado. Los gates de publicación permanecen seleccionados junto a sus dos marts y upstream; QA completa debe construir y probar también los marts legacy por separado o con el selector completo autorizado.
+
+## Operadores agrupados de Estrato
+
+`seeds/operator_groups.csv` versiona exclusivamente PCN y PLU → `PLUSPETROL` / Pluspetrol con regla `estrato-operator-groups-v1`, válida desde enero de 2023 (inclusive; extremo final abierto). Es una agrupación constante de presentación del histórico retenido, aprobada en spec 002 y ADR 0004. No reconstruye carteras históricas ni atribuye EXX u otros vendedores al comprador. IDs desconocidos conservan ID y nombre fuente, incluso si el nombre contiene Pluspetrol.
+
+Ambos marts de publicación usan el mismo join explícito de IDs y fechas antes de sumar volúmenes. Después calculan tasas, bases calendario YoY/MoM, porcentajes, ranking y concentración. `fct_well_month`, `fct_company_month` y `dim_company` conservan su semántica legal. `entity_name` muestra Pluspetrol; `source_name` mantiene un nombre legal observado por compatibilidad, y `legal_operator_provenance` contiene el conjunto completo de pares `{idempresa, empresa}` del snapshot del mes. Salidas ausentes y áreas tienen procedencia nula. `operator_group_rule_version` identifica la regla aplicada al mes actual; valores no mapeados quedan nulos.
+
+El export conserva schema_version=1 y los campos previos. Para filas del contrato agrupado añade `operator_grouping` tanto a release como manifest: mapping, significado, versión y hash del seed; valida la procedencia legal del grupo. Los exports previos sin los nuevos campos siguen siendo válidos sin esa metadata. Los marts de operador por área y de mapa/detalle quedan para el siguiente paso; deberán usar esta misma regla en dbt, sin cálculos de frontend.
+
+Regresión offline: dos entidades legales con variaciones individuales 200% y 0% producen variación conjunta 20%, volumen/tasa sumados y ranking/concentración recalculados. Incluye identidad desconocida, EXX, base cero, comparación calendario ausente, procedencia, ambos fluidos y reconciliación existente. `profiles.yml.example` es versionado; copiarlo al perfil local ignorado antes del build:
+
+```sh
+cp transform/offline/profiles.yml.example transform/offline/profiles.yml
+(cd transform/offline && "$DBT" build --no-partial-parse --profiles-dir . --select +fct_production_month +fct_entity_growth --quiet)
+"$PYTHON" -B -m unittest discover -s tests/transform -v
+```
+
+El build BigQuery real y revisión independiente pertenecen al responsable de integración; esta fase no escribe en cloud.
+
+Verificación de esta implementación (2026-10-02): el build offline anterior pasó con `/private/tmp/estrato-runtime/bin/dbt`, usando las versiones fijadas arriba: 2 seeds, 2 modelos, 15 data tests y 2 unit tests. Después del build, `/private/tmp/estrato-runtime/bin/python -B -m unittest discover -s tests/transform -v` pasó las 20 pruebas Python. `target/run_results.json` registra exclusivamente estados success/pass. El runtime previo en `work/runtime` quedó bloqueado por archivos iCloud sin contenido local; el runtime temporal permitió verificar el mismo SQL compartido. Estas son comprobaciones locales sobre fixtures sintéticos. El build real BigQuery, la revisión independiente de integración y la aprobación de publicación siguen pendientes; no se ejecutó BigQuery.

@@ -321,3 +321,5 @@ Evaluator (caro; no es el `dbt build` default). Los modelos del paquete están `
 ## Publicación estática revisada (spec 002)
 
 `fct_production_month` y `fct_entity_growth` añaden totales petróleo/gas y contribuciones calendario con aceptación explícita de snapshots. Contrato, comandos offline y export candidato en [publication/README.md](publication/README.md). El headline público nuevo usa tasas estáticas de estos marts; las instrucciones históricas de contador arriba corresponden al pipeline previo preservado y no al producto de spec 002.
+
+La revisión Estrato agrupa PCN y PLU como Pluspetrol solo en los marts de publicación mediante un seed versionado desde enero de 2023. Los modelos legales históricos se conservan. Procedencia, contrato y pruebas reproducibles: [publication/README.md](publication/README.md#operadores-agrupados-de-estrato).

@@ -1,0 +1,20 @@
+version: 2
+seeds:
+  - name: operator_groups
+    description: 'Estrato v1: explicit presentation grouping of PCN and PLU as PLUSPETROL from January 2023. This is a constant display rule across retained publication history, not historical ownership reconstruction. All other legal IDs remain unchanged, including acquired vendors.'
+    columns:
+      - name: legal_operator_id
+        data_tests: [not_null, unique]
+      - name: operator_group_id
+        data_tests: [not_null]
+      - name: operator_group_name
+        data_tests: [not_null]
+      - name: grouping_basis
+        data_tests: [not_null]
+      - name: history_policy
+        data_tests: [not_null]
+      - name: valid_from
+        description: 'Inclusive month of display mapping; valid_to is exclusive and null means open-ended.'
+        data_tests: [not_null]
+      - name: rule_version
+        data_tests: [not_null]

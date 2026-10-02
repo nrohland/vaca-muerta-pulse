@@ -1,0 +1,3 @@
+legal_operator_id,operator_group_id,operator_group_name,valid_from,valid_to,rule_version,grouping_basis,history_policy
+PCN,PLUSPETROL,Pluspetrol,2023-01-01,,estrato-operator-groups-v1,reviewed_explicit_id_mapping,presentation_constant_from_2023_01_no_acquired_vendor_restatement
+PLU,PLUSPETROL,Pluspetrol,2023-01-01,,estrato-operator-groups-v1,reviewed_explicit_id_mapping,presentation_constant_from_2023_01_no_acquired_vendor_restatement

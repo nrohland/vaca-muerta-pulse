@@ -31,7 +31,24 @@ fluids as (
  union all
  select w.*, 'gas' as fluid, prod_gas_km3 / 1000.0 as volume, 'million_m3' as volume_unit
  from wells w join accepted a on w.periodo=a.periodo
+) , publication_operators as (
+ select f.*,
+ coalesce(g.operator_group_id,cast(f.idempresa as {{ dbt.type_string() }})) as publication_operator_id,
+ coalesce(g.operator_group_name,f.empresa) as publication_operator_name,
+ g.rule_version as operator_group_rule_version
+ from fluids f
+ left join {{ ref('operator_groups') }} g
+ on cast(f.idempresa as {{ dbt.type_string() }})=g.legal_operator_id
+ and f.periodo >= g.valid_from and (g.valid_to is null or f.periodo < g.valid_to)
 )
+{% endmacro %}
+
+{% macro publication_legal_provenance() %}
+{% if target.type == 'bigquery' %}
+array_agg(struct(legal_operator_id as idempresa,legal_operator_name as empresa) order by legal_operator_id,legal_operator_name)
+{% else %}
+array_agg(struct_pack(idempresa := legal_operator_id, empresa := legal_operator_name) order by legal_operator_id,legal_operator_name)
+{% endif %}
 {% endmacro %}
 
 {% macro publication_growth_columns() %}
@@ -87,18 +104,29 @@ with {{ publication_base() }},
 {{ publication_concentration() }},
 entity_rows as (
  select fluid, periodo, volume_unit, 'company' as dimension,
- cast(idempresa as {{ dbt.type_string() }}) as entity_id, empresa as source_name,
- idpozo, volume from fluids
+ publication_operator_id as entity_id, empresa as source_name,
+ publication_operator_name as display_name, operator_group_rule_version,
+ cast(idempresa as {{ dbt.type_string() }}) as legal_operator_id, empresa as legal_operator_name,
+ idpozo, volume from publication_operators
  union all
  select fluid, periodo, volume_unit, 'area' as dimension,
  cast(idareapermisoconcesion as {{ dbt.type_string() }}), areapermisoconcesion,
+ areapermisoconcesion, cast(null as {{ dbt.type_string() }}),
+ cast(null as {{ dbt.type_string() }}), cast(null as {{ dbt.type_string() }}),
  idpozo, volume from fluids
+), legal_members as (
+ select distinct fluid,periodo,entity_id,legal_operator_id,legal_operator_name
+ from entity_rows where dimension='company'
+), provenance as (
+ select fluid,periodo,entity_id,{{ publication_legal_provenance() }} as legal_operator_provenance
+ from legal_members group by fluid,periodo,entity_id
 ), names as (
- select dimension, entity_id, source_name as entity_name, periodo as name_periodo
+ select dimension, entity_id, display_name as entity_name, periodo as name_periodo
  from entity_rows
- qualify row_number() over(partition by dimension,entity_id order by periodo desc, source_name desc)=1
+ qualify row_number() over(partition by dimension,entity_id order by periodo desc, display_name desc)=1
 ), monthly as (
  select fluid, dimension, entity_id, periodo, volume_unit, min(source_name) as source_name,
+ max(operator_group_rule_version) as operator_group_rule_version,
  sum(volume) as volume,
  count(distinct case when volume>0 then idpozo end) as positive_producing_wells,
  count(*) as reported_well_rows, count(volume) as valid_volume_rows
@@ -109,7 +137,7 @@ entity_rows as (
  select m.fluid,m.dimension,m.entity_id,a.periodo,m.volume_unit from monthly m
  join accepted a on m.periodo={{ publication_shift('a.periodo', -12) }} or m.periodo={{ publication_shift('a.periodo', -1) }}
 ), compared as (
- select u.*, n.entity_name,n.name_periodo,m.source_name,
+ select u.*, n.entity_name,n.name_periodo,m.source_name,m.operator_group_rule_version,pr.legal_operator_provenance,
  coalesce(m.volume,0) as volume,
  coalesce(m.volume,0) / {{ cap4_days_in_month('u.periodo') }} as rate,
  case when ay.periodo is not null then coalesce(y.volume,0) end as yoy_volume,
@@ -127,6 +155,7 @@ entity_rows as (
  left join concentration cy on cy.fluid=u.fluid and cy.dimension=u.dimension and cy.periodo={{ publication_shift('u.periodo',-12) }}
  join names n on u.dimension=n.dimension and u.entity_id=n.entity_id
  left join monthly m on u.fluid=m.fluid and u.dimension=m.dimension and u.entity_id=m.entity_id and u.periodo=m.periodo
+ left join provenance pr on u.dimension='company' and pr.fluid=u.fluid and pr.entity_id=u.entity_id and pr.periodo=u.periodo
  left join accepted ay on ay.periodo={{ publication_shift('u.periodo',-12) }}
  left join accepted ap on ap.periodo={{ publication_shift('u.periodo',-1) }}
  left join monthly y on u.fluid=y.fluid and u.dimension=y.dimension and u.entity_id=y.entity_id and y.periodo=ay.periodo
@@ -141,7 +170,7 @@ entity_rows as (
 ), selected as (
  select *, coalesce((yoy_rate_delta>0 and positive_contribution_rank<=5) or (yoy_rate_delta<0 and negative_contribution_rank<=5),false) as yoy_contribution_selected from ranked
 )
-select fluid,dimension,entity_id,periodo,volume_unit,entity_name,name_periodo,source_name,
+select fluid,dimension,entity_id,periodo,volume_unit,entity_name,name_periodo,source_name,operator_group_rule_version,legal_operator_provenance,
  volume,rate, {{ publication_growth_columns() }}
  volume_rank,top5_share_pct,yoy_top5_share_pct,top5_share_yoy_pp,yoy_contribution_selected,
  sum(case when not yoy_contribution_selected then yoy_rate_delta else 0 end) over(partition by fluid,dimension,periodo) as yoy_rest_rate_delta,
@@ -153,7 +182,7 @@ from selected
 
 {% macro publication_concentration() %}
 concentration_entities as (
- select fluid,periodo,'company' as dimension,cast(idempresa as {{ dbt.type_string() }}) as entity_id,sum(volume) as volume from fluids group by fluid,periodo,idempresa
+ select fluid,periodo,'company' as dimension,publication_operator_id as entity_id,sum(volume) as volume from publication_operators group by fluid,periodo,publication_operator_id
  union all
  select fluid,periodo,'area',cast(idareapermisoconcesion as {{ dbt.type_string() }}),sum(volume) from fluids group by fluid,periodo,idareapermisoconcesion
 ), concentration_ranked as (

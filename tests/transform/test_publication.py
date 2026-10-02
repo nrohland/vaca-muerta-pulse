@@ -25,12 +25,41 @@ class ExportGateTests(unittest.TestCase):
         cls.entities = rows('fct_entity_growth')
         connection.close()
         cls.source = {'data_kind': 'official', 'approved_period': '2024-05-01',
-                      'accepted_periods': ['2023-02-01','2023-03-01','2023-05-01','2024-01-01','2024-02-01','2024-03-01','2024-05-01'],
+                      'accepted_periods': ['2023-02-01','2023-03-01','2023-04-01','2023-05-01','2024-01-01','2024-02-01','2024-03-01','2024-04-01','2024-05-01'],
                       'accepted_at': '2024-04-01T00:00:00Z', 'commit': 'synthetic-unittest-only',
                       'resources': [{'id': 'synthetic-test-only', 'url': 'https://example.invalid/synthetic-test-only', 'hash_unavailable_reason': 'test only'}]}
 
     def test_reconciles_both_fluids_and_dimensions(self):
         exporter.validate_rows(self.totals, self.entities, self.source)
+
+    def test_group_provenance_tampering_rejected(self):
+        rows = copy.deepcopy(self.entities)
+        row = next(r for r in rows if r['entity_id'] == 'PLUSPETROL' and not r['is_absent_current'])
+        row['legal_operator_provenance'][0]['idempresa'] = 'EXX'
+        with self.assertRaisesRegex(ValueError, 'Pluspetrol grouping'):
+            exporter.validate_rows(self.totals, rows, self.source)
+
+    def test_legacy_contract_remains_valid(self):
+        rows = copy.deepcopy(self.entities)
+        for row in rows:
+            row.pop('operator_group_rule_version')
+            row.pop('legal_operator_provenance')
+        exporter.validate_rows(self.totals, rows, self.source)
+
+    def test_mixed_grouping_contract_rejected(self):
+        rows = copy.deepcopy(self.entities)
+        rows[0].pop('operator_group_rule_version')
+        rows[0].pop('legal_operator_provenance')
+        with self.assertRaisesRegex(ValueError, 'Mixed operator grouping contracts'):
+            exporter.validate_rows(self.totals, rows, self.source)
+
+    def test_mapped_legal_id_cannot_bypass_grouping(self):
+        rows = copy.deepcopy(self.entities)
+        row = next(r for r in rows if r['entity_id'] == 'PLUSPETROL' and not r['is_absent_current'])
+        row.update(entity_id='PCN', operator_group_rule_version=None,
+                   legal_operator_provenance=[{'idempresa': 'PCN', 'empresa': 'PCN legal name'}])
+        with self.assertRaisesRegex(ValueError, 'Ungrouped mapped legal operator'):
+            exporter.validate_rows(self.totals, rows, self.source)
 
     def test_synthetic_cannot_export(self):
         source = dict(self.source, data_kind='synthetic_test')
@@ -77,6 +106,12 @@ class ExportGateTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Approved period'):
             exporter.validate_rows(self.totals, self.entities, source)
 
+    def test_group_mapping_gate_required(self):
+        results = json.loads((ROOT/'transform/offline/target/run_results.json').read_text())
+        results['results'] = [r for r in results['results'] if not r['unique_id'].endswith('.assert_operator_groups')]
+        with self.assertRaisesRegex(ValueError, 'operator grouping gate'):
+            exporter.validate_dbt(results, grouped=True)
+
     def test_failed_dbt_rejected(self):
         results = json.loads((ROOT/'transform/offline/target/run_results.json').read_text())
         exporter.validate_dbt(results)
@@ -96,6 +131,8 @@ class ExportGateTests(unittest.TestCase):
             manifest = json.loads((result/'manifest.json').read_text())
             data = (result/'release.json').read_bytes()
             self.assertEqual(manifest['status'], 'candidate')
+            self.assertEqual(manifest['operator_grouping']['rule_version'], 'estrato-operator-groups-v1')
+            self.assertEqual(json.loads(data)['operator_grouping'], manifest['operator_grouping'])
             self.assertEqual(exporter.hashlib.sha256(data).hexdigest(), manifest['data_sha256'])
             with self.assertRaises(FileExistsError):
                 exporter.export(*args)
