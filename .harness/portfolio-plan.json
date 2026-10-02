@@ -1,100 +1,82 @@
 {
-  "runId": "barrilito-portfolio-20261001",
+  "runId": "estrato-portfolio-20261002",
   "plan": {
-    "goal": "Publishable Barrilito oil/gas data product implementing confirmed grill-me with validated official monthly history and editorial Next UI",
+    "goal": "Finish publishable Estrato implementing confirmed grouped operator ranking, tabbed compact UI, free official map and reviewed reproducible releases",
     "constraints": [
       "Read AGENTS.md and spec002; user confirms implementation after grill-me and antislop DURING. No repeated questions or skill install wizard.",
       "Stay within allowedChangedPaths. Do not run git commit/push/switch/merge, change IAM/billing or deploy; root manages review branches.",
       "No secrets in source/log/output. No GCP writes or expensive queries in implementation steps.",
       "Never fabricate data, passing tests, screenshots or warehouse execution. Keep pending external checks explicit.",
-      "One bounded step only. Work until its local checks pass. Do not implement future steps."
+      "One bounded step only. Work until its local checks pass. Do not implement future steps.",
+      "Read revised spec002 and ADR0004. No new interview; user confirmed Estrato/map/scope. Use only assigned phase, context and paths."
     ],
     "steps": [
       {
-        "id": "extract-contract",
-        "objective": "Implement a validated Capítulo IV annual extraction candidate and Python tests. Reuse Singer tap, preserve production/grain/business separation. Add deterministic _id sorting, stable paging/counts, explicit schema contract, strict integral ids/year/month, mismatch/capped-reemit guards and verification. Add extraction/scripts/prepare_history_candidate.py to download official chosen annual resources safely with filters OPTIONAL for a local VM QA sample, retain source metadata/checksums and profile per-period/duplicates/schema; do not write GCP or replace tables. No metrics in extraction. Fix compare_source_count exit code and year predicate without weakening existing safeguards. Include reusable load-to-new-candidate guidance for BigQuery and fail closed before promotion.",
+        "id": "operator-groups",
+        "objective": "Group PCN and PLU as PLUSPETROL in dbt publication models only, explicit versioned mapping across retained history Jan2023 onward. Preserve original operator provenance; no name matching or acquired-vendor retroactive regroup. Recompute aggregate volume/rate YoY/MoM/rank/top5concentration before comparison using shared BigQuery/DuckDB macros. Keep old source legal models intact. Add meaningful tests for two legal entities, changes over time, zero/missing comparisons, reconciliation and unknown IDs. Offline seeded model uses same business SQL. Export contract includes group definition/provenance and supports grouped operator areas/drilldown from marts, no frontend formulas. Do not cloud write.",
         "dependencies": [],
-        "expected_output": "extraction/tests/test_contract.py plus bounded source/tests/docs in owned folders",
+        "expected_output": "transform/seeds/operator_groups.csv",
         "acceptance_criteria": [
-          "Deliver the implemented artifact extraction/tests/test_contract.py with local meaningful tests passing",
-          "Document reproducible commands, data contracts and honest limits in the owned folders",
-          "Stay in allowed paths and preserve secrets/primary architecture"
+          "Meaningful local checks pass; document actual commands and gaps",
+          "Stay within owned paths, no fabricated source/checks or secrets",
+          "Independent review before root commits/PRs"
         ]
       },
       {
-        "id": "growth-marts",
-        "objective": "Implement oil/gas monthly total and entity growth dbt marts with documented grains. Daily oil bbl and gas million m3 are converted in dbt. Exact calendar joins for YoY/MoM; entity full union for entry/exit; no lag(12) on sparse. New models fct_production_month and fct_entity_growth (fluid, dimension, entity_id, periodo) should expose volume, rate, prior volume/rate, signed growth deltas and percentages, positive-producing wells, completeness/coverage. Explicit month acceptance comes from source/profile manifest or approved_period var; not max raw only. Historical names use id and latest name with traceability; fix dimensions tests rejecting legitimate renames (preserve identity integrity). Add dbt tests for reconciliation including rates/deltas, unit tests for missing months/leap/base-zero/entry-exit. Also build a portable offline dbt verification path (DuckDB, only these publication models, reuse SQL via macros/adapters; BigQuery remains primary), fed official normalized QA source or test fixture. No fake published data, no cloud writes. Include transform/publication/export_release.py to export these marts, validate aggregate reconciliation and build manifest/versioned JSON candidate, no business formulas outside dbt. Keep previous models/pipeline supported.",
-        "dependencies": [
-          "extract-contract"
-        ],
-        "expected_output": "transform/models/marts/fct_production_month.sql plus bounded source/tests/docs in owned folders",
+        "id": "geo-contract",
+        "objective": "Implement bounded official well geography candidate using existing Singer/resource contract. Audit real source metadata/sample supplied by root in work/geo-audit. Technical normalize coordinates WGS84, idpozo and catalog timestamps, retain missing/invalid as quantified gaps; strict no guessed positions, schema/paging/count/grain/hash gates. Production idpozo is per formation, not necessarily unique physical well; never silently fanout. Add script prepare_geo_candidate.py and tests, reproducible docs. Only extraction folder. No business metrics, no cloud writes. Official concession polygon source if exact ids and current API verified; otherwise document gap without invented outlines.",
+        "dependencies": [],
+        "expected_output": "extraction/scripts/prepare_geo_candidate.py",
         "acceptance_criteria": [
-          "Deliver the implemented artifact transform/models/marts/fct_production_month.sql with local meaningful tests passing",
-          "Document reproducible commands, data contracts and honest limits in the owned folders",
-          "Stay in allowed paths and preserve secrets/primary architecture"
+          "Meaningful local checks pass; document actual commands and gaps",
+          "Stay within owned paths, no fabricated source/checks or secrets",
+          "Independent review before root commits/PRs"
         ]
       },
       {
-        "id": "editorial-web",
-        "objective": "Build production Next.js static export editorial Barrilito in apps/web. Read specs/002-portfolio and ADR 0003 first, confirmed grill-me and antislop DURING so do not interview again/install globals. Oil default / Gas switch changes EVERY metric, chart, contribution/table; units bbl/d+bbl and MMm3/d+MMm3. Initial trend12 months selector12/24/36/60, only valid available ranges. Recharts for line gaps and signed contributions. Latest accepted month, YoY primary MoM secondary; date/source visible. Top5 monthly production with volume YoY; dimension tabs company/area; contributions full dataset including negatives/rest. Top5 concentration share with pp YoY if available. Responsive editorial typographic hierarchy, light paper/ink and deliberate domain accent, no SaaS card grid or decorative gradients. Methodology/source/revisions/data download; keyboard labels/focus, accessible equivalent text/table, empty/error/loading. Strict runtime schema from export contract; no raw/GCP credentials, NO metric recomputation in frontend (format/sort/presentation only). If live candidate not yet present use honest empty state and test fixtures visibly isolated; do not pretend fixture is official. Add scoped conversational analytics deterministic prepared questions over public aggregates with source/formula/period and rejection outside scope. Add meaningful unit and browser test scripts and write design rationale. No changes outside apps/web. Install dependencies necessary from npm and run build/tests, screenshots only if possible. Do not deploy.",
+        "id": "map-marts",
+        "objective": "Implement dbt official well monthly activity/location marts from fct_well_month plus normalized raw geo candidate documented by geo-contract. Use operator-groups mapping. Oil/gas units, rates and peroperator-area time series in dbt, not client/Python. Expose month fluid idpozo legal/group operator area basin positiveProduction status/type coordinate validity, catalog date vs production date. Reconcile every published aggregate, protect fanout and quantified missing coords. Add exporter for lazy perfluid/month GeoJSON + operator-area details, hash-index/small contracts; only metrics already computed by dbt. Offline meaningful sharedSQL tests. No cloud writes; root performs realBQchecks.",
         "dependencies": [
-          "growth-marts"
+          "operator-groups",
+          "geo-contract"
         ],
-        "expected_output": "apps/web/package.json plus bounded source/tests/docs in owned folders",
+        "expected_output": "transform/models/marts/fct_well_activity_month.sql",
         "acceptance_criteria": [
-          "Deliver the implemented artifact apps/web/package.json with local meaningful tests passing",
-          "Document reproducible commands, data contracts and honest limits in the owned folders",
-          "Stay in allowed paths and preserve secrets/primary architecture"
+          "Meaningful local checks pass; document actual commands and gaps",
+          "Stay within owned paths, no fabricated source/checks or secrets",
+          "Independent review before root commits/PRs"
+        ]
+      },
+      {
+        "id": "estrato-web",
+        "objective": "Replace rejected initial editorial design with confirmed Estrato clean coolwhite sans compact composition based reference supplied. Name/faviconE-strata; real tabs Resumen,Operadores,Mapa y actividad,Metodolog\u00eda; URL/shared monthfluid operator, backforward keyboard. Remove growth-contribution UI entirely. Oilteal/gasblue; variations \u25b2green \u25bcred zero neutral accessiblelabels. Compact trend initial12 24/36/60 onlycoverage, gaps intact; top5horizontalrank bars officiallogos. Operator fullranking clickdrilldown charts andareas using new prepared data. Lazy MapLibre/OpenFreeMap Positron official monthlypoints clustering filters/selection, coordinatescatalogdate, attribution and tablefallback; no demo/fakefeatures or viewport-summedbusinessmetrics. No rawcloudsecrets/frontendmetricformulas. Strict runtime hash/contracts inclgeoindex/group. Honest approvedsidecar state. Keep scoped preparedanswers accessible but no oversized chatsection onsummary. Responsive both themes a11y loadingerrorempty and screenshots. Build/typecheck/unit/browser checks, designrationale. Only apps/web; do notdeploy.",
+        "dependencies": [
+          "map-marts"
+        ],
+        "expected_output": "apps/web/app/page.tsx",
+        "acceptance_criteria": [
+          "Meaningful local checks pass; document actual commands and gaps",
+          "Stay within owned paths, no fabricated source/checks or secrets",
+          "Independent review before root commits/PRs"
         ]
       },
       {
         "id": "reviewed-release",
-        "objective": "Implement CI and docs for official Capítulo IV candidate→dbt build/test→export→Next static build. Preserve old approved public release on failure; workflow_dispatch/manual first3 cycles, no destructive old cron while no ready promotion. Use existing Meltano as primary BQ path; least-privileged separate dbt credentials (never GCP_SA_KEY fallback); budgets maximum_bytes_billed where querying; optional reproducible local DuckDB verifier no warehouse replacement. Validate year/resource schema and manifest/versioning; GitHub Pages build/upload artifact with activation instructions (do not enable Pages/IAM/billing or deploy now). Candidate and approved artifacts must be explicit and publication cannot auto-approve empty/new months; manual acceptance input/version. Persist revision comparison metadata and aggregate JSON snapshots, not raw heavy. Pipeline integration tests meaningful failure preservation/reconciliation/manifest. README end-to-end commands and separate real versus pending checks. Fix stale root specs docs roadmap to point confirmed spec002, without erasing prior historical evidence. Security QA do not merge/approve PRs.",
+        "objective": "Implement reproducible official-source Singer snapshot\u2192technical Parquet\u2192new BigQueryWRITE_EMPTY candidate\u2192dbtbuild/test\u2192export\u2192Nextstatic artifact pipeline; root provided real working batch scripts/evidence. Separate extraction/dbt credentials, no fallbackGCP_SA_KEY, querybudgets candidateTTL, hashes/manifest/acceptedmonths manualfirst3 review. Disable destructive cron, preserve lastapproved on failure, immutable snapshots and revisiondiff, approvedsidecar tiedhash/version actorowner gates. GitHubPages build/upload artifact activationinstructions only, no enabling/deploy/IAM. Integrations/tests/localCI including browser onGitHub where mac sandbox blocks Chromium. READMEcurrentEstrato/spec002 architecture commands evidence/security, rawheavy nevergit, source attribution/logos provenance. No fakepromotion approval.",
         "dependencies": [
-          "editorial-web"
+          "estrato-web"
         ],
-        "expected_output": "publication/README.md plus bounded source/tests/docs in owned folders",
+        "expected_output": "publication/README.md",
         "acceptance_criteria": [
-          "Deliver the implemented artifact publication/README.md with local meaningful tests passing",
-          "Document reproducible commands, data contracts and honest limits in the owned folders",
-          "Stay in allowed paths and preserve secrets/primary architecture"
+          "Meaningful local checks pass; document actual commands and gaps",
+          "Stay within owned paths, no fabricated source/checks or secrets",
+          "Independent review before root commits/PRs"
         ]
       }
     ]
   },
   "policies": {
-    "extract-contract": {
-      "access": "write",
-      "allowedChangedPaths": [
-        "extraction/",
-        "tests/extraction/"
-      ],
-      "relevantFiles": [
-        "AGENTS.md",
-        "specs/002-portfolio/spec.md",
-        "docs/adrs/0003-static-reviewed-releases.md",
-        "extraction/README.md",
-        "extraction/meltano.yml",
-        "extraction/plugins/tap-ckan-datastore/tap_ckan_datastore/streams.py"
-      ],
-      "timeoutMs": 900000,
-      "verification": {
-        "filesExist": [
-          "extraction/tests/test_contract.py"
-        ],
-        "authorizedCommands": [
-          {
-            "command": "git",
-            "args": [
-              "diff",
-              "--check"
-            ]
-          }
-        ],
-        "semanticEvidence": "Inspect changed sources and documented meaningful checks. Validate only local implementation criteria, not unpublished/live cloud criteria. No metrics duplicated in frontend, no fabricated official data/checks. Identify material semantic omissions."
-      }
-    },
-    "growth-marts": {
+    "operator-groups": {
       "access": "write",
       "allowedChangedPaths": [
         "transform/",
@@ -103,17 +85,14 @@
       "relevantFiles": [
         "AGENTS.md",
         "specs/002-portfolio/spec.md",
-        "docs/adrs/0003-static-reviewed-releases.md",
-        "transform/README.md",
-        "transform/models/marts/fct_well_month.sql",
-        "transform/models/marts/fct_company_month.sql",
-        "transform/models/marts/fct_area_month.sql",
-        "transform/dbt_project.yml"
+        "docs/adrs/0004-estrato-reviewed-batch-and-map.md",
+        "transform/macros/publication.sql",
+        "transform/publication/export_release.py"
       ],
       "timeoutMs": 900000,
       "verification": {
         "filesExist": [
-          "transform/models/marts/fct_production_month.sql"
+          "transform/seeds/operator_groups.csv"
         ],
         "authorizedCommands": [
           {
@@ -124,10 +103,70 @@
             ]
           }
         ],
-        "semanticEvidence": "Inspect changed sources and documented meaningful checks. Validate only local implementation criteria, not unpublished/live cloud criteria. No metrics duplicated in frontend, no fabricated official data/checks. Identify material semantic omissions."
+        "semanticEvidence": "Inspect actual files and meaningful local checks; no business formula duplication; strict data contracts, source dates and honest limits. Warehouse and publication acceptance are separate root gates, not claimed by builder."
       }
     },
-    "editorial-web": {
+    "geo-contract": {
+      "access": "write",
+      "allowedChangedPaths": [
+        "extraction/",
+        "tests/extraction/"
+      ],
+      "relevantFiles": [
+        "AGENTS.md",
+        "specs/002-portfolio/spec.md",
+        "docs/adrs/0004-estrato-reviewed-batch-and-map.md",
+        "extraction/resources/cap4.yml",
+        "extraction/plugins/tap-ckan-datastore/tap_ckan_datastore/streams.py"
+      ],
+      "timeoutMs": 900000,
+      "verification": {
+        "filesExist": [
+          "extraction/scripts/prepare_geo_candidate.py"
+        ],
+        "authorizedCommands": [
+          {
+            "command": "git",
+            "args": [
+              "diff",
+              "--check"
+            ]
+          }
+        ],
+        "semanticEvidence": "Inspect actual files and meaningful local checks; no business formula duplication; strict data contracts, source dates and honest limits. Warehouse and publication acceptance are separate root gates, not claimed by builder."
+      }
+    },
+    "map-marts": {
+      "access": "write",
+      "allowedChangedPaths": [
+        "transform/",
+        "tests/transform/"
+      ],
+      "relevantFiles": [
+        "AGENTS.md",
+        "specs/002-portfolio/spec.md",
+        "docs/adrs/0004-estrato-reviewed-batch-and-map.md",
+        "transform/README.md",
+        "transform/publication/contract.json"
+      ],
+      "timeoutMs": 900000,
+      "verification": {
+        "filesExist": [
+          "transform/models/marts/fct_well_activity_month.sql"
+        ],
+        "authorizedCommands": [
+          {
+            "command": "git",
+            "args": [
+              "diff",
+              "--check"
+            ]
+          }
+        ],
+        "semanticEvidence": "Inspect actual files and meaningful local checks; no business formula duplication; strict data contracts, source dates and honest limits. Warehouse and publication acceptance are separate root gates, not claimed by builder."
+      }
+    },
+    "estrato-web": {
       "access": "write",
       "allowedChangedPaths": [
         "apps/web/"
@@ -135,16 +174,15 @@
       "relevantFiles": [
         "AGENTS.md",
         "specs/002-portfolio/spec.md",
-        "docs/adrs/0003-static-reviewed-releases.md",
-        "transform/publication/export_release.py",
-        "transform/models/marts/fct_production_month.sql",
-        "transform/models/marts/fct_entity_growth.sql",
-        "apps/web/README.md"
+        "docs/adrs/0004-estrato-reviewed-batch-and-map.md",
+        "apps/web/README.md",
+        "apps/web/DESIGN.md",
+        "transform/publication/contract.json"
       ],
       "timeoutMs": 900000,
       "verification": {
         "filesExist": [
-          "apps/web/package.json"
+          "apps/web/app/page.tsx"
         ],
         "authorizedCommands": [
           {
@@ -155,7 +193,7 @@
             ]
           }
         ],
-        "semanticEvidence": "Inspect changed sources and documented meaningful checks. Validate only local implementation criteria, not unpublished/live cloud criteria. No metrics duplicated in frontend, no fabricated official data/checks. Identify material semantic omissions."
+        "semanticEvidence": "Inspect actual files and meaningful local checks; no business formula duplication; strict data contracts, source dates and honest limits. Warehouse and publication acceptance are separate root gates, not claimed by builder."
       }
     },
     "reviewed-release": {
@@ -172,12 +210,11 @@
       "relevantFiles": [
         "AGENTS.md",
         "specs/002-portfolio/spec.md",
-        "docs/adrs/0003-static-reviewed-releases.md",
+        "docs/adrs/0004-estrato-reviewed-batch-and-map.md",
         "apps/web/README.md",
         "extraction/README.md",
         "transform/README.md",
-        ".github/workflows/extract-cap4.yml",
-        ".github/workflows/dbt-transform.yml"
+        ".github/workflows/extract-cap4.yml"
       ],
       "timeoutMs": 900000,
       "verification": {
@@ -193,7 +230,7 @@
             ]
           }
         ],
-        "semanticEvidence": "Inspect changed sources and documented meaningful checks. Validate only local implementation criteria, not unpublished/live cloud criteria. No metrics duplicated in frontend, no fabricated official data/checks. Identify material semantic omissions."
+        "semanticEvidence": "Inspect actual files and meaningful local checks; no business formula duplication; strict data contracts, source dates and honest limits. Warehouse and publication acceptance are separate root gates, not claimed by builder."
       }
     }
   }
