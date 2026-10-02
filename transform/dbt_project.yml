@@ -59,6 +59,11 @@ models:
     +enabled: false
 
 seeds:
+  vaca_muerta_pulse:
+    operator_groups:
+      +column_types:
+        valid_from: date
+        valid_to: date
   dbt_project_evaluator:
     +enabled: false
 
