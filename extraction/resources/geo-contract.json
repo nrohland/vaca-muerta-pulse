@@ -1,0 +1,92 @@
+{
+  "well_resource_id": "cb5c0f04-7835-45cd-b982-3e25ca7d7751",
+  "well_package_id": "c846e79c-026c-4040-897f-1ad3543b407c",
+  "well_fields": {
+    "sigla": "text",
+    "idpozo": "numeric",
+    "area": "text",
+    "cod_area": "text",
+    "empresa": "text",
+    "yacimiento": "text",
+    "cod_yacimiento": "text",
+    "formacion": "text",
+    "cuenca": "text",
+    "provincia": "text",
+    "cota": "numeric",
+    "profundidad": "numeric",
+    "clasificacion": "text",
+    "subclasificacion": "text",
+    "tipo_recurso": "text",
+    "sub_tipo_recurso": "text",
+    "gasplus": "text",
+    "tipopozo": "text",
+    "tipoextraccion": "text",
+    "tipoestado": "text",
+    "adjiv_fecha_inicio_perf": "timestamp",
+    "adjiv_fecha_fin_perf": "timestamp",
+    "adjiv_fecha_inicio_term": "timestamp",
+    "adjiv_fecha_fin_term": "timestamp",
+    "geojson": "text",
+    "geom": "text"
+  },
+  "area_resource_id": "48a306a3-d5da-4f28-8ab5-7f80767ffdec",
+  "area_package_id": "81cfad0a-4162-4f85-ad71-837f5a5fae57",
+  "area_dbf_fields": [
+    [
+      "NOMBRE_DE_",
+      "C",
+      41,
+      0
+    ],
+    [
+      "CODIGO_DE_",
+      "C",
+      4,
+      0
+    ],
+    [
+      "EMPRESA_OP",
+      "C",
+      41,
+      0
+    ],
+    [
+      "EMPRESA_IN",
+      "C",
+      54,
+      0
+    ],
+    [
+      "PARTICIPAC",
+      "C",
+      220,
+      0
+    ],
+    [
+      "COMENTARIO",
+      "C",
+      122,
+      0
+    ],
+    [
+      "GEOJSON",
+      "C",
+      254,
+      0
+    ],
+    [
+      "ALTA_PLANO",
+      "C",
+      29,
+      0
+    ],
+    [
+      "MODIFICACI",
+      "C",
+      29,
+      0
+    ]
+  ],
+  "reviewed_at": "2026-10-02",
+  "crs": "EPSG:4326"
+}

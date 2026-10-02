@@ -1,5 +1,7 @@
 # extraction/ — Meltano (Data Engineer)
 
+Geografía oficial: [contrato y comandos de candidato local](docs/geo-candidate-contract.md).
+
 > Para candidatos históricos nuevos, usar [contrato y guía de candidato](docs/history-candidate-contract.md). Los comandos históricos de TRUNCATE/DELETE/recreate de abajo no son el flujo de candidato ni autorización de promoción.
 
 **Hito 1.** Ingesta Capítulo IV → BigQuery `raw_*`. Owner: **DE**. No hay dbt ni dashboard acá.
