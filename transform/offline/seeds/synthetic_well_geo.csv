@@ -1,0 +1,5 @@
+idpozo,longitude,latitude,coordinate_valid,coordinate_issue,catalog_at,source_resource_id,sigla,tipoestado,tipopozo
+1,-68,-39,true,,2026-07-08 16:48:15,fixture,CURRENT,current_status,current_type
+2,,,false,invalid_coordinate,2026-07-08 16:48:15,fixture,CURRENT,current_status,current_type
+301,-68,-39,true,,2026-07-08 16:48:15,fixture,CURRENT,current_status,current_type
+302,-68,-39,true,,2026-07-08 16:48:15,fixture,CURRENT,current_status,current_type

@@ -104,5 +104,37 @@
     ],
     "compatibility": "schema_version and all existing fields retained; grouped dbt exports append operator_grouping to release and manifest, legacy exports remain valid without grouping metadata.",
     "future_drilldown": "Operator-by-area/map publication marts must apply this same mapping before aggregation and preserve legal provenance. Those marts are deferred; frontend must not regroup or calculate metrics."
+  },
+  "map_extension": {
+    "schema_version": 1,
+    "activity_grain": [
+      "fluid",
+      "periodo",
+      "idpozo"
+    ],
+    "operator_area_grain": [
+      "fluid",
+      "periodo",
+      "operator_group_id",
+      "area_id"
+    ],
+    "required_optional_inputs": [
+      "activity",
+      "operator_areas",
+      "map_coverage",
+      "geo_manifest",
+      "areas_geometry"
+    ],
+    "anchor": "release SHA256 -> release.map.index.sha256 -> index per-file SHA256",
+    "null_geometry": "retain reported rows for equivalent table fallback",
+    "scope": "VM production classified Neuquina; no spatial basin claim",
+    "business_metrics": "dbt only",
+    "required_gates": [
+      "assert_map_grain",
+      "assert_map_integrity",
+      "assert_map_reconciliation",
+      "assert_map_metrics"
+    ],
+    "index_source_metadata": "resource id/url/last_modified, known license or null, quarantined feature counts, date semantics"
   }
 }

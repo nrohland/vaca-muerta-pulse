@@ -20,3 +20,10 @@ seeds:
       +column_types:
         periodo: date
         source_batched_at: timestamp
+
+    synthetic_well_geo:
+      +column_types:
+        longitude: double
+        latitude: double
+        coordinate_valid: boolean
+        catalog_at: timestamp

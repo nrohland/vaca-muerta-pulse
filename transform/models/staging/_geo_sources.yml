@@ -1,0 +1,8 @@
+version: 2
+sources:
+  - name: raw_geography
+    database: "{{ env_var('BIGQUERY_PROJECT', 'vaca-muerta-pulse') }}"
+    schema: "{{ var('geo_raw_dataset', env_var('DBT_RAW_DATASET', 'raw_cap4_dev')) }}"
+    tables:
+      - name: capitulo_iv_pozos
+      - name: concessions_geography

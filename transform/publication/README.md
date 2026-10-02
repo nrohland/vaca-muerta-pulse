@@ -92,3 +92,43 @@ cp transform/offline/profiles.yml.example transform/offline/profiles.yml
 El build BigQuery real y revisión independiente pertenecen al responsable de integración; esta fase no escribe en cloud.
 
 Verificación de esta implementación (2026-10-02): el build offline anterior pasó con `/private/tmp/estrato-runtime/bin/dbt`, usando las versiones fijadas arriba: 2 seeds, 2 modelos, 15 data tests y 2 unit tests. Después del build, `/private/tmp/estrato-runtime/bin/python -B -m unittest discover -s tests/transform -v` pasó las 20 pruebas Python. `target/run_results.json` registra exclusivamente estados success/pass. El runtime previo en `work/runtime` quedó bloqueado por archivos iCloud sin contenido local; el runtime temporal permitió verificar el mismo SQL compartido. Estas son comprobaciones locales sobre fixtures sintéticos. El build real BigQuery, la revisión independiente de integración y la aprobación de publicación siguen pendientes; no se ejecutó BigQuery.
+
+## Estrato: actividad mensual y detalles operador × área
+
+`fct_well_activity_month` tiene grano `(fluid, periodo, idpozo)`: conserva todas las filas del snapshot de producción, incluidos volumen cero y geografía ausente. Reutiliza `publication_base`: petróleo bbl, gas millones m³, tasas por días calendario; PCN/PLU agrupados antes de comparar. `legal_operator_id/name`, área, cuenca, sigla, estado y tipo proceden de producción mensual. El join al padrón usa exclusivamente `idpozo`; `catalog_at` es DATETIME sin zona afirmada y nunca sustituye `periodo`. Las coordenadas son del catálogo actual y no reconstruyen posiciones históricas.
+
+`fct_operator_area_month` prepara series, MoM/YoY calendario exacto, diferencias, porcentajes, cuota dentro del operador y conteos/cobertura geográfica en SQL. Incluye entidades ausentes del mes actual con cero únicamente dentro de snapshots aceptados íntegros; comparadores de meses faltantes y porcentajes con base cero siguen nulos. `fct_map_coverage_month` cuantifica catálogo ausente, coordenada inválida, pozos positivos ubicados/no ubicados y áreas sin polígono. Cuenca NEUQUINA se comprueba en el gate, sin eliminar filas fuera de alcance silenciosamente ni afirmar validación espacial.
+
+Fuentes normalizadas: `raw_geography.capitulo_iv_pozos` y `concessions_geography`, dataset por `DBT_RAW_DATASET` (override `geo_raw_dataset` opcional). Las concesiones se unen por código fuente `area_id`. AVI permanece en cuarentena y no recibe polígono elegido/inventado. La revisión de topología de polígonos usados es una comprobación externa obligatoria del candidato oficial; este paso local no afirma haberla ejecutado.
+
+Para exportar el mapa, agregar **todos** los argumentos siguientes al comando de release existente:
+
+```bash
+--activity /ruta/fct_well_activity_month.json \
+--operator-areas /ruta/fct_operator_area_month.json \
+--map-coverage /ruta/fct_map_coverage_month.json \
+--geo-manifest /ruta/geo-candidate/manifest.json \
+--areas-geometry /ruta/geo-candidate/areas.normalized.ndjson
+```
+
+Los tres archivos de marts son arrays JSON exportados de dbt; las áreas deben conservar exactamente los bytes NDJSON del manifiesto. Inputs parciales fallan. Requiere éxito de los tres modelos y PASS de `assert_map_grain`, `assert_map_integrity`, `assert_map_reconciliation`; no reemplaza aceptación oficial ni aprobación de promoción. Python solo serializa y valida valores preparados/reconciliación. El comando sin argumentos geográficos conserva el contrato legado.
+
+`release.json.map.index` contiene ruta, SHA256 y tamaño del índice. El hash principal de release incluye esa referencia: el consumidor debe verificar primero el SHA256 del release esperado, después SHA del índice, y finalmente SHA de cada archivo lazy. No confiar en un índice mutable independiente. El índice conserva cobertura SQL por mes/fluido, procedencia y hashes de GeoJSON mensual/detalle operador-área y polígonos usados. Cada GeoJSON contiene todas las filas de actividad, con `geometry: null` para tabla alternativa; `positive_production` controla los puntos productivos. No consultar BQ por visita, no calcular tasas/crecimientos/cobertura en el navegador.
+
+Verificación local ejecutada 2026-10-02, fixture sintética compartiendo SQL de negocio:
+
+```bash
+# cwd transform/offline; copiar profiles.yml.example a profiles.yml local si falta
+/private/tmp/estrato-runtime/bin/dbt build --no-partial-parse --profiles-dir . --quiet
+# cwd raíz
+/private/tmp/estrato-runtime/bin/python -B -m unittest discover -s tests/transform -v
+```
+
+Resultado: dbt exit 0, 5 modelos, 4 seeds, 19 data tests y 2 unit tests exitosos; Python 28 tests OK. Casos cubren coordenadas ausentes/inválidas preservadas, producción vs catálogo actual, agrupación legal PCN/PLU, base cero, fechas calendario, ambos fluidos, reconciliación total y por entidad, integridad de hashes, inputs incompletos, alteraciones y fanout mediante duplicación deliberada del catálogo contra el SQL compilado real. Build/reconciliación oficial BigQuery, export real y revisión independiente quedan a cargo del coordinador; publicación/web pertenecen a fases posteriores.
+
+Los GeoJSON mensuales se guardan como `.geojson.gz` con gzip determinista (`mtime=0`). SHA256 y tamaño del descriptor corresponden a bytes comprimidos. El consumidor verifica hash antes de descomprimir con `DecompressionStream('gzip')` y parsear JSON; la compresión es técnica y no altera filas ni métricas. Tests verifican roundtrip y determinismo entre dos exports idénticos.
+
+
+Reparación tras revisión independiente (2026-10-02): se agrega el gate obligatorio `assert_map_metrics`. Recomputa desde actividad todos los conteos y ratios globales y por operador-área, volumen/tasa actual, comparadores calendario, diferencias, porcentajes y cuota. FULL JOIN protege filas faltantes/adicionales. El exportador valida esas mismas identidades numéricas sin sustituir valores publicados: la aritmética en Python es comprobación, las métricas permanecen producidas en dbt. Rechaza nulls inconsistentes, no finitos, conteos alterados y fechas/IDs de catálogo diferentes del manifiesto. Los índices hasheados incorporan metadata compacta de recursos (id/url/last_modified), licencias conocidas o null honesto, cuarentena y semántica de fechas; no modifica el manifiesto fuente ni inventa licencia del padrón.
+
+Verificación fresca tras reparación: dbt build completo exit 0 con 5 modelos, 4 seeds, 20 data tests y 2 unit tests; unittest discovery 31 tests OK. El test de SQL copia la DuckDB sintética temporalmente y altera cada uno de los diez conteos en ambos marts, además de ratios, porcentajes y share: el gate compilado real detecta cada mutación. Tests del exportador alteran todos esos conteos, ratios, porcentajes/share, identidad de recurso y fecha de catálogo; todos se rechazan. Controles cloud y revisión del coordinador siguen pendientes.
