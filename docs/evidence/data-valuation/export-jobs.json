@@ -1,0 +1,12 @@
+{
+  "production": {
+    "rows": 88,
+    "job_id": "7f8947f2-86bf-4d1a-9d2c-5065aa1fc399",
+    "bytes_billed": 10485760
+  },
+  "entities": {
+    "rows": 8936,
+    "job_id": "6bb75160-bb20-4bae-a527-da7356a6feed",
+    "bytes_billed": 10485760
+  }
+}

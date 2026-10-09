@@ -11,6 +11,7 @@ export type Tab = (typeof tabs)[number][0];
 export type Selection = {
   tab: Tab;
   fluid: Fluid;
+  mode: "volume" | "value";
   month: string;
   operator: string;
   area: string;
@@ -22,6 +23,7 @@ export function readSelection(search: string): Selection {
       ? (p.get("tab") as Tab)
       : "summary",
     fluid: p.get("fluid") === "gas" ? "gas" : "oil",
+    mode: p.get("mode") === "value" ? "value" : "volume",
     month: p.get("month") ?? "",
     operator: p.get("operator") ?? "",
     area: p.get("area") ?? "",

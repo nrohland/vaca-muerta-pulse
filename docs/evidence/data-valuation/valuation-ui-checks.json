@@ -1,0 +1,842 @@
+[
+  {
+    "name": "laptop-value-light",
+    "cards": [
+      {
+        "comparisons": "YoY +70,7%\nMoM +13,3%",
+        "label": "Valor diario estimado",
+        "value": "61,01M USD/día"
+      },
+      {
+        "comparisons": "YoY +70,7%\nMoM +13,3%",
+        "label": "Valor mensual estimado",
+        "value": "1.891,2M USD"
+      },
+      {
+        "comparisons": "YoY +21,0%\nMoM +1,7%",
+        "label": "Pozos productivos",
+        "value": "2.678pozos"
+      },
+      {
+        "comparisons": "YoY +34,2%\nMoM +8,7%",
+        "label": "Precio de referencia Brent",
+        "value": "91,08USD/bbl"
+      }
+    ],
+    "chart": "Evolución del valor estimado",
+    "footerBottom": 755.8359375,
+    "logos": [
+      {
+        "src": "/vaca-muerta-pulse/operators/YPF.svg",
+        "width": 300
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/VST.svg",
+        "width": 104
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/PLUSPETROL.svg",
+        "width": 103
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/SHE.jpg",
+        "width": 2212
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/PAL.png",
+        "width": 300
+      }
+    ],
+    "rankings": [
+      {
+        "amount": "943,0 M",
+        "name": "01YPF",
+        "width": "49.8614%",
+        "yoy": "+59,7%"
+      },
+      {
+        "amount": "230,2 M",
+        "name": "02Vista",
+        "width": "12.1714%",
+        "yoy": "+65,0%"
+      },
+      {
+        "amount": "221,1 M",
+        "name": "03Pluspetrol",
+        "width": "11.6916%",
+        "yoy": "+142,1%"
+      },
+      {
+        "amount": "120,7 M",
+        "name": "04Shell",
+        "width": "6.3843%",
+        "yoy": "+92,9%"
+      },
+      {
+        "amount": "102,0 M",
+        "name": "05Pan American Energy",
+        "width": "5.39122%",
+        "yoy": "+57,7%"
+      },
+      {
+        "amount": "260,6 M",
+        "name": "01LOMA CAMPANA",
+        "width": "13.7778%",
+        "yoy": "+45,9%"
+      },
+      {
+        "amount": "228,6 M",
+        "name": "02LA AMARGA CHICA",
+        "width": "12.0855%",
+        "yoy": "+49,0%"
+      },
+      {
+        "amount": "203,9 M",
+        "name": "03BANDURRIA SUR",
+        "width": "10.7801%",
+        "yoy": "+38,5%"
+      },
+      {
+        "amount": "165,9 M",
+        "name": "04BAJADA DEL PALO OESTE",
+        "width": "8.76988%",
+        "yoy": "+54,7%"
+      },
+      {
+        "amount": "131,6 M",
+        "name": "05BAJO DEL CHOIQUE - LA INVERNADA",
+        "width": "6.95637%",
+        "yoy": "+379,3%"
+      }
+    ],
+    "scroll": {
+      "height": 768,
+      "width": 1366
+    },
+    "url": "http://127.0.0.1:4173/vaca-muerta-pulse/?tab=summary&fluid=oil&mode=value&month=2026-08-01",
+    "viewport": {
+      "height": 768,
+      "width": 1366
+    }
+  },
+  {
+    "name": "desktop-volume-light",
+    "cards": [
+      {
+        "comparisons": "YoY +27,2%\nMoM +4,1%",
+        "label": "Producción diaria",
+        "value": "669.802bbl/d"
+      },
+      {
+        "comparisons": "YoY +27,2%\nMoM +4,1%",
+        "label": "Volumen mensual",
+        "value": "20,8M bbl"
+      },
+      {
+        "comparisons": "YoY +21,0%\nMoM +1,7%",
+        "label": "Pozos productivos",
+        "value": "2.678pozos"
+      },
+      {
+        "comparisons": "YoY +70,7%\nMoM +13,3%",
+        "label": "Valor bruto estimado",
+        "value": "1.891,2M USD"
+      }
+    ],
+    "chart": "Evolución de la producción",
+    "footerBottom": 859.265625,
+    "logos": [
+      {
+        "src": "/vaca-muerta-pulse/operators/YPF.svg",
+        "width": 300
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/VST.svg",
+        "width": 104
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/PLUSPETROL.svg",
+        "width": 103
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/SHE.jpg",
+        "width": 2212
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/PAL.png",
+        "width": 300
+      }
+    ],
+    "rankings": [
+      {
+        "amount": "10.353.166",
+        "name": "01YPF",
+        "width": "49.8614%",
+        "yoy": "+19,0%"
+      },
+      {
+        "amount": "2.527.252",
+        "name": "02Vista",
+        "width": "12.1714%",
+        "yoy": "+23,0%"
+      },
+      {
+        "amount": "2.427.635",
+        "name": "03Pluspetrol",
+        "width": "11.6916%",
+        "yoy": "+80,4%"
+      },
+      {
+        "amount": "1.325.629",
+        "name": "04Shell",
+        "width": "6.3843%",
+        "yoy": "+43,7%"
+      },
+      {
+        "amount": "1.119.426",
+        "name": "05Pan American Energy",
+        "width": "5.39122%",
+        "yoy": "+17,5%"
+      },
+      {
+        "amount": "2.860.800",
+        "name": "01LOMA CAMPANA",
+        "width": "13.7778%",
+        "yoy": "+8,7%"
+      },
+      {
+        "amount": "2.509.423",
+        "name": "02LA AMARGA CHICA",
+        "width": "12.0855%",
+        "yoy": "+11,0%"
+      },
+      {
+        "amount": "2.238.367",
+        "name": "03BANDURRIA SUR",
+        "width": "10.7801%",
+        "yoy": "+3,2%"
+      },
+      {
+        "amount": "1.820.967",
+        "name": "04BAJADA DEL PALO OESTE",
+        "width": "8.76988%",
+        "yoy": "+15,3%"
+      },
+      {
+        "amount": "1.444.411",
+        "name": "05BAJO DEL CHOIQUE - LA INVERNADA",
+        "width": "6.95637%",
+        "yoy": "+257,1%"
+      }
+    ],
+    "scroll": {
+      "height": 900,
+      "width": 1440
+    },
+    "url": "http://127.0.0.1:4173/vaca-muerta-pulse/?tab=summary&fluid=oil&mode=volume&month=2026-08-01",
+    "viewport": {
+      "height": 900,
+      "width": 1440
+    }
+  },
+  {
+    "name": "desktop-value-dark",
+    "cards": [
+      {
+        "comparisons": "YoY +70,7%\nMoM +13,3%",
+        "label": "Valor diario estimado",
+        "value": "61,01M USD/día"
+      },
+      {
+        "comparisons": "YoY +70,7%\nMoM +13,3%",
+        "label": "Valor mensual estimado",
+        "value": "1.891,2M USD"
+      },
+      {
+        "comparisons": "YoY +21,0%\nMoM +1,7%",
+        "label": "Pozos productivos",
+        "value": "2.678pozos"
+      },
+      {
+        "comparisons": "YoY +34,2%\nMoM +8,7%",
+        "label": "Precio de referencia Brent",
+        "value": "91,08USD/bbl"
+      }
+    ],
+    "chart": "Evolución del valor estimado",
+    "footerBottom": 859.265625,
+    "logos": [
+      {
+        "src": "/vaca-muerta-pulse/operators/YPF.svg",
+        "width": 300
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/VST.svg",
+        "width": 104
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/PLUSPETROL.svg",
+        "width": 103
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/SHE.jpg",
+        "width": 2212
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/PAL.png",
+        "width": 300
+      }
+    ],
+    "rankings": [
+      {
+        "amount": "943,0 M",
+        "name": "01YPF",
+        "width": "49.8614%",
+        "yoy": "+59,7%"
+      },
+      {
+        "amount": "230,2 M",
+        "name": "02Vista",
+        "width": "12.1714%",
+        "yoy": "+65,0%"
+      },
+      {
+        "amount": "221,1 M",
+        "name": "03Pluspetrol",
+        "width": "11.6916%",
+        "yoy": "+142,1%"
+      },
+      {
+        "amount": "120,7 M",
+        "name": "04Shell",
+        "width": "6.3843%",
+        "yoy": "+92,9%"
+      },
+      {
+        "amount": "102,0 M",
+        "name": "05Pan American Energy",
+        "width": "5.39122%",
+        "yoy": "+57,7%"
+      },
+      {
+        "amount": "260,6 M",
+        "name": "01LOMA CAMPANA",
+        "width": "13.7778%",
+        "yoy": "+45,9%"
+      },
+      {
+        "amount": "228,6 M",
+        "name": "02LA AMARGA CHICA",
+        "width": "12.0855%",
+        "yoy": "+49,0%"
+      },
+      {
+        "amount": "203,9 M",
+        "name": "03BANDURRIA SUR",
+        "width": "10.7801%",
+        "yoy": "+38,5%"
+      },
+      {
+        "amount": "165,9 M",
+        "name": "04BAJADA DEL PALO OESTE",
+        "width": "8.76988%",
+        "yoy": "+54,7%"
+      },
+      {
+        "amount": "131,6 M",
+        "name": "05BAJO DEL CHOIQUE - LA INVERNADA",
+        "width": "6.95637%",
+        "yoy": "+379,3%"
+      }
+    ],
+    "scroll": {
+      "height": 900,
+      "width": 1440
+    },
+    "url": "http://127.0.0.1:4173/vaca-muerta-pulse/?tab=summary&fluid=oil&mode=value&month=2026-08-01",
+    "viewport": {
+      "height": 900,
+      "width": 1440
+    }
+  },
+  {
+    "name": "tablet-gas-light",
+    "cards": [
+      {
+        "comparisons": "YoY +6,0%\nMoM −1,2%",
+        "label": "Producción diaria",
+        "value": "95,45MMm³/d"
+      },
+      {
+        "comparisons": "YoY +6,0%\nMoM −1,2%",
+        "label": "Volumen mensual",
+        "value": "2.959,0MMm³"
+      },
+      {
+        "comparisons": "YoY +20,5%\nMoM +1,7%",
+        "label": "Pozos productivos",
+        "value": "2.884pozos"
+      },
+      {
+        "comparisons": "YoY —\nSin comparador\nMoM —\nSin comparador",
+        "label": "Valor bruto estimado",
+        "value": "No disponible"
+      }
+    ],
+    "chart": "Evolución de la producción",
+    "footerBottom": 1881,
+    "logos": [
+      {
+        "src": "/vaca-muerta-pulse/operators/TPT.jpg",
+        "width": 1650
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/YPF.svg",
+        "width": 300
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/PLUSPETROL.svg",
+        "width": 103
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/TAU.svg",
+        "width": 430
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/PAL.png",
+        "width": 300
+      }
+    ],
+    "rankings": [
+      {
+        "amount": "644,13",
+        "name": "01Tecpetrol",
+        "width": "21.7689%",
+        "yoy": "−1,8%"
+      },
+      {
+        "amount": "643,18",
+        "name": "02YPF",
+        "width": "21.7368%",
+        "yoy": "−2,5%"
+      },
+      {
+        "amount": "507,17",
+        "name": "03Pluspetrol",
+        "width": "17.1404%",
+        "yoy": "+27,7%"
+      },
+      {
+        "amount": "346,62",
+        "name": "04Total Austral",
+        "width": "11.7142%",
+        "yoy": "−0,3%"
+      },
+      {
+        "amount": "326,04",
+        "name": "05Pan American Energy",
+        "width": "11.0188%",
+        "yoy": "+8,4%"
+      },
+      {
+        "amount": "636,48",
+        "name": "01FORTIN DE PIEDRA ",
+        "width": "21.5104%",
+        "yoy": "−1,5%"
+      },
+      {
+        "amount": "423,04",
+        "name": "02LA CALERA",
+        "width": "14.2968%",
+        "yoy": "+18,3%"
+      },
+      {
+        "amount": "346,56",
+        "name": "03AGUADA PICHANA ESTE  ",
+        "width": "11.7124%",
+        "yoy": "+2,3%"
+      },
+      {
+        "amount": "297,25",
+        "name": "04AGUADA PICHANA OESTE ",
+        "width": "10.0459%",
+        "yoy": "+10,7%"
+      },
+      {
+        "amount": "241,89",
+        "name": "05SIERRA CHATA",
+        "width": "8.17498%",
+        "yoy": "+17,4%"
+      }
+    ],
+    "scroll": {
+      "height": 1881,
+      "width": 768
+    },
+    "url": "http://127.0.0.1:4173/vaca-muerta-pulse/?tab=summary&fluid=gas&mode=volume&month=2026-08-01",
+    "viewport": {
+      "height": 1024,
+      "width": 768
+    }
+  },
+  {
+    "name": "mobile-volume-light",
+    "cards": [
+      {
+        "comparisons": "YoY +27,2%\nMoM +4,1%",
+        "label": "Producción diaria",
+        "value": "669.802bbl/d"
+      },
+      {
+        "comparisons": "YoY +27,2%\nMoM +4,1%",
+        "label": "Volumen mensual",
+        "value": "20,8M bbl"
+      },
+      {
+        "comparisons": "YoY +21,0%\nMoM +1,7%",
+        "label": "Pozos productivos",
+        "value": "2.678pozos"
+      },
+      {
+        "comparisons": "YoY +70,7%\nMoM +13,3%",
+        "label": "Valor bruto estimado",
+        "value": "1.891,2M USD"
+      }
+    ],
+    "chart": "Evolución de la producción",
+    "footerBottom": 2746.2734375,
+    "logos": [
+      {
+        "src": "/vaca-muerta-pulse/operators/YPF.svg",
+        "width": 300
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/VST.svg",
+        "width": 104
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/PLUSPETROL.svg",
+        "width": 103
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/SHE.jpg",
+        "width": 2212
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/PAL.png",
+        "width": 300
+      }
+    ],
+    "rankings": [
+      {
+        "amount": "Producción\n10.353.166",
+        "name": "01YPF",
+        "width": "49.8614%",
+        "yoy": "YoY\n+19,0%"
+      },
+      {
+        "amount": "Producción\n2.527.252",
+        "name": "02Vista",
+        "width": "12.1714%",
+        "yoy": "YoY\n+23,0%"
+      },
+      {
+        "amount": "Producción\n2.427.635",
+        "name": "03Pluspetrol",
+        "width": "11.6916%",
+        "yoy": "YoY\n+80,4%"
+      },
+      {
+        "amount": "Producción\n1.325.629",
+        "name": "04Shell",
+        "width": "6.3843%",
+        "yoy": "YoY\n+43,7%"
+      },
+      {
+        "amount": "Producción\n1.119.426",
+        "name": "05Pan American Energy",
+        "width": "5.39122%",
+        "yoy": "YoY\n+17,5%"
+      },
+      {
+        "amount": "Producción\n2.860.800",
+        "name": "01LOMA CAMPANA",
+        "width": "13.7778%",
+        "yoy": "YoY\n+8,7%"
+      },
+      {
+        "amount": "Producción\n2.509.423",
+        "name": "02LA AMARGA CHICA",
+        "width": "12.0855%",
+        "yoy": "YoY\n+11,0%"
+      },
+      {
+        "amount": "Producción\n2.238.367",
+        "name": "03BANDURRIA SUR",
+        "width": "10.7801%",
+        "yoy": "YoY\n+3,2%"
+      },
+      {
+        "amount": "Producción\n1.820.967",
+        "name": "04BAJADA DEL PALO OESTE",
+        "width": "8.76988%",
+        "yoy": "YoY\n+15,3%"
+      },
+      {
+        "amount": "Producción\n1.444.411",
+        "name": "05BAJO DEL CHOIQUE - LA INVERNADA",
+        "width": "6.95637%",
+        "yoy": "YoY\n+257,1%"
+      }
+    ],
+    "scroll": {
+      "height": 2746,
+      "width": 390
+    },
+    "url": "http://127.0.0.1:4173/vaca-muerta-pulse/?tab=summary&fluid=oil&mode=volume&month=2026-08-01",
+    "viewport": {
+      "height": 844,
+      "width": 390
+    }
+  },
+  {
+    "name": "mobile-value-dark",
+    "cards": [
+      {
+        "comparisons": "YoY +70,7%\nMoM +13,3%",
+        "label": "Valor diario estimado",
+        "value": "61,01M USD/día"
+      },
+      {
+        "comparisons": "YoY +70,7%\nMoM +13,3%",
+        "label": "Valor mensual estimado",
+        "value": "1.891,2M USD"
+      },
+      {
+        "comparisons": "YoY +21,0%\nMoM +1,7%",
+        "label": "Pozos productivos",
+        "value": "2.678pozos"
+      },
+      {
+        "comparisons": "YoY +34,2%\nMoM +8,7%",
+        "label": "Precio de referencia Brent",
+        "value": "91,08USD/bbl"
+      }
+    ],
+    "chart": "Evolución del valor estimado",
+    "footerBottom": 2776.2734375,
+    "logos": [
+      {
+        "src": "/vaca-muerta-pulse/operators/YPF.svg",
+        "width": 300
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/VST.svg",
+        "width": 104
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/PLUSPETROL.svg",
+        "width": 103
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/SHE.jpg",
+        "width": 2212
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/PAL.png",
+        "width": 300
+      }
+    ],
+    "rankings": [
+      {
+        "amount": "USD estimados\n943,0 M",
+        "name": "01YPF",
+        "width": "49.8614%",
+        "yoy": "YoY\n+59,7%"
+      },
+      {
+        "amount": "USD estimados\n230,2 M",
+        "name": "02Vista",
+        "width": "12.1714%",
+        "yoy": "YoY\n+65,0%"
+      },
+      {
+        "amount": "USD estimados\n221,1 M",
+        "name": "03Pluspetrol",
+        "width": "11.6916%",
+        "yoy": "YoY\n+142,1%"
+      },
+      {
+        "amount": "USD estimados\n120,7 M",
+        "name": "04Shell",
+        "width": "6.3843%",
+        "yoy": "YoY\n+92,9%"
+      },
+      {
+        "amount": "USD estimados\n102,0 M",
+        "name": "05Pan American Energy",
+        "width": "5.39122%",
+        "yoy": "YoY\n+57,7%"
+      },
+      {
+        "amount": "USD estimados\n260,6 M",
+        "name": "01LOMA CAMPANA",
+        "width": "13.7778%",
+        "yoy": "YoY\n+45,9%"
+      },
+      {
+        "amount": "USD estimados\n228,6 M",
+        "name": "02LA AMARGA CHICA",
+        "width": "12.0855%",
+        "yoy": "YoY\n+49,0%"
+      },
+      {
+        "amount": "USD estimados\n203,9 M",
+        "name": "03BANDURRIA SUR",
+        "width": "10.7801%",
+        "yoy": "YoY\n+38,5%"
+      },
+      {
+        "amount": "USD estimados\n165,9 M",
+        "name": "04BAJADA DEL PALO OESTE",
+        "width": "8.76988%",
+        "yoy": "YoY\n+54,7%"
+      },
+      {
+        "amount": "USD estimados\n131,6 M",
+        "name": "05BAJO DEL CHOIQUE - LA INVERNADA",
+        "width": "6.95637%",
+        "yoy": "YoY\n+379,3%"
+      }
+    ],
+    "scroll": {
+      "height": 2776,
+      "width": 390
+    },
+    "url": "http://127.0.0.1:4173/vaca-muerta-pulse/?tab=summary&fluid=oil&mode=value&month=2026-08-01",
+    "viewport": {
+      "height": 844,
+      "width": 390
+    }
+  },
+  {
+    "name": "mobile-gas-unavailable",
+    "cards": [
+      {
+        "comparisons": "YoY +6,0%\nMoM −1,2%",
+        "label": "Producción diaria",
+        "value": "95,45MMm³/d"
+      },
+      {
+        "comparisons": "YoY +6,0%\nMoM −1,2%",
+        "label": "Volumen mensual",
+        "value": "2.959,0MMm³"
+      },
+      {
+        "comparisons": "YoY +20,5%\nMoM +1,7%",
+        "label": "Pozos productivos",
+        "value": "2.884pozos"
+      },
+      {
+        "comparisons": "YoY —\nSin comparador\nMoM —\nSin comparador",
+        "label": "Valor bruto estimado",
+        "value": "No disponible"
+      }
+    ],
+    "chart": "Evolución de la producción",
+    "footerBottom": 2832.2734375,
+    "logos": [
+      {
+        "src": "/vaca-muerta-pulse/operators/TPT.jpg",
+        "width": 1650
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/YPF.svg",
+        "width": 300
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/PLUSPETROL.svg",
+        "width": 103
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/TAU.svg",
+        "width": 430
+      },
+      {
+        "src": "/vaca-muerta-pulse/operators/PAL.png",
+        "width": 300
+      }
+    ],
+    "rankings": [
+      {
+        "amount": "Producción\n644,13",
+        "name": "01Tecpetrol",
+        "width": "21.7689%",
+        "yoy": "YoY\n−1,8%"
+      },
+      {
+        "amount": "Producción\n643,18",
+        "name": "02YPF",
+        "width": "21.7368%",
+        "yoy": "YoY\n−2,5%"
+      },
+      {
+        "amount": "Producción\n507,17",
+        "name": "03Pluspetrol",
+        "width": "17.1404%",
+        "yoy": "YoY\n+27,7%"
+      },
+      {
+        "amount": "Producción\n346,62",
+        "name": "04Total Austral",
+        "width": "11.7142%",
+        "yoy": "YoY\n−0,3%"
+      },
+      {
+        "amount": "Producción\n326,04",
+        "name": "05Pan American Energy",
+        "width": "11.0188%",
+        "yoy": "YoY\n+8,4%"
+      },
+      {
+        "amount": "Producción\n636,48",
+        "name": "01FORTIN DE PIEDRA ",
+        "width": "21.5104%",
+        "yoy": "YoY\n−1,5%"
+      },
+      {
+        "amount": "Producción\n423,04",
+        "name": "02LA CALERA",
+        "width": "14.2968%",
+        "yoy": "YoY\n+18,3%"
+      },
+      {
+        "amount": "Producción\n346,56",
+        "name": "03AGUADA PICHANA ESTE  ",
+        "width": "11.7124%",
+        "yoy": "YoY\n+2,3%"
+      },
+      {
+        "amount": "Producción\n297,25",
+        "name": "04AGUADA PICHANA OESTE ",
+        "width": "10.0459%",
+        "yoy": "YoY\n+10,7%"
+      },
+      {
+        "amount": "Producción\n241,89",
+        "name": "05SIERRA CHATA",
+        "width": "8.17498%",
+        "yoy": "YoY\n+17,4%"
+      }
+    ],
+    "scroll": {
+      "height": 2832,
+      "width": 390
+    },
+    "url": "http://127.0.0.1:4173/vaca-muerta-pulse/?tab=summary&fluid=gas&mode=value&month=2026-08-01",
+    "viewport": {
+      "height": 844,
+      "width": 390
+    }
+  }
+]

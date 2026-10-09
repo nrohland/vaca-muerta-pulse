@@ -1,0 +1,19 @@
+{
+  "status": "pass",
+  "source_vm_well_month_rows": 112506,
+  "duplicate_grain": 0,
+  "production_rows": 88,
+  "entity_rows": 8936,
+  "numeric_checks": 45736,
+  "latest_accepted": "2026-08-01",
+  "september_in_release": false,
+  "checks": [
+    "CSV/retained official source to totals and unique positive wells",
+    "formation/resource universe",
+    "physical unit conversion and calendar rate",
+    "entity monthly volume, total reconciliation and top5 denominator",
+    "rank ordering",
+    "YoY/MoM exact calendar bases, zero or missing comparator null"
+  ],
+  "release_sha256": "1bf27be1365a1520f757f7b1fa6b936a1fc07fe7f07a0f3e7a831b7bfd21688b"
+}

@@ -1,23 +1,10 @@
 {
-  "data_sha256": "96b02cf1cf912e3e4a9d100dee2dff886517d374b8a85ec3f09f7671b653a4e1",
-  "generated_at": "2026-10-02T16:11:26.380095+00:00",
+  "data_sha256": "1bf27be1365a1520f757f7b1fa6b936a1fc07fe7f07a0f3e7a831b7bfd21688b",
+  "generated_at": "2026-10-09T19:18:34.059703+00:00",
   "input_sha256": {
-    "activity": "e7ccf370048526bb0e1308af68dcd6c9f2ca103ed3dd3d75ed4871b0e6d43963",
-    "areas_geometry": "be8495ca6084aa402cb9192cb4bbc7b718cc9743496b40194200de728b301ace",
-    "dbt_run_results": "0b24c17b433d4e7a8ede86586fa270e49e095eb0266f501cdaa088a93c8826eb",
-    "entities": "ebbe01401cabd6109d521b1efd2a8b7a90983f68ed5894decfb31e20df1af6c9",
-    "geo_manifest": "5e2f6dc3469a0a91eb3cba859793ceb4c7005bdeb3411f9cbe0984e7b641d518",
-    "map_coverage": "ce13df9bbb3ce83e6d0f8a0d43faa75f5c2c357f2f11f1b20991063e0e0c82b0",
-    "operator_areas": "e91b618a4efe11673c4ed8898988ab076d2ec696f2b81a70e32a36448a3a3819",
-    "production": "a0d07bc9e2eea3fe64d2b8ec4fa7ad6c71dac2f126cd88aff173be41f078523e"
-  },
-  "map": {
-    "index": {
-      "bytes": 72566,
-      "path": "map/index.json",
-      "sha256": "2b1f5f5b8f06081e9c1ef162616d56528a5696779d4e181ecbdaf68ad56ee4ee"
-    },
-    "schema_version": 1
+    "dbt_run_results": "e12412af11a6aafed062820c4c23e8e633c5f7c4a333e899b8f148f358bd113f",
+    "entities": "9356026532e6da6829faa46035fd18ef12a6e77d6aa1be35eabebf7c4f347490",
+    "production": "5db1ecae8fb98c0c652aff9426fe51c51201ec51e834dc9bf2e675d0422dede4"
   },
   "operator_grouping": {
     "legal_provenance_field": "legal_operator_provenance",
@@ -50,8 +37,8 @@
   },
   "schema_version": 1,
   "source": {
-    "acceptance_note": "Engineering review of full retained official available-record snapshots: schema, pagination, grain, period coverage, primary dbt tests; source declarations remain revisable. Owner approval for public promotion remains separate.",
-    "accepted_at": "2026-10-02T15:17:07.997560+00:00",
+    "acceptance_note": "Engineering validation of complete retained available-record snapshot through August. September excluded as partial. Owner approval for promotion separate.",
+    "accepted_at": "2026-10-09T19:18:22.719655+00:00",
     "accepted_periods": [
       "2023-01-01",
       "2023-02-01",
@@ -95,19 +82,15 @@
       "2026-04-01",
       "2026-05-01",
       "2026-06-01",
-      "2026-07-01"
+      "2026-07-01",
+      "2026-08-01"
     ],
-    "approved_period": "2026-07-01",
-    "commit": "448a406",
-    "comparison_evidence": "cambios-respecto-carga-anterior.json",
+    "approved_period": "2026-08-01",
+    "commit": "2edd0efdab96c9714a8f8e762cb817d1032e0fae",
     "data_kind": "official",
-    "geography_candidate_manifest": "geo-candidate-20261002/manifest.json",
-    "geography_review_evidence": [
-      "validacion-carga-geografica.json",
-      "validacion-join-geografia-bigquery.json",
-      "validacion-topologia-concesiones.json"
-    ],
-    "raw_candidate": "vaca-muerta-pulse.raw_cap4_candidate_20261001.produccion_pozo_mes",
+    "ingested_at": "2026-10-09T19:14:31.383000+00:00",
+    "published_at": null,
+    "raw_candidate": "vaca-muerta-pulse.raw_cap4_candidate_20261009.produccion_pozo_mes",
     "resources": [
       {
         "extracted_at": "2026-10-01T19:04:37.084000+00:00",
@@ -185,28 +168,31 @@
         "year": 2025
       },
       {
-        "extracted_at": "2026-10-01T19:00:47.305250+00:00",
-        "hash_scope": "normalized full annual NDJSON, not original CSV bytes",
+        "extracted_at": "2026-10-09T19:07:30.997493+00:00",
+        "hash_scope": "original official download CSV bytes",
         "id": "fb7a47a0-cba9-4667-a004-6f6c1c346c23",
-        "original_download_url": "http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/fb7a47a0-cba9-4667-a004-6f6c1c346c23/download/produccin-de-pozos-de-gas-y-petrleo-2026.csv",
+        "normalized_ndjson_sha256": "fb8c0f26eb64da588b271a17b5e691ef052c8e390a434e49cfdea6c6a76aaa8a",
         "period_rows": {
-          "2026-01-01": 80423,
-          "2026-02-01": 80476,
-          "2026-03-01": 80510,
-          "2026-04-01": 82788,
-          "2026-05-01": 82872,
-          "2026-06-01": 79282,
-          "2026-07-01": 74649
+          "2026-01-01": 82948,
+          "2026-02-01": 83001,
+          "2026-03-01": 83035,
+          "2026-04-01": 82949,
+          "2026-05-01": 83033,
+          "2026-06-01": 82476,
+          "2026-07-01": 82549,
+          "2026-08-01": 79576,
+          "2026-09-01": 4108
         },
-        "raw_rows": 561000,
-        "sha256": "6513c645158b0e53d1bd071f74c3e97a9605e5fbb3d467a7743d76d7d6a13ec8",
-        "source_last_modified": "2026-10-01T10:02:03.874866",
-        "url": "https://datos.energia.gob.ar/api/3/action/datastore_search?resource_id=fb7a47a0-cba9-4667-a004-6f6c1c346c23",
+        "raw_rows": 663675,
+        "sha256": "cba1522b4a550bec6380a37e9135fac2bcac49164965240a7676f9b0377182b3",
+        "source_last_modified": "2026-10-09T10:04:00.449091",
+        "transport": "official_download_csv",
+        "url": "https://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/fb7a47a0-cba9-4667-a004-6f6c1c346c23/download/produccin-de-pozos-de-gas-y-petrleo-2026.csv",
         "year": 2026
       }
     ],
-    "snapshot_revisions_note": "First preserved publication candidate; no previous public release exists. Comparison with September14 warehouse detected75 corrected2024 area assignments, with volumes unchanged."
+    "snapshot_revisions_note": "Official 2026 download CSV supersedes lagging DataStore. Adds August, revises 17 oil and 17 gas row values; 29 additional VM well/month rows January–July, no prior keys removed. September retained raw but excluded from accepted publication periods."
   },
   "status": "candidate",
-  "version": "2026-07-01-96b02cf1cf91"
+  "version": "2026-08-01-1bf27be1365a"
 }

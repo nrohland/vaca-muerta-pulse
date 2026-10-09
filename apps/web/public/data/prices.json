@@ -1,0 +1,1915 @@
+{
+  "schema_version": 1,
+  "source": {
+    "provider": "EIA",
+    "series": "Europe Brent Spot Price FOB",
+    "url": "https://www.eia.gov/dnav/pet/hist/leafhandler.ashx?f=m&n=pet&s=rbrte",
+    "unit": "USD/bbl",
+    "frequency": "monthly",
+    "source_updated_at": "2026-10-07",
+    "retrieved_at": "2026-10-09T19:07:44.883758+00:00",
+    "response_sha256": "15df82629c5906c899f741b72258770cd3a5d4f12e884962aa459849db58fdd9"
+  },
+  "prices": [
+    {
+      "periodo": "1987-05-01",
+      "usd_per_bbl": 18.58
+    },
+    {
+      "periodo": "1987-06-01",
+      "usd_per_bbl": 18.86
+    },
+    {
+      "periodo": "1987-07-01",
+      "usd_per_bbl": 19.86
+    },
+    {
+      "periodo": "1987-08-01",
+      "usd_per_bbl": 18.98
+    },
+    {
+      "periodo": "1987-09-01",
+      "usd_per_bbl": 18.31
+    },
+    {
+      "periodo": "1987-10-01",
+      "usd_per_bbl": 18.76
+    },
+    {
+      "periodo": "1987-11-01",
+      "usd_per_bbl": 17.78
+    },
+    {
+      "periodo": "1987-12-01",
+      "usd_per_bbl": 17.05
+    },
+    {
+      "periodo": "1988-01-01",
+      "usd_per_bbl": 16.75
+    },
+    {
+      "periodo": "1988-02-01",
+      "usd_per_bbl": 15.73
+    },
+    {
+      "periodo": "1988-03-01",
+      "usd_per_bbl": 14.73
+    },
+    {
+      "periodo": "1988-04-01",
+      "usd_per_bbl": 16.6
+    },
+    {
+      "periodo": "1988-05-01",
+      "usd_per_bbl": 16.31
+    },
+    {
+      "periodo": "1988-06-01",
+      "usd_per_bbl": 15.54
+    },
+    {
+      "periodo": "1988-07-01",
+      "usd_per_bbl": 14.91
+    },
+    {
+      "periodo": "1988-08-01",
+      "usd_per_bbl": 14.89
+    },
+    {
+      "periodo": "1988-09-01",
+      "usd_per_bbl": 13.18
+    },
+    {
+      "periodo": "1988-10-01",
+      "usd_per_bbl": 12.41
+    },
+    {
+      "periodo": "1988-11-01",
+      "usd_per_bbl": 13.02
+    },
+    {
+      "periodo": "1988-12-01",
+      "usd_per_bbl": 15.31
+    },
+    {
+      "periodo": "1989-01-01",
+      "usd_per_bbl": 17.17
+    },
+    {
+      "periodo": "1989-02-01",
+      "usd_per_bbl": 16.89
+    },
+    {
+      "periodo": "1989-03-01",
+      "usd_per_bbl": 18.7
+    },
+    {
+      "periodo": "1989-04-01",
+      "usd_per_bbl": 20.32
+    },
+    {
+      "periodo": "1989-05-01",
+      "usd_per_bbl": 18.63
+    },
+    {
+      "periodo": "1989-06-01",
+      "usd_per_bbl": 17.67
+    },
+    {
+      "periodo": "1989-07-01",
+      "usd_per_bbl": 17.62
+    },
+    {
+      "periodo": "1989-08-01",
+      "usd_per_bbl": 16.77
+    },
+    {
+      "periodo": "1989-09-01",
+      "usd_per_bbl": 17.77
+    },
+    {
+      "periodo": "1989-10-01",
+      "usd_per_bbl": 18.91
+    },
+    {
+      "periodo": "1989-11-01",
+      "usd_per_bbl": 18.73
+    },
+    {
+      "periodo": "1989-12-01",
+      "usd_per_bbl": 19.84
+    },
+    {
+      "periodo": "1990-01-01",
+      "usd_per_bbl": 21.25
+    },
+    {
+      "periodo": "1990-02-01",
+      "usd_per_bbl": 19.81
+    },
+    {
+      "periodo": "1990-03-01",
+      "usd_per_bbl": 18.39
+    },
+    {
+      "periodo": "1990-04-01",
+      "usd_per_bbl": 16.61
+    },
+    {
+      "periodo": "1990-05-01",
+      "usd_per_bbl": 16.35
+    },
+    {
+      "periodo": "1990-06-01",
+      "usd_per_bbl": 15.1
+    },
+    {
+      "periodo": "1990-07-01",
+      "usd_per_bbl": 17.17
+    },
+    {
+      "periodo": "1990-08-01",
+      "usd_per_bbl": 27.17
+    },
+    {
+      "periodo": "1990-09-01",
+      "usd_per_bbl": 34.9
+    },
+    {
+      "periodo": "1990-10-01",
+      "usd_per_bbl": 36.02
+    },
+    {
+      "periodo": "1990-11-01",
+      "usd_per_bbl": 33.07
+    },
+    {
+      "periodo": "1990-12-01",
+      "usd_per_bbl": 28.27
+    },
+    {
+      "periodo": "1991-01-01",
+      "usd_per_bbl": 23.57
+    },
+    {
+      "periodo": "1991-02-01",
+      "usd_per_bbl": 19.54
+    },
+    {
+      "periodo": "1991-03-01",
+      "usd_per_bbl": 19.08
+    },
+    {
+      "periodo": "1991-04-01",
+      "usd_per_bbl": 19.18
+    },
+    {
+      "periodo": "1991-05-01",
+      "usd_per_bbl": 19.19
+    },
+    {
+      "periodo": "1991-06-01",
+      "usd_per_bbl": 18.17
+    },
+    {
+      "periodo": "1991-07-01",
+      "usd_per_bbl": 19.4
+    },
+    {
+      "periodo": "1991-08-01",
+      "usd_per_bbl": 19.77
+    },
+    {
+      "periodo": "1991-09-01",
+      "usd_per_bbl": 20.5
+    },
+    {
+      "periodo": "1991-10-01",
+      "usd_per_bbl": 22.21
+    },
+    {
+      "periodo": "1991-11-01",
+      "usd_per_bbl": 21.11
+    },
+    {
+      "periodo": "1991-12-01",
+      "usd_per_bbl": 18.41
+    },
+    {
+      "periodo": "1992-01-01",
+      "usd_per_bbl": 18.16
+    },
+    {
+      "periodo": "1992-02-01",
+      "usd_per_bbl": 18.05
+    },
+    {
+      "periodo": "1992-03-01",
+      "usd_per_bbl": 17.63
+    },
+    {
+      "periodo": "1992-04-01",
+      "usd_per_bbl": 18.92
+    },
+    {
+      "periodo": "1992-05-01",
+      "usd_per_bbl": 19.89
+    },
+    {
+      "periodo": "1992-06-01",
+      "usd_per_bbl": 21.16
+    },
+    {
+      "periodo": "1992-07-01",
+      "usd_per_bbl": 20.24
+    },
+    {
+      "periodo": "1992-08-01",
+      "usd_per_bbl": 19.74
+    },
+    {
+      "periodo": "1992-09-01",
+      "usd_per_bbl": 20.27
+    },
+    {
+      "periodo": "1992-10-01",
+      "usd_per_bbl": 20.26
+    },
+    {
+      "periodo": "1992-11-01",
+      "usd_per_bbl": 19.21
+    },
+    {
+      "periodo": "1992-12-01",
+      "usd_per_bbl": 18.14
+    },
+    {
+      "periodo": "1993-01-01",
+      "usd_per_bbl": 17.39
+    },
+    {
+      "periodo": "1993-02-01",
+      "usd_per_bbl": 18.47
+    },
+    {
+      "periodo": "1993-03-01",
+      "usd_per_bbl": 18.79
+    },
+    {
+      "periodo": "1993-04-01",
+      "usd_per_bbl": 18.67
+    },
+    {
+      "periodo": "1993-05-01",
+      "usd_per_bbl": 18.51
+    },
+    {
+      "periodo": "1993-06-01",
+      "usd_per_bbl": 17.65
+    },
+    {
+      "periodo": "1993-07-01",
+      "usd_per_bbl": 16.78
+    },
+    {
+      "periodo": "1993-08-01",
+      "usd_per_bbl": 16.7
+    },
+    {
+      "periodo": "1993-09-01",
+      "usd_per_bbl": 16.01
+    },
+    {
+      "periodo": "1993-10-01",
+      "usd_per_bbl": 16.61
+    },
+    {
+      "periodo": "1993-11-01",
+      "usd_per_bbl": 15.2
+    },
+    {
+      "periodo": "1993-12-01",
+      "usd_per_bbl": 13.73
+    },
+    {
+      "periodo": "1994-01-01",
+      "usd_per_bbl": 14.29
+    },
+    {
+      "periodo": "1994-02-01",
+      "usd_per_bbl": 13.8
+    },
+    {
+      "periodo": "1994-03-01",
+      "usd_per_bbl": 13.82
+    },
+    {
+      "periodo": "1994-04-01",
+      "usd_per_bbl": 15.23
+    },
+    {
+      "periodo": "1994-05-01",
+      "usd_per_bbl": 16.19
+    },
+    {
+      "periodo": "1994-06-01",
+      "usd_per_bbl": 16.76
+    },
+    {
+      "periodo": "1994-07-01",
+      "usd_per_bbl": 17.6
+    },
+    {
+      "periodo": "1994-08-01",
+      "usd_per_bbl": 16.89
+    },
+    {
+      "periodo": "1994-09-01",
+      "usd_per_bbl": 15.9
+    },
+    {
+      "periodo": "1994-10-01",
+      "usd_per_bbl": 16.49
+    },
+    {
+      "periodo": "1994-11-01",
+      "usd_per_bbl": 17.19
+    },
+    {
+      "periodo": "1994-12-01",
+      "usd_per_bbl": 15.93
+    },
+    {
+      "periodo": "1995-01-01",
+      "usd_per_bbl": 16.55
+    },
+    {
+      "periodo": "1995-02-01",
+      "usd_per_bbl": 17.11
+    },
+    {
+      "periodo": "1995-03-01",
+      "usd_per_bbl": 17.01
+    },
+    {
+      "periodo": "1995-04-01",
+      "usd_per_bbl": 18.65
+    },
+    {
+      "periodo": "1995-05-01",
+      "usd_per_bbl": 18.35
+    },
+    {
+      "periodo": "1995-06-01",
+      "usd_per_bbl": 17.31
+    },
+    {
+      "periodo": "1995-07-01",
+      "usd_per_bbl": 15.85
+    },
+    {
+      "periodo": "1995-08-01",
+      "usd_per_bbl": 16.1
+    },
+    {
+      "periodo": "1995-09-01",
+      "usd_per_bbl": 16.7
+    },
+    {
+      "periodo": "1995-10-01",
+      "usd_per_bbl": 16.11
+    },
+    {
+      "periodo": "1995-11-01",
+      "usd_per_bbl": 16.86
+    },
+    {
+      "periodo": "1995-12-01",
+      "usd_per_bbl": 17.93
+    },
+    {
+      "periodo": "1996-01-01",
+      "usd_per_bbl": 17.85
+    },
+    {
+      "periodo": "1996-02-01",
+      "usd_per_bbl": 18.0
+    },
+    {
+      "periodo": "1996-03-01",
+      "usd_per_bbl": 19.85
+    },
+    {
+      "periodo": "1996-04-01",
+      "usd_per_bbl": 20.9
+    },
+    {
+      "periodo": "1996-05-01",
+      "usd_per_bbl": 19.15
+    },
+    {
+      "periodo": "1996-06-01",
+      "usd_per_bbl": 18.46
+    },
+    {
+      "periodo": "1996-07-01",
+      "usd_per_bbl": 19.57
+    },
+    {
+      "periodo": "1996-08-01",
+      "usd_per_bbl": 20.51
+    },
+    {
+      "periodo": "1996-09-01",
+      "usd_per_bbl": 22.63
+    },
+    {
+      "periodo": "1996-10-01",
+      "usd_per_bbl": 24.16
+    },
+    {
+      "periodo": "1996-11-01",
+      "usd_per_bbl": 22.76
+    },
+    {
+      "periodo": "1996-12-01",
+      "usd_per_bbl": 23.78
+    },
+    {
+      "periodo": "1997-01-01",
+      "usd_per_bbl": 23.54
+    },
+    {
+      "periodo": "1997-02-01",
+      "usd_per_bbl": 20.85
+    },
+    {
+      "periodo": "1997-03-01",
+      "usd_per_bbl": 19.13
+    },
+    {
+      "periodo": "1997-04-01",
+      "usd_per_bbl": 17.56
+    },
+    {
+      "periodo": "1997-05-01",
+      "usd_per_bbl": 19.02
+    },
+    {
+      "periodo": "1997-06-01",
+      "usd_per_bbl": 17.58
+    },
+    {
+      "periodo": "1997-07-01",
+      "usd_per_bbl": 18.46
+    },
+    {
+      "periodo": "1997-08-01",
+      "usd_per_bbl": 18.6
+    },
+    {
+      "periodo": "1997-09-01",
+      "usd_per_bbl": 18.46
+    },
+    {
+      "periodo": "1997-10-01",
+      "usd_per_bbl": 19.87
+    },
+    {
+      "periodo": "1997-11-01",
+      "usd_per_bbl": 19.17
+    },
+    {
+      "periodo": "1997-12-01",
+      "usd_per_bbl": 17.18
+    },
+    {
+      "periodo": "1998-01-01",
+      "usd_per_bbl": 15.19
+    },
+    {
+      "periodo": "1998-02-01",
+      "usd_per_bbl": 14.07
+    },
+    {
+      "periodo": "1998-03-01",
+      "usd_per_bbl": 13.1
+    },
+    {
+      "periodo": "1998-04-01",
+      "usd_per_bbl": 13.53
+    },
+    {
+      "periodo": "1998-05-01",
+      "usd_per_bbl": 14.36
+    },
+    {
+      "periodo": "1998-06-01",
+      "usd_per_bbl": 12.21
+    },
+    {
+      "periodo": "1998-07-01",
+      "usd_per_bbl": 12.08
+    },
+    {
+      "periodo": "1998-08-01",
+      "usd_per_bbl": 11.91
+    },
+    {
+      "periodo": "1998-09-01",
+      "usd_per_bbl": 13.34
+    },
+    {
+      "periodo": "1998-10-01",
+      "usd_per_bbl": 12.7
+    },
+    {
+      "periodo": "1998-11-01",
+      "usd_per_bbl": 11.04
+    },
+    {
+      "periodo": "1998-12-01",
+      "usd_per_bbl": 9.82
+    },
+    {
+      "periodo": "1999-01-01",
+      "usd_per_bbl": 11.11
+    },
+    {
+      "periodo": "1999-02-01",
+      "usd_per_bbl": 10.27
+    },
+    {
+      "periodo": "1999-03-01",
+      "usd_per_bbl": 12.51
+    },
+    {
+      "periodo": "1999-04-01",
+      "usd_per_bbl": 15.29
+    },
+    {
+      "periodo": "1999-05-01",
+      "usd_per_bbl": 15.23
+    },
+    {
+      "periodo": "1999-06-01",
+      "usd_per_bbl": 15.86
+    },
+    {
+      "periodo": "1999-07-01",
+      "usd_per_bbl": 19.08
+    },
+    {
+      "periodo": "1999-08-01",
+      "usd_per_bbl": 20.22
+    },
+    {
+      "periodo": "1999-09-01",
+      "usd_per_bbl": 22.54
+    },
+    {
+      "periodo": "1999-10-01",
+      "usd_per_bbl": 22.0
+    },
+    {
+      "periodo": "1999-11-01",
+      "usd_per_bbl": 24.58
+    },
+    {
+      "periodo": "1999-12-01",
+      "usd_per_bbl": 25.47
+    },
+    {
+      "periodo": "2000-01-01",
+      "usd_per_bbl": 25.51
+    },
+    {
+      "periodo": "2000-02-01",
+      "usd_per_bbl": 27.78
+    },
+    {
+      "periodo": "2000-03-01",
+      "usd_per_bbl": 27.49
+    },
+    {
+      "periodo": "2000-04-01",
+      "usd_per_bbl": 22.76
+    },
+    {
+      "periodo": "2000-05-01",
+      "usd_per_bbl": 27.74
+    },
+    {
+      "periodo": "2000-06-01",
+      "usd_per_bbl": 29.8
+    },
+    {
+      "periodo": "2000-07-01",
+      "usd_per_bbl": 28.68
+    },
+    {
+      "periodo": "2000-08-01",
+      "usd_per_bbl": 30.2
+    },
+    {
+      "periodo": "2000-09-01",
+      "usd_per_bbl": 33.14
+    },
+    {
+      "periodo": "2000-10-01",
+      "usd_per_bbl": 30.96
+    },
+    {
+      "periodo": "2000-11-01",
+      "usd_per_bbl": 32.55
+    },
+    {
+      "periodo": "2000-12-01",
+      "usd_per_bbl": 25.66
+    },
+    {
+      "periodo": "2001-01-01",
+      "usd_per_bbl": 25.62
+    },
+    {
+      "periodo": "2001-02-01",
+      "usd_per_bbl": 27.5
+    },
+    {
+      "periodo": "2001-03-01",
+      "usd_per_bbl": 24.5
+    },
+    {
+      "periodo": "2001-04-01",
+      "usd_per_bbl": 25.66
+    },
+    {
+      "periodo": "2001-05-01",
+      "usd_per_bbl": 28.31
+    },
+    {
+      "periodo": "2001-06-01",
+      "usd_per_bbl": 27.85
+    },
+    {
+      "periodo": "2001-07-01",
+      "usd_per_bbl": 24.61
+    },
+    {
+      "periodo": "2001-08-01",
+      "usd_per_bbl": 25.68
+    },
+    {
+      "periodo": "2001-09-01",
+      "usd_per_bbl": 25.62
+    },
+    {
+      "periodo": "2001-10-01",
+      "usd_per_bbl": 20.54
+    },
+    {
+      "periodo": "2001-11-01",
+      "usd_per_bbl": 18.8
+    },
+    {
+      "periodo": "2001-12-01",
+      "usd_per_bbl": 18.71
+    },
+    {
+      "periodo": "2002-01-01",
+      "usd_per_bbl": 19.42
+    },
+    {
+      "periodo": "2002-02-01",
+      "usd_per_bbl": 20.28
+    },
+    {
+      "periodo": "2002-03-01",
+      "usd_per_bbl": 23.7
+    },
+    {
+      "periodo": "2002-04-01",
+      "usd_per_bbl": 25.73
+    },
+    {
+      "periodo": "2002-05-01",
+      "usd_per_bbl": 25.35
+    },
+    {
+      "periodo": "2002-06-01",
+      "usd_per_bbl": 24.08
+    },
+    {
+      "periodo": "2002-07-01",
+      "usd_per_bbl": 25.74
+    },
+    {
+      "periodo": "2002-08-01",
+      "usd_per_bbl": 26.65
+    },
+    {
+      "periodo": "2002-09-01",
+      "usd_per_bbl": 28.4
+    },
+    {
+      "periodo": "2002-10-01",
+      "usd_per_bbl": 27.54
+    },
+    {
+      "periodo": "2002-11-01",
+      "usd_per_bbl": 24.34
+    },
+    {
+      "periodo": "2002-12-01",
+      "usd_per_bbl": 28.33
+    },
+    {
+      "periodo": "2003-01-01",
+      "usd_per_bbl": 31.18
+    },
+    {
+      "periodo": "2003-02-01",
+      "usd_per_bbl": 32.77
+    },
+    {
+      "periodo": "2003-03-01",
+      "usd_per_bbl": 30.61
+    },
+    {
+      "periodo": "2003-04-01",
+      "usd_per_bbl": 25.0
+    },
+    {
+      "periodo": "2003-05-01",
+      "usd_per_bbl": 25.86
+    },
+    {
+      "periodo": "2003-06-01",
+      "usd_per_bbl": 27.65
+    },
+    {
+      "periodo": "2003-07-01",
+      "usd_per_bbl": 28.35
+    },
+    {
+      "periodo": "2003-08-01",
+      "usd_per_bbl": 29.89
+    },
+    {
+      "periodo": "2003-09-01",
+      "usd_per_bbl": 27.11
+    },
+    {
+      "periodo": "2003-10-01",
+      "usd_per_bbl": 29.61
+    },
+    {
+      "periodo": "2003-11-01",
+      "usd_per_bbl": 28.75
+    },
+    {
+      "periodo": "2003-12-01",
+      "usd_per_bbl": 29.81
+    },
+    {
+      "periodo": "2004-01-01",
+      "usd_per_bbl": 31.28
+    },
+    {
+      "periodo": "2004-02-01",
+      "usd_per_bbl": 30.86
+    },
+    {
+      "periodo": "2004-03-01",
+      "usd_per_bbl": 33.63
+    },
+    {
+      "periodo": "2004-04-01",
+      "usd_per_bbl": 33.59
+    },
+    {
+      "periodo": "2004-05-01",
+      "usd_per_bbl": 37.57
+    },
+    {
+      "periodo": "2004-06-01",
+      "usd_per_bbl": 35.18
+    },
+    {
+      "periodo": "2004-07-01",
+      "usd_per_bbl": 38.22
+    },
+    {
+      "periodo": "2004-08-01",
+      "usd_per_bbl": 42.74
+    },
+    {
+      "periodo": "2004-09-01",
+      "usd_per_bbl": 43.2
+    },
+    {
+      "periodo": "2004-10-01",
+      "usd_per_bbl": 49.78
+    },
+    {
+      "periodo": "2004-11-01",
+      "usd_per_bbl": 43.11
+    },
+    {
+      "periodo": "2004-12-01",
+      "usd_per_bbl": 39.6
+    },
+    {
+      "periodo": "2005-01-01",
+      "usd_per_bbl": 44.51
+    },
+    {
+      "periodo": "2005-02-01",
+      "usd_per_bbl": 45.48
+    },
+    {
+      "periodo": "2005-03-01",
+      "usd_per_bbl": 53.1
+    },
+    {
+      "periodo": "2005-04-01",
+      "usd_per_bbl": 51.88
+    },
+    {
+      "periodo": "2005-05-01",
+      "usd_per_bbl": 48.65
+    },
+    {
+      "periodo": "2005-06-01",
+      "usd_per_bbl": 54.35
+    },
+    {
+      "periodo": "2005-07-01",
+      "usd_per_bbl": 57.52
+    },
+    {
+      "periodo": "2005-08-01",
+      "usd_per_bbl": 63.98
+    },
+    {
+      "periodo": "2005-09-01",
+      "usd_per_bbl": 62.91
+    },
+    {
+      "periodo": "2005-10-01",
+      "usd_per_bbl": 58.54
+    },
+    {
+      "periodo": "2005-11-01",
+      "usd_per_bbl": 55.24
+    },
+    {
+      "periodo": "2005-12-01",
+      "usd_per_bbl": 56.86
+    },
+    {
+      "periodo": "2006-01-01",
+      "usd_per_bbl": 62.99
+    },
+    {
+      "periodo": "2006-02-01",
+      "usd_per_bbl": 60.21
+    },
+    {
+      "periodo": "2006-03-01",
+      "usd_per_bbl": 62.06
+    },
+    {
+      "periodo": "2006-04-01",
+      "usd_per_bbl": 70.26
+    },
+    {
+      "periodo": "2006-05-01",
+      "usd_per_bbl": 69.78
+    },
+    {
+      "periodo": "2006-06-01",
+      "usd_per_bbl": 68.56
+    },
+    {
+      "periodo": "2006-07-01",
+      "usd_per_bbl": 73.67
+    },
+    {
+      "periodo": "2006-08-01",
+      "usd_per_bbl": 73.23
+    },
+    {
+      "periodo": "2006-09-01",
+      "usd_per_bbl": 61.96
+    },
+    {
+      "periodo": "2006-10-01",
+      "usd_per_bbl": 57.81
+    },
+    {
+      "periodo": "2006-11-01",
+      "usd_per_bbl": 58.76
+    },
+    {
+      "periodo": "2006-12-01",
+      "usd_per_bbl": 62.47
+    },
+    {
+      "periodo": "2007-01-01",
+      "usd_per_bbl": 53.68
+    },
+    {
+      "periodo": "2007-02-01",
+      "usd_per_bbl": 57.56
+    },
+    {
+      "periodo": "2007-03-01",
+      "usd_per_bbl": 62.05
+    },
+    {
+      "periodo": "2007-04-01",
+      "usd_per_bbl": 67.49
+    },
+    {
+      "periodo": "2007-05-01",
+      "usd_per_bbl": 67.21
+    },
+    {
+      "periodo": "2007-06-01",
+      "usd_per_bbl": 71.05
+    },
+    {
+      "periodo": "2007-07-01",
+      "usd_per_bbl": 76.93
+    },
+    {
+      "periodo": "2007-08-01",
+      "usd_per_bbl": 70.76
+    },
+    {
+      "periodo": "2007-09-01",
+      "usd_per_bbl": 77.17
+    },
+    {
+      "periodo": "2007-10-01",
+      "usd_per_bbl": 82.34
+    },
+    {
+      "periodo": "2007-11-01",
+      "usd_per_bbl": 92.41
+    },
+    {
+      "periodo": "2007-12-01",
+      "usd_per_bbl": 90.93
+    },
+    {
+      "periodo": "2008-01-01",
+      "usd_per_bbl": 92.18
+    },
+    {
+      "periodo": "2008-02-01",
+      "usd_per_bbl": 94.99
+    },
+    {
+      "periodo": "2008-03-01",
+      "usd_per_bbl": 103.64
+    },
+    {
+      "periodo": "2008-04-01",
+      "usd_per_bbl": 109.07
+    },
+    {
+      "periodo": "2008-05-01",
+      "usd_per_bbl": 122.8
+    },
+    {
+      "periodo": "2008-06-01",
+      "usd_per_bbl": 132.32
+    },
+    {
+      "periodo": "2008-07-01",
+      "usd_per_bbl": 132.72
+    },
+    {
+      "periodo": "2008-08-01",
+      "usd_per_bbl": 113.24
+    },
+    {
+      "periodo": "2008-09-01",
+      "usd_per_bbl": 97.23
+    },
+    {
+      "periodo": "2008-10-01",
+      "usd_per_bbl": 71.58
+    },
+    {
+      "periodo": "2008-11-01",
+      "usd_per_bbl": 52.45
+    },
+    {
+      "periodo": "2008-12-01",
+      "usd_per_bbl": 39.95
+    },
+    {
+      "periodo": "2009-01-01",
+      "usd_per_bbl": 43.44
+    },
+    {
+      "periodo": "2009-02-01",
+      "usd_per_bbl": 43.32
+    },
+    {
+      "periodo": "2009-03-01",
+      "usd_per_bbl": 46.54
+    },
+    {
+      "periodo": "2009-04-01",
+      "usd_per_bbl": 50.18
+    },
+    {
+      "periodo": "2009-05-01",
+      "usd_per_bbl": 57.3
+    },
+    {
+      "periodo": "2009-06-01",
+      "usd_per_bbl": 68.61
+    },
+    {
+      "periodo": "2009-07-01",
+      "usd_per_bbl": 64.44
+    },
+    {
+      "periodo": "2009-08-01",
+      "usd_per_bbl": 72.51
+    },
+    {
+      "periodo": "2009-09-01",
+      "usd_per_bbl": 67.65
+    },
+    {
+      "periodo": "2009-10-01",
+      "usd_per_bbl": 72.77
+    },
+    {
+      "periodo": "2009-11-01",
+      "usd_per_bbl": 76.66
+    },
+    {
+      "periodo": "2009-12-01",
+      "usd_per_bbl": 74.46
+    },
+    {
+      "periodo": "2010-01-01",
+      "usd_per_bbl": 76.17
+    },
+    {
+      "periodo": "2010-02-01",
+      "usd_per_bbl": 73.75
+    },
+    {
+      "periodo": "2010-03-01",
+      "usd_per_bbl": 78.83
+    },
+    {
+      "periodo": "2010-04-01",
+      "usd_per_bbl": 84.82
+    },
+    {
+      "periodo": "2010-05-01",
+      "usd_per_bbl": 75.95
+    },
+    {
+      "periodo": "2010-06-01",
+      "usd_per_bbl": 74.76
+    },
+    {
+      "periodo": "2010-07-01",
+      "usd_per_bbl": 75.58
+    },
+    {
+      "periodo": "2010-08-01",
+      "usd_per_bbl": 77.04
+    },
+    {
+      "periodo": "2010-09-01",
+      "usd_per_bbl": 77.84
+    },
+    {
+      "periodo": "2010-10-01",
+      "usd_per_bbl": 82.67
+    },
+    {
+      "periodo": "2010-11-01",
+      "usd_per_bbl": 85.28
+    },
+    {
+      "periodo": "2010-12-01",
+      "usd_per_bbl": 91.45
+    },
+    {
+      "periodo": "2011-01-01",
+      "usd_per_bbl": 96.52
+    },
+    {
+      "periodo": "2011-02-01",
+      "usd_per_bbl": 103.72
+    },
+    {
+      "periodo": "2011-03-01",
+      "usd_per_bbl": 114.64
+    },
+    {
+      "periodo": "2011-04-01",
+      "usd_per_bbl": 123.26
+    },
+    {
+      "periodo": "2011-05-01",
+      "usd_per_bbl": 114.99
+    },
+    {
+      "periodo": "2011-06-01",
+      "usd_per_bbl": 113.83
+    },
+    {
+      "periodo": "2011-07-01",
+      "usd_per_bbl": 116.97
+    },
+    {
+      "periodo": "2011-08-01",
+      "usd_per_bbl": 110.22
+    },
+    {
+      "periodo": "2011-09-01",
+      "usd_per_bbl": 112.83
+    },
+    {
+      "periodo": "2011-10-01",
+      "usd_per_bbl": 109.55
+    },
+    {
+      "periodo": "2011-11-01",
+      "usd_per_bbl": 110.77
+    },
+    {
+      "periodo": "2011-12-01",
+      "usd_per_bbl": 107.87
+    },
+    {
+      "periodo": "2012-01-01",
+      "usd_per_bbl": 110.69
+    },
+    {
+      "periodo": "2012-02-01",
+      "usd_per_bbl": 119.33
+    },
+    {
+      "periodo": "2012-03-01",
+      "usd_per_bbl": 125.45
+    },
+    {
+      "periodo": "2012-04-01",
+      "usd_per_bbl": 119.75
+    },
+    {
+      "periodo": "2012-05-01",
+      "usd_per_bbl": 110.34
+    },
+    {
+      "periodo": "2012-06-01",
+      "usd_per_bbl": 95.16
+    },
+    {
+      "periodo": "2012-07-01",
+      "usd_per_bbl": 102.62
+    },
+    {
+      "periodo": "2012-08-01",
+      "usd_per_bbl": 113.36
+    },
+    {
+      "periodo": "2012-09-01",
+      "usd_per_bbl": 112.86
+    },
+    {
+      "periodo": "2012-10-01",
+      "usd_per_bbl": 111.71
+    },
+    {
+      "periodo": "2012-11-01",
+      "usd_per_bbl": 109.06
+    },
+    {
+      "periodo": "2012-12-01",
+      "usd_per_bbl": 109.49
+    },
+    {
+      "periodo": "2013-01-01",
+      "usd_per_bbl": 112.96
+    },
+    {
+      "periodo": "2013-02-01",
+      "usd_per_bbl": 116.05
+    },
+    {
+      "periodo": "2013-03-01",
+      "usd_per_bbl": 108.47
+    },
+    {
+      "periodo": "2013-04-01",
+      "usd_per_bbl": 102.25
+    },
+    {
+      "periodo": "2013-05-01",
+      "usd_per_bbl": 102.56
+    },
+    {
+      "periodo": "2013-06-01",
+      "usd_per_bbl": 102.92
+    },
+    {
+      "periodo": "2013-07-01",
+      "usd_per_bbl": 107.93
+    },
+    {
+      "periodo": "2013-08-01",
+      "usd_per_bbl": 111.28
+    },
+    {
+      "periodo": "2013-09-01",
+      "usd_per_bbl": 111.6
+    },
+    {
+      "periodo": "2013-10-01",
+      "usd_per_bbl": 109.08
+    },
+    {
+      "periodo": "2013-11-01",
+      "usd_per_bbl": 107.79
+    },
+    {
+      "periodo": "2013-12-01",
+      "usd_per_bbl": 110.76
+    },
+    {
+      "periodo": "2014-01-01",
+      "usd_per_bbl": 108.12
+    },
+    {
+      "periodo": "2014-02-01",
+      "usd_per_bbl": 108.9
+    },
+    {
+      "periodo": "2014-03-01",
+      "usd_per_bbl": 107.48
+    },
+    {
+      "periodo": "2014-04-01",
+      "usd_per_bbl": 107.76
+    },
+    {
+      "periodo": "2014-05-01",
+      "usd_per_bbl": 109.54
+    },
+    {
+      "periodo": "2014-06-01",
+      "usd_per_bbl": 111.8
+    },
+    {
+      "periodo": "2014-07-01",
+      "usd_per_bbl": 106.77
+    },
+    {
+      "periodo": "2014-08-01",
+      "usd_per_bbl": 101.61
+    },
+    {
+      "periodo": "2014-09-01",
+      "usd_per_bbl": 97.09
+    },
+    {
+      "periodo": "2014-10-01",
+      "usd_per_bbl": 87.43
+    },
+    {
+      "periodo": "2014-11-01",
+      "usd_per_bbl": 79.44
+    },
+    {
+      "periodo": "2014-12-01",
+      "usd_per_bbl": 62.34
+    },
+    {
+      "periodo": "2015-01-01",
+      "usd_per_bbl": 47.76
+    },
+    {
+      "periodo": "2015-02-01",
+      "usd_per_bbl": 58.1
+    },
+    {
+      "periodo": "2015-03-01",
+      "usd_per_bbl": 55.89
+    },
+    {
+      "periodo": "2015-04-01",
+      "usd_per_bbl": 59.52
+    },
+    {
+      "periodo": "2015-05-01",
+      "usd_per_bbl": 64.08
+    },
+    {
+      "periodo": "2015-06-01",
+      "usd_per_bbl": 61.48
+    },
+    {
+      "periodo": "2015-07-01",
+      "usd_per_bbl": 56.56
+    },
+    {
+      "periodo": "2015-08-01",
+      "usd_per_bbl": 46.52
+    },
+    {
+      "periodo": "2015-09-01",
+      "usd_per_bbl": 47.62
+    },
+    {
+      "periodo": "2015-10-01",
+      "usd_per_bbl": 48.43
+    },
+    {
+      "periodo": "2015-11-01",
+      "usd_per_bbl": 44.27
+    },
+    {
+      "periodo": "2015-12-01",
+      "usd_per_bbl": 38.01
+    },
+    {
+      "periodo": "2016-01-01",
+      "usd_per_bbl": 30.7
+    },
+    {
+      "periodo": "2016-02-01",
+      "usd_per_bbl": 32.18
+    },
+    {
+      "periodo": "2016-03-01",
+      "usd_per_bbl": 38.21
+    },
+    {
+      "periodo": "2016-04-01",
+      "usd_per_bbl": 41.58
+    },
+    {
+      "periodo": "2016-05-01",
+      "usd_per_bbl": 46.74
+    },
+    {
+      "periodo": "2016-06-01",
+      "usd_per_bbl": 48.25
+    },
+    {
+      "periodo": "2016-07-01",
+      "usd_per_bbl": 44.95
+    },
+    {
+      "periodo": "2016-08-01",
+      "usd_per_bbl": 45.84
+    },
+    {
+      "periodo": "2016-09-01",
+      "usd_per_bbl": 46.57
+    },
+    {
+      "periodo": "2016-10-01",
+      "usd_per_bbl": 49.52
+    },
+    {
+      "periodo": "2016-11-01",
+      "usd_per_bbl": 44.73
+    },
+    {
+      "periodo": "2016-12-01",
+      "usd_per_bbl": 53.31
+    },
+    {
+      "periodo": "2017-01-01",
+      "usd_per_bbl": 54.58
+    },
+    {
+      "periodo": "2017-02-01",
+      "usd_per_bbl": 54.87
+    },
+    {
+      "periodo": "2017-03-01",
+      "usd_per_bbl": 51.59
+    },
+    {
+      "periodo": "2017-04-01",
+      "usd_per_bbl": 52.31
+    },
+    {
+      "periodo": "2017-05-01",
+      "usd_per_bbl": 50.33
+    },
+    {
+      "periodo": "2017-06-01",
+      "usd_per_bbl": 46.37
+    },
+    {
+      "periodo": "2017-07-01",
+      "usd_per_bbl": 48.48
+    },
+    {
+      "periodo": "2017-08-01",
+      "usd_per_bbl": 51.7
+    },
+    {
+      "periodo": "2017-09-01",
+      "usd_per_bbl": 56.15
+    },
+    {
+      "periodo": "2017-10-01",
+      "usd_per_bbl": 57.51
+    },
+    {
+      "periodo": "2017-11-01",
+      "usd_per_bbl": 62.71
+    },
+    {
+      "periodo": "2017-12-01",
+      "usd_per_bbl": 64.37
+    },
+    {
+      "periodo": "2018-01-01",
+      "usd_per_bbl": 69.08
+    },
+    {
+      "periodo": "2018-02-01",
+      "usd_per_bbl": 65.32
+    },
+    {
+      "periodo": "2018-03-01",
+      "usd_per_bbl": 66.02
+    },
+    {
+      "periodo": "2018-04-01",
+      "usd_per_bbl": 72.11
+    },
+    {
+      "periodo": "2018-05-01",
+      "usd_per_bbl": 76.98
+    },
+    {
+      "periodo": "2018-06-01",
+      "usd_per_bbl": 74.41
+    },
+    {
+      "periodo": "2018-07-01",
+      "usd_per_bbl": 74.25
+    },
+    {
+      "periodo": "2018-08-01",
+      "usd_per_bbl": 72.53
+    },
+    {
+      "periodo": "2018-09-01",
+      "usd_per_bbl": 78.89
+    },
+    {
+      "periodo": "2018-10-01",
+      "usd_per_bbl": 81.03
+    },
+    {
+      "periodo": "2018-11-01",
+      "usd_per_bbl": 64.75
+    },
+    {
+      "periodo": "2018-12-01",
+      "usd_per_bbl": 57.36
+    },
+    {
+      "periodo": "2019-01-01",
+      "usd_per_bbl": 59.41
+    },
+    {
+      "periodo": "2019-02-01",
+      "usd_per_bbl": 63.96
+    },
+    {
+      "periodo": "2019-03-01",
+      "usd_per_bbl": 66.14
+    },
+    {
+      "periodo": "2019-04-01",
+      "usd_per_bbl": 71.23
+    },
+    {
+      "periodo": "2019-05-01",
+      "usd_per_bbl": 71.32
+    },
+    {
+      "periodo": "2019-06-01",
+      "usd_per_bbl": 64.22
+    },
+    {
+      "periodo": "2019-07-01",
+      "usd_per_bbl": 63.92
+    },
+    {
+      "periodo": "2019-08-01",
+      "usd_per_bbl": 59.04
+    },
+    {
+      "periodo": "2019-09-01",
+      "usd_per_bbl": 62.83
+    },
+    {
+      "periodo": "2019-10-01",
+      "usd_per_bbl": 59.71
+    },
+    {
+      "periodo": "2019-11-01",
+      "usd_per_bbl": 63.21
+    },
+    {
+      "periodo": "2019-12-01",
+      "usd_per_bbl": 67.31
+    },
+    {
+      "periodo": "2020-01-01",
+      "usd_per_bbl": 63.65
+    },
+    {
+      "periodo": "2020-02-01",
+      "usd_per_bbl": 55.66
+    },
+    {
+      "periodo": "2020-03-01",
+      "usd_per_bbl": 32.01
+    },
+    {
+      "periodo": "2020-04-01",
+      "usd_per_bbl": 18.38
+    },
+    {
+      "periodo": "2020-05-01",
+      "usd_per_bbl": 29.38
+    },
+    {
+      "periodo": "2020-06-01",
+      "usd_per_bbl": 40.27
+    },
+    {
+      "periodo": "2020-07-01",
+      "usd_per_bbl": 43.24
+    },
+    {
+      "periodo": "2020-08-01",
+      "usd_per_bbl": 44.74
+    },
+    {
+      "periodo": "2020-09-01",
+      "usd_per_bbl": 40.91
+    },
+    {
+      "periodo": "2020-10-01",
+      "usd_per_bbl": 40.19
+    },
+    {
+      "periodo": "2020-11-01",
+      "usd_per_bbl": 42.69
+    },
+    {
+      "periodo": "2020-12-01",
+      "usd_per_bbl": 49.99
+    },
+    {
+      "periodo": "2021-01-01",
+      "usd_per_bbl": 54.77
+    },
+    {
+      "periodo": "2021-02-01",
+      "usd_per_bbl": 62.28
+    },
+    {
+      "periodo": "2021-03-01",
+      "usd_per_bbl": 65.41
+    },
+    {
+      "periodo": "2021-04-01",
+      "usd_per_bbl": 64.81
+    },
+    {
+      "periodo": "2021-05-01",
+      "usd_per_bbl": 68.53
+    },
+    {
+      "periodo": "2021-06-01",
+      "usd_per_bbl": 73.16
+    },
+    {
+      "periodo": "2021-07-01",
+      "usd_per_bbl": 75.17
+    },
+    {
+      "periodo": "2021-08-01",
+      "usd_per_bbl": 70.75
+    },
+    {
+      "periodo": "2021-09-01",
+      "usd_per_bbl": 74.49
+    },
+    {
+      "periodo": "2021-10-01",
+      "usd_per_bbl": 83.54
+    },
+    {
+      "periodo": "2021-11-01",
+      "usd_per_bbl": 81.05
+    },
+    {
+      "periodo": "2021-12-01",
+      "usd_per_bbl": 74.17
+    },
+    {
+      "periodo": "2022-01-01",
+      "usd_per_bbl": 86.51
+    },
+    {
+      "periodo": "2022-02-01",
+      "usd_per_bbl": 97.13
+    },
+    {
+      "periodo": "2022-03-01",
+      "usd_per_bbl": 117.25
+    },
+    {
+      "periodo": "2022-04-01",
+      "usd_per_bbl": 104.58
+    },
+    {
+      "periodo": "2022-05-01",
+      "usd_per_bbl": 113.34
+    },
+    {
+      "periodo": "2022-06-01",
+      "usd_per_bbl": 122.71
+    },
+    {
+      "periodo": "2022-07-01",
+      "usd_per_bbl": 111.93
+    },
+    {
+      "periodo": "2022-08-01",
+      "usd_per_bbl": 100.45
+    },
+    {
+      "periodo": "2022-09-01",
+      "usd_per_bbl": 89.76
+    },
+    {
+      "periodo": "2022-10-01",
+      "usd_per_bbl": 93.33
+    },
+    {
+      "periodo": "2022-11-01",
+      "usd_per_bbl": 91.42
+    },
+    {
+      "periodo": "2022-12-01",
+      "usd_per_bbl": 80.92
+    },
+    {
+      "periodo": "2023-01-01",
+      "usd_per_bbl": 82.5
+    },
+    {
+      "periodo": "2023-02-01",
+      "usd_per_bbl": 82.59
+    },
+    {
+      "periodo": "2023-03-01",
+      "usd_per_bbl": 78.43
+    },
+    {
+      "periodo": "2023-04-01",
+      "usd_per_bbl": 84.64
+    },
+    {
+      "periodo": "2023-05-01",
+      "usd_per_bbl": 75.47
+    },
+    {
+      "periodo": "2023-06-01",
+      "usd_per_bbl": 74.84
+    },
+    {
+      "periodo": "2023-07-01",
+      "usd_per_bbl": 80.11
+    },
+    {
+      "periodo": "2023-08-01",
+      "usd_per_bbl": 86.15
+    },
+    {
+      "periodo": "2023-09-01",
+      "usd_per_bbl": 93.72
+    },
+    {
+      "periodo": "2023-10-01",
+      "usd_per_bbl": 90.6
+    },
+    {
+      "periodo": "2023-11-01",
+      "usd_per_bbl": 82.94
+    },
+    {
+      "periodo": "2023-12-01",
+      "usd_per_bbl": 77.63
+    },
+    {
+      "periodo": "2024-01-01",
+      "usd_per_bbl": 80.12
+    },
+    {
+      "periodo": "2024-02-01",
+      "usd_per_bbl": 83.48
+    },
+    {
+      "periodo": "2024-03-01",
+      "usd_per_bbl": 85.41
+    },
+    {
+      "periodo": "2024-04-01",
+      "usd_per_bbl": 89.94
+    },
+    {
+      "periodo": "2024-05-01",
+      "usd_per_bbl": 81.75
+    },
+    {
+      "periodo": "2024-06-01",
+      "usd_per_bbl": 82.25
+    },
+    {
+      "periodo": "2024-07-01",
+      "usd_per_bbl": 85.15
+    },
+    {
+      "periodo": "2024-08-01",
+      "usd_per_bbl": 80.36
+    },
+    {
+      "periodo": "2024-09-01",
+      "usd_per_bbl": 74.02
+    },
+    {
+      "periodo": "2024-10-01",
+      "usd_per_bbl": 75.63
+    },
+    {
+      "periodo": "2024-11-01",
+      "usd_per_bbl": 74.35
+    },
+    {
+      "periodo": "2024-12-01",
+      "usd_per_bbl": 73.86
+    },
+    {
+      "periodo": "2025-01-01",
+      "usd_per_bbl": 79.27
+    },
+    {
+      "periodo": "2025-02-01",
+      "usd_per_bbl": 75.44
+    },
+    {
+      "periodo": "2025-03-01",
+      "usd_per_bbl": 72.73
+    },
+    {
+      "periodo": "2025-04-01",
+      "usd_per_bbl": 68.13
+    },
+    {
+      "periodo": "2025-05-01",
+      "usd_per_bbl": 64.45
+    },
+    {
+      "periodo": "2025-06-01",
+      "usd_per_bbl": 71.44
+    },
+    {
+      "periodo": "2025-07-01",
+      "usd_per_bbl": 71.04
+    },
+    {
+      "periodo": "2025-08-01",
+      "usd_per_bbl": 67.87
+    },
+    {
+      "periodo": "2025-09-01",
+      "usd_per_bbl": 67.99
+    },
+    {
+      "periodo": "2025-10-01",
+      "usd_per_bbl": 64.54
+    },
+    {
+      "periodo": "2025-11-01",
+      "usd_per_bbl": 63.8
+    },
+    {
+      "periodo": "2025-12-01",
+      "usd_per_bbl": 62.54
+    },
+    {
+      "periodo": "2026-01-01",
+      "usd_per_bbl": 66.6
+    },
+    {
+      "periodo": "2026-02-01",
+      "usd_per_bbl": 70.89
+    },
+    {
+      "periodo": "2026-03-01",
+      "usd_per_bbl": 103.13
+    },
+    {
+      "periodo": "2026-04-01",
+      "usd_per_bbl": 117.29
+    },
+    {
+      "periodo": "2026-05-01",
+      "usd_per_bbl": 107.14
+    },
+    {
+      "periodo": "2026-06-01",
+      "usd_per_bbl": 85.4
+    },
+    {
+      "periodo": "2026-07-01",
+      "usd_per_bbl": 83.76
+    },
+    {
+      "periodo": "2026-08-01",
+      "usd_per_bbl": 91.08
+    },
+    {
+      "periodo": "2026-09-01",
+      "usd_per_bbl": 114.16
+    }
+  ],
+  "gas": {
+    "status": "unavailable",
+    "reason": "No se validó una serie mensual comparable para Vaca Muerta ni el poder calorífico para convertir m³ a MMBtu.",
+    "reviewed_sources": [
+      "https://datos.energia.gob.ar/dataset/precios-de-gas-natural",
+      "https://www.argentina.gob.ar/economia/energia/hidrocarburos/plan-gasar"
+    ]
+  }
+}

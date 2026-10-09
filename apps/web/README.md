@@ -38,3 +38,15 @@ No se inventa aprobación: mientras no exista un `approval.json` válido se mues
 `lib/navigation.ts` define Resumen → Producción/Operadores/Áreas/Actividad → operador/área. Filtros e IDs se conservan en la URL, con atrás/adelante. Los destinos solo muestran Próximamente; no se incorporan las vistas locales de operadores o mapa ni se construyen drill-downs.
 
 Alcance/aceptación: [resumen-ui.md](../../specs/001-vaca-muerta-pulse/resumen-ui.md). Hito 3 completo queda pendiente; sin cambios en extracción, dbt o harness.
+
+## Iteración de actualidad y valorización (9 de octubre de 2026)
+
+El Resumen conserva la arquitectura de cards de 003 y aplica [004-data-valuation](../../specs/004-data-valuation/spec.md) usando analytics-ui. Se reemplaza el snapshot por el candidato validado hasta agosto; septiembre parcial queda excluido. El cliente elige el máximo período aceptado y verifica cutoff, cobertura, contrato y hash.
+
+`lib/metrics.ts` concentra comparaciones de cada KPI, valorización y adaptaciones parametrizadas para ambos fluidos. Volumen: tasa, volumen mensual, pozos, valor bruto estimado. Valor estimado: tasa USD/día, valor USD/mes, pozos, referencia Brent USD/bbl, evitando repetir el valor mensual en la cuarta card. La carga de precios es independiente de producción: errores de precios mantienen disponibles los agregados físicos.
+
+`public/data/prices.json` contiene la historia mensual oficial de EIA y su procedencia; `valuation-manifest.json` vincula sus bytes y el release con SHA-256. `scripts/import_brent.py` (raíz del repo) importa la respuesta HTML mensual retenida de EIA sin interpolar. `scripts/bind_valuation.py --data-dir apps/web/public/data` vuelve a ligar los artefactos después de cada actualización. No usar precios nuevos sobre toda la historia. Gas queda sin valoración hasta resolver referencia nacional y conversión energética; se explica su indisponibilidad y mantiene la UI física.
+
+Todas las cards conservan sus propias variaciones y ayuda metodológica accesible. El gráfico y rankings adaptan unidades y comparaciones al modo, con barras de participación sobre el total. `mode=volume|value` se conserva junto con fluido/mes al navegar. La fuente, estado y fechas viven en el footer desplegable. Los destinos pendientes se identifican como Próximamente.
+
+La evidencia nueva y las limitaciones de ejecución están en [data-valuation](../../docs/evidence/data-valuation/README.md). Las descripciones anteriores corresponden a la primera iteración, no a este snapshot actualizado. Harness, configuración del runner y servidor de pruebas permanecen intactos; las expectativas UI se actualizan al contrato nuevo.

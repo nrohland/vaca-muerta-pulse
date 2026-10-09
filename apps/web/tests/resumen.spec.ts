@@ -2,19 +2,21 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { readFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
+import { metric, validatePrices } from "../lib/metrics";
 import { number, prepareEntities, type Release } from "../lib/contract";
 const release: Release = JSON.parse(
   readFileSync("public/data/release.json", "utf8"),
 );
 const manifest = JSON.parse(readFileSync("public/data/manifest.json", "utf8"));
 const latest = manifest.source.approved_period;
+const prices = validatePrices(
+  JSON.parse(readFileSync("public/data/prices.json", "utf8")),
+);
 const base = "/vaca-muerta-pulse/";
 const evidence =
   process.env.EVIDENCE_DIR ?? path.resolve("../../docs/evidence/resumen");
 async function ready(page: any) {
-  await expect(
-    page.getByRole("heading", { name: "Resumen de producción" }),
-  ).toBeVisible();
+  await expect(page.locator(".kpi-card--primary")).toBeVisible();
 }
 
 test("real snapshot matches KPIs and both top-five rankings for oil and gas", async ({
@@ -35,20 +37,22 @@ test("real snapshot matches KPIs and both top-five rankings for oil and gas", as
     await expect(page.locator(".kpi-card--primary .kpi-value")).toContainText(
       number(r.rate, fluid === "oil" ? 0 : 2),
     );
-    await expect(page.locator(".kpi-comparisons")).toContainText(
-      number(r.yoy_rate_pct!),
-    );
-    await expect(page.locator(".kpi-comparisons")).toContainText(
-      number(r.mom_rate_pct!),
-    );
-    await expect(page.locator(".kpi-card").nth(1)).toContainText(
+    await expect(
+      page.locator(".kpi-card--primary .kpi-comparisons"),
+    ).toContainText(number(r.yoy_rate_pct!));
+    await expect(
+      page.locator(".kpi-card--primary .kpi-comparisons"),
+    ).toContainText(number(r.mom_rate_pct!));
+    await expect(page.locator(".kpi-card").nth(2)).toContainText(
       number(r.positive_producing_wells, 0),
     );
-    await expect(page.locator(".kpi-card").nth(2)).toContainText(
-      number(r.volume, fluid === "oil" ? 0 : 2),
-    );
+    await expect(
+      page.locator(".kpi-card").nth(1).locator(".kpi-value"),
+    ).toContainText(number(fluid === "oil" ? r.volume / 1e6 : r.volume, 1));
     await expect(page.locator(".kpi-card").nth(3)).toContainText(
-      number(r.top5_company_share_pct),
+      fluid === "oil"
+        ? number(metric(r, release.production, prices, "estimate").value! / 1e6)
+        : "No disponible",
     );
     for (const dimension of ["company", "area"] as const) {
       const top = prepareEntities(
@@ -98,12 +102,9 @@ test("filters, chart ranges, early missing comparisons and URL reload", async ({
   await page
     .getByLabel("Mes de producción")
     .selectOption(manifest.source.accepted_periods[0]);
-  await expect(page.locator(".kpi-comparisons")).toContainText(
-    "Sin comparador",
-  );
-  await expect(page.locator(".kpi-comparisons")).toContainText(
-    "Sin comparador",
-  );
+  await expect(
+    page.locator(".kpi-card--primary .kpi-comparisons .sr-only"),
+  ).toHaveCount(2);
   await page.reload();
   await ready(page);
   await expect(
@@ -184,6 +185,7 @@ for (const [name, width, height] of [
   ["desktop", 1440, 900],
   ["laptop", 1366, 768],
   ["mobile", 390, 844],
+  ["tablet", 768, 1024],
 ] as const) {
   test(`visual and accessibility review ${name} light/dark`, async ({
     page,
@@ -217,3 +219,47 @@ for (const [name, width, height] of [
     }
   });
 }
+
+test("monetary mode updates metrics and units; gas availability and price failure stay honest", async ({
+  page,
+}) => {
+  await page.goto(base);
+  await ready(page);
+  await page
+    .getByRole("button", { name: "Valor estimado", exact: true })
+    .click();
+  const r = release.production.find(
+    (r) => r.fluid === "oil" && r.periodo === latest,
+  )!;
+  await expect(page.locator(".kpi-card--primary .kpi-value")).toContainText(
+    number(
+      metric(r, release.production, prices, "rate", "value").value! / 1e6,
+      2,
+    ),
+  );
+  await expect(page.locator(".kpi-card").nth(3)).toContainText(
+    "Precio de referencia Brent",
+  );
+  await expect(
+    page.getByRole("heading", { name: "Evolución del valor estimado" }),
+  ).toBeVisible();
+  await page.locator(".ranking-operators .ranking-row").first().click();
+  expect(new URL(page.url()).searchParams.get("mode")).toBe("value");
+  await page.getByRole("button", { name: "Volver al Resumen" }).click();
+  await page.getByRole("button", { name: "Gas", exact: true }).click();
+  await expect(page.getByRole("status")).toContainText(
+    "no disponible para gas",
+  );
+  await expect(page.locator(".kpi-card--primary .kpi-value")).toContainText(
+    "MMm³/d",
+  );
+  await page.route("**/data/prices.json", (route) =>
+    route.fulfill({ status: 404 }),
+  );
+  await page.goto(base);
+  await ready(page);
+  await expect(page.getByRole("status")).toContainText(
+    "métricas físicas siguen disponibles",
+  );
+  await expect(page.locator(".kpi-card").nth(3)).toContainText("No disponible");
+});

@@ -8,6 +8,7 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  ReferenceDot,
 } from "recharts";
 import {
   availableRanges,
@@ -21,6 +22,50 @@ import {
 } from "../lib/contract";
 import { operatorName } from "../lib/operators";
 import type { Tab } from "../lib/navigation";
+import {
+  metric,
+  referencePrice,
+  entityValue,
+  entityYoY,
+  effectiveMode,
+  estimationNote,
+  type Mode,
+  type Prices,
+  type Metric,
+} from "../lib/metrics";
+const exact = (value: number | null) =>
+  value == null
+    ? "No disponible"
+    : new Intl.NumberFormat("es-AR", { maximumFractionDigits: 20 }).format(
+        value,
+      );
+const display = (value: number | null, decimals = 1) =>
+  value == null ? "No disponible" : number(value, decimals);
+const compact = (value: number | null, decimals = 1) =>
+  value == null ? "No disponible" : number(value / 1e6, decimals);
+function Comparisons({
+  metric: m,
+  period,
+}: {
+  metric: Metric;
+  period: string;
+}) {
+  return (
+    <>
+      {(
+        [
+          ["YoY", -12, m.yoy],
+          ["MoM", -1, m.mom],
+        ] as const
+      ).map(([label, offset, value]) => (
+        <span key={label} title={`vs. ${comparisonMonth(period, offset)}`}>
+          <span className="comparison-label">{label}</span>{" "}
+          <Change value={value} compact />
+        </span>
+      ))}
+    </>
+  );
+}
 const rateUnit = (f: Fluid) => (f === "oil" ? "bbl/d" : "MMm³/d");
 const volumeUnit = (f: Fluid) => (f === "oil" ? "bbl" : "MMm³");
 export function periodTitle(p: string) {
@@ -85,7 +130,15 @@ export function KpiCard({
       data-state={state}
       title={tooltip}
     >
-      <span className="metric-label">{label}</span>
+      <div className="metric-heading">
+        <span className="metric-label">{label}</span>
+        {tooltip && (
+          <details className="metric-help">
+            <summary aria-label={`Metodología de ${label}`}>ⓘ</summary>
+            <p>{tooltip}</p>
+          </details>
+        )}
+      </div>
       <div className="kpi-value">
         {value}
         {unit && <span>{unit}</span>}
@@ -97,7 +150,8 @@ export function KpiCard({
           <button
             className="icon-action"
             onClick={onDetail}
-            aria-label={`Ver detalle de ${label.toLocaleLowerCase("es-AR")}`}
+            title="Detalle próximamente"
+            aria-label={`Próximamente: detalle de ${label.toLocaleLowerCase("es-AR")}`}
           >
             ↗
           </button>
@@ -145,16 +199,18 @@ export function GlobalFilters({
   fluid,
   period,
   periods,
-  preliminary,
+  mode,
   onFluid,
   onPeriod,
+  onMode,
 }: {
   fluid: Fluid;
   period: string;
   periods: string[];
-  preliminary: boolean;
+  mode: Mode;
   onFluid: (f: Fluid) => void;
   onPeriod: (p: string) => void;
+  onMode: (m: Mode) => void;
 }) {
   return (
     <div className="global-filters">
@@ -167,7 +223,7 @@ export function GlobalFilters({
         ))}
       </fieldset>
       <label className="period-selector">
-        <span>Período</span>
+        <span className="sr-only">Período</span>
         <select
           aria-label="Mes de producción"
           value={period}
@@ -184,17 +240,14 @@ export function GlobalFilters({
             ))}
         </select>
       </label>
-      <div className="release-status">
-        <span>Datos oficiales · mensuales</span>
-        {preliminary && (
-          <span
-            className="status-badge"
-            title="Agregados pendientes de revisión final"
-          >
-            Preliminar
-          </span>
-        )}
-      </div>
+      <fieldset className="fluid-control mode-control">
+        <legend className="sr-only">Unidad de análisis</legend>
+        {(["volume", "value"] as Mode[]).map((m) => (
+          <button key={m} aria-pressed={mode === m} onClick={() => onMode(m)}>
+            {m === "volume" ? "Volumen" : "Valor estimado"}
+          </button>
+        ))}
+      </fieldset>
     </div>
   );
 }
@@ -203,11 +256,15 @@ function TrendTooltip({
   payload,
   label,
   fluid,
+  mode,
+  prices,
 }: {
   active?: boolean;
   payload?: readonly { value?: number | string | (number | string)[] }[];
   label?: string | number;
   fluid: Fluid;
+  mode: Mode;
+  prices: Prices | null;
 }) {
   const value = payload?.[0]?.value;
   if (!active || value == null || label == null) return null;
@@ -215,12 +272,21 @@ function TrendTooltip({
     <div className="chart-tooltip">
       <span>{periodTitle(String(label))}</span>
       <strong>
-        {number(Number(value), fluid === "oil" ? 0 : 2)} {rateUnit(fluid)}
+        {exact(Number(value))}{" "}
+        {mode === "value" ? "USD/día estimados" : rateUnit(fluid)}
       </strong>
+      {mode === "value" && (
+        <span>
+          Brent: {display(referencePrice(prices, String(label), fluid), 2)}{" "}
+          USD/bbl · EIA
+        </span>
+      )}
     </div>
   );
 }
 export function Evolution({
+  mode,
+  prices,
   rows,
   fluid,
   period,
@@ -229,6 +295,8 @@ export function Evolution({
   onDetail,
 }: {
   rows: Row[];
+  mode: Mode;
+  prices: Prices | null;
   fluid: Fluid;
   period: string;
   range: number;
@@ -237,11 +305,30 @@ export function Evolution({
 }) {
   const ranges = availableRanges(rows, fluid, period),
     selected = ranges.includes(range) ? range : (ranges[0] ?? 12),
-    series = trend(rows, fluid, period, selected);
+    series = trend(rows, fluid, period, selected).map((point) => {
+      const row = rows.find(
+        (r) => r.fluid === fluid && r.periodo === point.periodo,
+      );
+      return {
+        ...point,
+        rate:
+          mode === "value" && row
+            ? metric(row, rows, prices, "rate", mode).value
+            : mode === "value"
+              ? null
+              : point.rate,
+      };
+    });
+  const unit = mode === "value" ? "USD/día estimados" : rateUnit(fluid);
+  const last = series.at(-1);
   return (
     <ChartCard
-      title="Evolución de la producción"
-      subtitle={`Tasa diaria equivalente · ${rateUnit(fluid)}`}
+      title={
+        mode === "value"
+          ? "Evolución del valor estimado"
+          : "Evolución de la producción"
+      }
+      subtitle={`Tasa diaria equivalente · ${unit}`}
       className="evolution"
       controls={
         <div className="ranges" aria-label="Período de evolución">
@@ -258,7 +345,7 @@ export function Evolution({
       }
       action={
         <button className="text-action" onClick={onDetail}>
-          Ver producción <span aria-hidden="true">↗</span>
+          Producción · Próximamente <span aria-hidden="true">↗</span>
         </button>
       }
     >
@@ -266,7 +353,7 @@ export function Evolution({
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={series}
-            margin={{ left: 0, right: 20, top: 8, bottom: 0 }}
+            margin={{ left: 0, right: 24, top: 22, bottom: 0 }}
           >
             <CartesianGrid vertical={false} stroke="var(--chart-grid)" />
             <XAxis
@@ -285,17 +372,23 @@ export function Evolution({
               tickLine={false}
             />
             <YAxis
-              width={65}
+              width={mode === "value" ? 75 : 65}
               domain={["auto", "auto"]}
               tickCount={3}
-              tickFormatter={(v) => number(v, fluid === "oil" ? 0 : 1)}
+              tickFormatter={(v) =>
+                mode === "value"
+                  ? `${number(v / 1e6, 1)} M`
+                  : number(v, fluid === "oil" ? 0 : 1)
+              }
               tick={{ fill: "var(--muted)", fontSize: 11 }}
               tickMargin={8}
               axisLine={false}
               tickLine={false}
             />
             <Tooltip
-              content={<TrendTooltip fluid={fluid} />}
+              content={
+                <TrendTooltip fluid={fluid} mode={mode} prices={prices} />
+              }
               cursor={{ stroke: "var(--rule)" }}
             />
             <Line
@@ -308,19 +401,38 @@ export function Evolution({
               connectNulls={false}
               isAnimationActive={false}
             />
+            {last?.rate != null && (
+              <ReferenceDot
+                x={last.periodo}
+                y={last.rate}
+                r={4}
+                fill="var(--accent)"
+                stroke="var(--surface)"
+              />
+            )}
           </LineChart>
         </ResponsiveContainer>
       </div>
+      {last?.rate != null && (
+        <p className="chart-final">
+          {periodTitle(last.periodo)} ·{" "}
+          <strong>
+            {number(last.rate, mode === "value" || fluid === "oil" ? 0 : 2)}{" "}
+            {unit}
+          </strong>
+        </p>
+      )}
       <details className="data-disclosure">
         <summary>Ver tabla de datos</summary>
         <table>
           <caption>
-            Tasa mensual. Los meses ausentes no equivalen a cero.
+            Tasa diaria equivalente del mes. Los meses o precios ausentes no
+            equivalen a cero.
           </caption>
           <thead>
             <tr>
               <th>Mes</th>
-              <th>Tasa ({rateUnit(fluid)})</th>
+              <th>Tasa ({unit})</th>
             </tr>
           </thead>
           <tbody>
@@ -330,7 +442,10 @@ export function Evolution({
                 <td>
                   {r.rate == null
                     ? "No disponible"
-                    : number(r.rate, fluid === "oil" ? 0 : 2)}
+                    : number(
+                        r.rate,
+                        mode === "value" || fluid === "oil" ? 0 : 2,
+                      )}
                 </td>
               </tr>
             ))}
@@ -385,12 +500,16 @@ function OperatorLogo({ id }: { id: string }) {
 }
 
 export function RankingCard({
+  mode,
+  prices,
   entities,
   current,
   fluid,
   dimension,
   onNavigate,
 }: {
+  mode: Mode;
+  prices: Prices | null;
   entities: Entity[];
   current: Row;
   fluid: Fluid;
@@ -403,17 +522,17 @@ export function RankingCard({
   return (
     <ModuleCard
       title={operators ? "Principales operadores" : "Principales áreas"}
-      subtitle={`Top 5 · volumen mensual · ${volumeUnit(fluid)}`}
+      subtitle={`Top 5 · ${mode === "value" ? "valor bruto estimado · USD" : `volumen mensual · ${volumeUnit(fluid)}`}`}
       className={`ranking-card ${operators ? "ranking-operators" : "ranking-areas"}`}
       action={
         <button className="text-action" onClick={() => onNavigate(tab)}>
-          Ver {operators ? "operadores" : "áreas"} ↗
+          {operators ? "Operadores" : "Áreas"} · Próximamente ↗
         </button>
       }
     >
       <div className="ranking-columns" aria-hidden="true">
         <span>{operators ? "Operador" : "Área"}</span>
-        <span>Producción</span>
+        <span>{mode === "value" ? "Valor estimado" : "Producción"}</span>
         {operators && <span>Cuota</span>}
         <span>YoY</span>
       </div>
@@ -421,7 +540,11 @@ export function RankingCard({
         {shown.map((e) => {
           // Display composition on a true 0–100% total-volume scale. No growth calculations in UI.
           const share =
-            current.volume > 0 ? (e.volume / current.volume) * 100 : null;
+            current.volume > 0 &&
+            (mode === "volume" ||
+              referencePrice(prices, current.periodo, fluid) != null)
+              ? (e.volume / current.volume) * 100
+              : null;
           const label = operators
             ? operatorName(e.entity_id, e.entity_name)
             : e.entity_name;
@@ -441,8 +564,14 @@ export function RankingCard({
                   </span>
                 </span>
                 <span className="bar-value">
-                  <span className="mobile-label">Producción</span>
-                  {number(e.volume, fluid === "oil" ? 0 : 2)}
+                  <span className="mobile-label">
+                    {mode === "value" ? "USD estimados" : "Producción"}
+                  </span>
+                  <span title={exact(entityValue(e, prices, mode))}>
+                    {mode === "value"
+                      ? `${compact(entityValue(e, prices, mode))} M`
+                      : number(e.volume, fluid === "oil" ? 0 : 2)}
+                  </span>
                 </span>
                 {operators && (
                   <span className="share-value">
@@ -452,7 +581,7 @@ export function RankingCard({
                 )}
                 <span className="yoy-value">
                   <span className="mobile-label">YoY</span>
-                  <Change value={e.yoy_volume_pct} compact />
+                  <Change value={entityYoY(e, prices, mode)} compact />
                 </span>
                 <span className="bar-track" aria-hidden="true">
                   <span style={{ width: `${share ?? 0}%` }} />
@@ -468,7 +597,8 @@ export function RankingCard({
         </p>
       )}
       <p className="ranking-scale">
-        Barras: participación en el volumen total · escala 0–100%
+        Barras: participación en el total · escala 0–100%
+        {mode === "value" && " · Referencia uniforme, no ingresos efectivos"}
       </p>
     </ModuleCard>
   );
@@ -482,6 +612,8 @@ export function SummaryDashboard({
   range,
   setRange,
   onNavigate,
+  mode,
+  prices,
 }: {
   current: Row;
   rows: Row[];
@@ -491,63 +623,108 @@ export function SummaryDashboard({
   range: number;
   setRange: (n: number) => void;
   onNavigate: (tab: Tab, id?: string) => void;
+  mode: Mode;
+  prices: Prices | null;
 }) {
+  const shownMode = effectiveMode(mode, fluid),
+    monetary = shownMode === "value";
+  const daily = metric(current, rows, prices, "rate", shownMode);
+  const monthly = metric(current, rows, prices, "volume", shownMode);
+  const wells = metric(current, rows, prices, "wells");
+  const fourth = metric(current, rows, prices, monetary ? "price" : "estimate");
+  const price = referencePrice(prices, period, fluid);
+  const physicalVolume =
+    fluid === "oil"
+      ? `${exact(current.volume)} bbl`
+      : `${exact(current.volume * 1e6)} m³ (${exact(current.volume)} MMm³)`;
+  const valuationHelp =
+    price == null
+      ? fluid === "gas"
+        ? (prices?.gas.reason ?? "Referencia nacional sin validar.")
+        : "Precio Brent no disponible para este mes. No se calcula un valor sin respaldo."
+      : `${estimationNote} Fórmula: volumen mensual en bbl × ${number(price, 2)} USD/bbl (${periodTitle(period)}). Fuente: EIA. Actualizada ${prices?.source.source_updated_at}. Valor exacto: ${exact(current.volume * price)} USD. Comparaciones con volumen y precio de cada mes.`;
   return (
     <>
-      <div className="summary-heading">
-        <div>
-          <p className="eyebrow">Vaca Muerta · No convencional</p>
-          <h1>Resumen de producción</h1>
-        </div>
-        <p>Qué se produce, cómo evoluciona y quiénes lideran.</p>
-      </div>
+      <h1 className="sr-only">Resumen de Vaca Muerta</h1>
+      {mode === "value" && fluid === "gas" && (
+        <p className="availability-note" role="status">
+          Valor estimado no disponible para gas. Falta validar una referencia
+          nacional comparable y la conversión energética. Se muestran unidades
+          físicas.
+        </p>
+      )}
+      {monetary && price == null && (
+        <p className="availability-note" role="status">
+          Precio Brent no disponible para este período; el valor estimado
+          permanece sin calcular.
+        </p>
+      )}
       <div className="kpi-grid">
         <KpiCard
           variant="primary"
-          label={
-            fluid === "oil"
-              ? "Barriles extraídos por día"
-              : "Gas producido por día"
+          label={monetary ? "Valor diario estimado" : "Producción diaria"}
+          value={
+            monetary
+              ? compact(daily.value, 2)
+              : display(daily.value, fluid === "oil" ? 0 : 2)
           }
-          value={number(current.rate, fluid === "oil" ? 0 : 2)}
-          unit={rateUnit(fluid)}
-          context="Tasa diaria equivalente del mes"
-          comparisons={
-            <>
-              <span title={`vs. ${comparisonMonth(period, -12)}`}>
-                <span className="comparison-label">YoY</span>{" "}
-                <Change value={current.yoy_rate_pct} />
-              </span>
-              <span title={`vs. ${comparisonMonth(period, -1)}`}>
-                <span className="comparison-label">MoM</span>{" "}
-                <Change value={current.mom_rate_pct} />
-              </span>
-            </>
+          unit={monetary ? "M USD/día" : rateUnit(fluid)}
+          context={periodTitle(period)}
+          comparisons={<Comparisons metric={daily} period={period} />}
+          tooltip={
+            monetary
+              ? `${valuationHelp} Diario = valor mensual / ${current.days_in_month} días calendario.`
+              : `Volumen mensual / ${current.days_in_month} días calendario. Tasa exacta: ${exact(current.rate)} ${rateUnit(fluid)}. YoY y MoM comparan tasas diarias, no volúmenes mensuales.`
+          }
+          onDetail={() => onNavigate("production")}
+        />
+        <KpiCard
+          label={monetary ? "Valor mensual estimado" : "Volumen mensual"}
+          value={
+            monetary || fluid === "oil"
+              ? compact(monthly.value)
+              : display(monthly.value, 1)
+          }
+          unit={monetary ? "M USD" : fluid === "oil" ? "M bbl" : "MMm³"}
+          context={periodTitle(period)}
+          comparisons={<Comparisons metric={monthly} period={period} />}
+          tooltip={
+            monetary
+              ? valuationHelp
+              : `${physicalVolume}. YoY y MoM comparan volúmenes mensuales; pueden diferir de la tasa diaria por los días de cada mes.`
           }
           onDetail={() => onNavigate("production")}
         />
         <KpiCard
           label="Pozos productivos"
-          value={number(current.positive_producing_wells, 0)}
+          value={display(wells.value, 0)}
+          unit="pozos"
           context="Con producción positiva"
+          comparisons={<Comparisons metric={wells} period={period} />}
+          tooltip={`Pozos únicos con producción positiva de ${fluid === "oil" ? "petróleo" : "gas"} durante ${periodTitle(period)}. YoY y MoM comparan esta cantidad de pozos; no tasas ni volumen. Base ausente o cero: sin comparador.`}
           onDetail={() => onNavigate("activity")}
         />
         <KpiCard
-          label="Volumen mensual"
-          value={number(current.volume, fluid === "oil" ? 0 : 2)}
-          unit={volumeUnit(fluid)}
-          context={periodTitle(period)}
-          onDetail={() => onNavigate("production")}
-        />
-        <KpiCard
-          label="Cuota del Top 5"
-          value={
-            current.top5_company_share_pct == null
-              ? "No disponible"
-              : `${number(current.top5_company_share_pct)}%`
+          label={
+            monetary ? "Precio de referencia Brent" : "Valor bruto estimado"
           }
-          context="Participación de operadores"
-          onDetail={() => onNavigate("operators")}
+          value={monetary ? display(fourth.value, 2) : compact(fourth.value)}
+          unit={
+            fourth.value == null ? undefined : monetary ? "USD/bbl" : "M USD"
+          }
+          context={
+            monetary
+              ? "Promedio mensual · EIA"
+              : fourth.value == null
+                ? "Estimación pendiente"
+                : "A precio Brent · estimación"
+          }
+          comparisons={<Comparisons metric={fourth} period={period} />}
+          tooltip={
+            monetary
+              ? `Europe Brent Spot Price FOB. Promedio mensual en USD/bbl, EIA (${prices?.source.source_updated_at}). YoY/MoM comparan precios. ${estimationNote}`
+              : valuationHelp
+          }
         />
       </div>
       <Evolution
@@ -556,29 +733,24 @@ export function SummaryDashboard({
         period={period}
         range={range}
         setRange={setRange}
+        mode={shownMode}
+        prices={prices}
         onDetail={() => onNavigate("production")}
       />
       <div className="ranking-grid">
-        <RankingCard
-          entities={entities}
-          current={current}
-          fluid={fluid}
-          dimension="company"
-          onNavigate={onNavigate}
-        />
-        <RankingCard
-          entities={entities}
-          current={current}
-          fluid={fluid}
-          dimension="area"
-          onNavigate={onNavigate}
-        />
+        {(["company", "area"] as const).map((dimension) => (
+          <RankingCard
+            key={dimension}
+            entities={entities}
+            current={current}
+            fluid={fluid}
+            dimension={dimension}
+            mode={shownMode}
+            prices={prices}
+            onNavigate={onNavigate}
+          />
+        ))}
       </div>
-      <p className="scope-note">
-        Operador declarado cada mes; las transferencias de activos pueden
-        modificar el ranking. Área: permiso o concesión. YoY de los rankings
-        compara volumen mensual.
-      </p>
     </>
   );
 }

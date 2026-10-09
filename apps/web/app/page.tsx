@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
+import { validatePrices, estimationNote, type Prices } from "../lib/metrics";
 import { SummaryDashboard, GlobalFilters } from "./dashboard-components";
 import {
   tabs,
@@ -24,6 +25,7 @@ type Data = { release: Release; manifest: Manifest; approval: Approval | null };
 const initial: Selection = {
   tab: "summary",
   fluid: "oil",
+  mode: "volume",
   month: "",
   operator: "",
   area: "",
@@ -35,8 +37,10 @@ export default function Page() {
     [attempt, setAttempt] = useState(0),
     [selection, setSelection] = useState<Selection>(initial),
     [range, setRange] = useState(12),
-    [dark, setDark] = useState(false);
-  const { tab, fluid, month: period } = selection;
+    [dark, setDark] = useState(false),
+    [prices, setPrices] = useState<Prices | null>(null),
+    [priceError, setPriceError] = useState("");
+  const { tab, fluid, month: period, mode } = selection;
   function readUrl() {
     return readSelection(window.location.search);
   }
@@ -104,7 +108,7 @@ export default function Page() {
               ...prev,
               month: manifest.source.accepted_periods.includes(prev.month)
                 ? prev.month
-                : manifest.source.approved_period,
+                : [...manifest.source.accepted_periods].sort().at(-1)!,
             };
             const url = new URL(window.location.href);
             for (const [k, v] of Object.entries(next))
@@ -124,6 +128,45 @@ export default function Page() {
       active = false;
     };
   }, [attempt]);
+  useEffect(() => {
+    if (!data) return;
+    let active = true;
+    setPrices(null);
+    setPriceError("");
+    (async () => {
+      try {
+        const [pr, vr] = await Promise.all([
+          fetch(`${base}/data/prices.json`),
+          fetch(`${base}/data/valuation-manifest.json`),
+        ]);
+        if (!pr.ok || !vr.ok)
+          throw Error("Referencia de precios no disponible.");
+        const priceBytes = await pr.arrayBuffer(),
+          vm = await vr.json();
+        if (
+          vm.schema_version !== 1 ||
+          vm.status !== "candidate" ||
+          vm.release_sha256 !== data.manifest.data_sha256 ||
+          vm.prices_sha256 !== (await sha256(priceBytes))
+        )
+          throw Error(
+            "La referencia de precios no corresponde a esta versión.",
+          );
+        const result = validatePrices(
+          JSON.parse(new TextDecoder().decode(priceBytes)),
+        );
+        if (active) setPrices(result);
+      } catch (e) {
+        if (active)
+          setPriceError(
+            e instanceof Error ? e.message : "Precio no disponible.",
+          );
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [data]);
   const rows = data?.release.production ?? [];
   const current = rows.find((r) => r.fluid === fluid && r.periodo === period);
   const entities = data?.release.entities ?? [];
@@ -211,10 +254,16 @@ export default function Page() {
             fluid={fluid}
             period={period}
             periods={data?.manifest.source.accepted_periods ?? []}
-            preliminary={!!data && !data.approval}
+            mode={mode}
+            onMode={(mode) => update({ mode })}
             onFluid={(f) => update({ fluid: f })}
             onPeriod={(p) => update({ month: p })}
           />
+          {priceError && !loading && (
+            <p className="availability-note" role="status">
+              {priceError} Las métricas físicas siguen disponibles.
+            </p>
+          )}
           {loading ? (
             <div className="state" role="status">
               Cargando agregados oficiales y verificando integridad…
@@ -247,6 +296,8 @@ export default function Page() {
             >
               {tab === "summary" ? (
                 <SummaryDashboard
+                  mode={mode}
+                  prices={prices}
                   current={current}
                   rows={rows}
                   entities={entities}
@@ -286,12 +337,76 @@ export default function Page() {
               Secretaría de Energía · Capítulo IV
             </a>
             {data && (
-              <> · Actualizado {month(data.manifest.source.approved_period)}</>
+              <>
+                {" "}
+                · Producción hasta {month(
+                  data.manifest.source.approved_period,
+                )}{" "}
+                {!data.approval && (
+                  <span
+                    className="status-badge"
+                    title="Candidato validado técnicamente; promoción pública pendiente"
+                  >
+                    Preliminar
+                  </span>
+                )}
+              </>
             )}
+            <span>
+              {" "}
+              · Vaca Muerta · No convencional.{" "}
+              {fluid === "oil"
+                ? estimationNote
+                : "Valorización del gas pendiente."}
+            </span>
           </span>
-          <a download href={`${base}/data/manifest.json`}>
-            Ver manifiesto ↗
-          </a>
+          <details className="provenance">
+            <summary>Fuentes y metodología</summary>
+            <p>
+              Universo: formación Vaca Muerta y recurso no convencional.
+              Operador declarado por mes; transferencias de activos pueden
+              modificar los rankings. Área: permiso o concesión. Los datos
+              oficiales son revisables; se conserva el último snapshot validado
+              y la promoción pública permanece pendiente.
+            </p>
+            {data && (
+              <div>
+                <p>
+                  Producción: {month(data.manifest.source.approved_period)}.
+                  Ingesta del warehouse:{" "}
+                  {data.manifest.source.ingested_at ?? "no informada"}. Release
+                  preparado: {data.manifest.generated_at}. Publicación:{" "}
+                  {data.approval?.approved_at ?? "pendiente de aprobación"}.
+                </p>
+                {data.manifest.source.resources.map((r) => (
+                  <p key={r.id}>
+                    {r.year}: fuente actualizada{" "}
+                    {r.source_last_modified ?? "no informada"}; extracción{" "}
+                    {r.extracted_at ?? "no informada"}.
+                  </p>
+                ))}
+                <a download href={`${base}/data/manifest.json`}>
+                  Manifiesto de producción
+                </a>
+              </div>
+            )}
+            {prices && (
+              <p>
+                Brent:{" "}
+                <a href={prices.source.url}>EIA · promedio mensual USD/bbl</a>.
+                Actualizada {prices.source.source_updated_at}; ingesta{" "}
+                {prices.source.retrieved_at}. Valor mensual = bbl × precio del
+                mismo mes; diario = valor mensual / días calendario.
+                Comparaciones calculadas sobre cada valor estimado. No
+                representa facturación efectiva. Referencia uniforme para
+                entidades; no incorpora calidad, descuentos, costos, regalías o
+                tipo de cambio. Gas:{" "}
+                <a href={prices.gas.reviewed_sources[0]}>precios nacionales</a>{" "}
+                revisados, sin serie comparable y conversión energética
+                validadas.
+              </p>
+            )}
+          </details>
         </footer>
       </div>
     </>

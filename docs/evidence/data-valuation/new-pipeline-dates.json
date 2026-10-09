@@ -1,0 +1,20 @@
+{
+  "rows": [
+    {
+      "layer": "well_month",
+      "latest": "2026-09-01",
+      "row_count": 112532
+    },
+    {
+      "layer": "publication_totals",
+      "latest": "2026-08-01",
+      "row_count": 88
+    },
+    {
+      "layer": "publication_entities",
+      "latest": "2026-08-01",
+      "row_count": 8936
+    }
+  ],
+  "job_id": "6c499511-1f9c-40bc-95aa-6e23abe1b35e"
+}

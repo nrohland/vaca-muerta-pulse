@@ -1,0 +1,158 @@
+{
+  "status": "pass",
+  "periods": {
+    "2026-01-01": {
+      "oil_m3": 2954410.6475754,
+      "gas_km3": 2260617.9792273366,
+      "oil_wells": 2379,
+      "gas_wells": 2542,
+      "rows": 3085,
+      "flags": {
+        "rectificado=f;habilitado=t": 3085
+      },
+      "oil_bbl": 18582683.910122424,
+      "oil_rate": 599441.4164555621,
+      "gas_million_m3": 2260.6179792273365,
+      "gas_rate": 72.92316062023666,
+      "days": 31
+    },
+    "2026-02-01": {
+      "oil_m3": 2630008.699582541,
+      "gas_km3": 2194107.979789633,
+      "oil_wells": 2411,
+      "gas_wells": 2588,
+      "rows": 3127,
+      "flags": {
+        "rectificado=f;habilitado=t": 3127
+      },
+      "oil_bbl": 16542257.04382796,
+      "oil_rate": 590794.8944224272,
+      "gas_million_m3": 2194.1079797896327,
+      "gas_rate": 78.36099927820116,
+      "days": 28
+    },
+    "2026-03-01": {
+      "oil_m3": 2945239.9739297894,
+      "gas_km3": 2564071.3661923814,
+      "oil_wells": 2461,
+      "gas_wells": 2658,
+      "rows": 3165,
+      "flags": {
+        "rectificado=f;habilitado=t": 3165
+      },
+      "oil_bbl": 18525002.10825811,
+      "oil_rate": 597580.7131696164,
+      "gas_million_m3": 2564.0713661923814,
+      "gas_rate": 82.71197955459294,
+      "days": 31
+    },
+    "2026-04-01": {
+      "oil_m3": 2938290.432543332,
+      "gas_km3": 2485117.0783152548,
+      "oil_wells": 2506,
+      "gas_wells": 2704,
+      "rows": 3217,
+      "flags": {
+        "rectificado=f;habilitado=t": 3217
+      },
+      "oil_bbl": 18481290.807999007,
+      "oil_rate": 616043.0269333002,
+      "gas_million_m3": 2485.1170783152547,
+      "gas_rate": 82.83723594384182,
+      "days": 30
+    },
+    "2026-05-01": {
+      "oil_m3": 3068706.009830458,
+      "gas_km3": 2962415.479297006,
+      "oil_wells": 2556,
+      "gas_wells": 2771,
+      "rows": 3281,
+      "flags": {
+        "rectificado=f;habilitado=t": 3281
+      },
+      "oil_bbl": 19301580.11059534,
+      "oil_rate": 622631.6164708175,
+      "gas_million_m3": 2962.415479297006,
+      "gas_rate": 95.56178965474213,
+      "days": 31
+    },
+    "2026-06-01": {
+      "oil_m3": 3021594.4763968154,
+      "gas_km3": 2932907.633160722,
+      "oil_wells": 2585,
+      "gas_wells": 2783,
+      "rows": 3322,
+      "flags": {
+        "rectificado=f;habilitado=t": 3322
+      },
+      "oil_bbl": 19005257.4802132,
+      "oil_rate": 633508.5826737733,
+      "gas_million_m3": 2932.907633160722,
+      "gas_rate": 97.76358777202407,
+      "days": 30
+    },
+    "2026-07-01": {
+      "oil_m3": 3169661.2396856328,
+      "gas_km3": 2994332.4092420656,
+      "oil_wells": 2633,
+      "gas_wells": 2836,
+      "rows": 3369,
+      "flags": {
+        "rectificado=f;habilitado=t": 3369
+      },
+      "oil_bbl": 19936569.402626242,
+      "oil_rate": 643115.1420202014,
+      "gas_million_m3": 2994.3324092420658,
+      "gas_rate": 96.59136804006664,
+      "days": 31
+    },
+    "2026-08-01": {
+      "oil_m3": 3301191.718139005,
+      "gas_km3": 2958950.899443999,
+      "oil_wells": 2678,
+      "gas_wells": 2884,
+      "rows": 3404,
+      "flags": {
+        "rectificado=f;habilitado=t": 3404
+      },
+      "oil_bbl": 20763871.222585518,
+      "oil_rate": 669802.2975027587,
+      "gas_million_m3": 2958.950899443999,
+      "gas_rate": 95.45002901432254,
+      "days": 31
+    },
+    "2026-09-01": {
+      "oil_m3": 19099.820999999996,
+      "gas_km3": 1126.6032400000001,
+      "oil_wells": 15,
+      "gas_wells": 12,
+      "rows": 26,
+      "flags": {
+        "rectificado=f;habilitado=t": 26
+      },
+      "oil_bbl": 120134.25983087215,
+      "oil_rate": 4004.4753276957385,
+      "gas_million_m3": 1.1266032400000001,
+      "gas_rate": 0.03755344133333334,
+      "days": 30
+    }
+  },
+  "changed_fields_vs_retained_datastore": {
+    "prod_pet": 17,
+    "prod_gas": 17
+  },
+  "new_vm_rows_by_period": {
+    "2026-08-01": 3404,
+    "2026-09-01": 26,
+    "2026-07-01": 11,
+    "2026-01-01": 4,
+    "2026-02-01": 4,
+    "2026-03-01": 4,
+    "2026-04-01": 2,
+    "2026-05-01": 2,
+    "2026-06-01": 2
+  },
+  "retained_keys_no_longer_present": 0,
+  "invalid_production": {},
+  "universe": "Exact formacion=vaca muerta AND tipo_de_recurso=NO CONVENCIONAL. Flags retained per existing method; no alternate DDJJ source."
+}

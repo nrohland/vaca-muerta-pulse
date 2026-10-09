@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "status": "candidate",
+  "release_sha256": "1bf27be1365a1520f757f7b1fa6b936a1fc07fe7f07a0f3e7a831b7bfd21688b",
+  "prices_sha256": "ae002c79d9bbd84254c4d47a44eaac2b560f10f611e3a4b2daa475d98678182e",
+  "generated_at": "2026-10-09T19:19:08.952190+00:00",
+  "missing_oil_price_periods": [],
+  "method": "monthly bbl × monthly EIA Brent USD/bbl; daily = monthly value / calendar days. No realized revenues.",
+  "gas_status": "unavailable"
+}

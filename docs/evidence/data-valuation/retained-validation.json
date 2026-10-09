@@ -1,0 +1,26 @@
+[
+  {
+    "year": 2023,
+    "vm_rows": 23911,
+    "duplicate_grain": 0,
+    "totals_wells_reconcile": "pass"
+  },
+  {
+    "year": 2024,
+    "vm_rows": 28574,
+    "duplicate_grain": 0,
+    "totals_wells_reconcile": "pass"
+  },
+  {
+    "year": 2025,
+    "vm_rows": 34051,
+    "duplicate_grain": 0,
+    "totals_wells_reconcile": "pass"
+  },
+  {
+    "year": 2026,
+    "vm_rows": 22537,
+    "duplicate_grain": 0,
+    "totals_wells_reconcile": "pass"
+  }
+]

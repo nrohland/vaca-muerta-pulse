@@ -1,0 +1,30 @@
+{
+  "status": "candidate-not-promoted",
+  "rows": 3614041,
+  "load_job_id": "a587adf4-d36e-4dff-af52-ddcac3d439e0",
+  "table": "vaca-muerta-pulse.raw_cap4_candidate_20261009.produccion_pozo_mes",
+  "input": {
+    "rows_by_year": [
+      [
+        2023,
+        974971
+      ],
+      [
+        2024,
+        983551
+      ],
+      [
+        2025,
+        991844
+      ],
+      [
+        2026,
+        663675
+      ]
+    ],
+    "loaded_at": "2026-10-09T19:08:28.766219+00:00",
+    "parquet_sha256": "1c8357446f01007ee49402710b0b3ea9113af9d3731d3ca198394edcc234f7bc",
+    "bytes": 39295286,
+    "timestamp_policy": "Source timestamps encoded as UTC for BigQuery, existing loader convention; business month from anio/mes."
+  }
+}

@@ -309,3 +309,18 @@ python scripts/compare_source_count.py --dataset raw_cap4_dev
 - `.meltano/`, `.venv/`, `.env`, JSON de SA, CSV crudos: gitignore
 - Env vars: [.env.example](.env.example) (nombres; IDs CKAN son públicos)
 - Plugins pinned: Meltano **4.2.2** en el Makefile; tap editable; target `z3z1ma/target-bigquery@090dad06` (no bump: el workaround de Bug 1 es append, no el DROP+CREATE de 0.7.2 ni el PR #139 sin mergear)
+
+## CSV oficial cuando DataStore queda rezagado
+
+La auditoría del 9 de octubre de 2026 encontró agosto y septiembre parcial en el CSV estándar 2026, mientras DataStore seguía en julio. `scripts/prepare_csv_candidate.py` permite normalizar una descarga **retenida del recurso oficial revisado**, con schema cerrado en `contracts/production_csv.json` (copiado sin cambios del contrato revisado de #25). Exige todo el archivo anual, grano único y tipos válidos; conserva todos los universos raw. No carga, acepta meses ni promueve datos.
+
+```sh
+python3 scripts/prepare_csv_candidate.py --csv /tmp/official-2026.csv \
+  --contract contracts/production_csv.json --metadata /tmp/resource_show.json \
+  --output /tmp/new-csv-candidate --year 2026
+python3 -m unittest discover -s tests -p test_csv_candidate.py -v
+```
+
+Ejecutar desde `extraction/`. Guardar metadata antes/después y comparar identidad, URL y actualización; conservar checksum de CSV y NDJSON normalizado. El CSV usa UTF-8 BOM y `fecha_data` de tipo fecha: se normaliza a timestamp de medianoche sin inventar zona. El loader posterior conserva la convención UTC existente; el mes de negocio sigue siendo anio/mes. La aparición de registros no demuestra cierre/completitud de un período.
+
+Los candidatos raw y dbt son aislados, `WRITE_EMPTY`; nunca reemplazar raw existente. Para esta entrega se ejecutó el pipeline de publicación ya revisado en `feat/estrato-map-marts` commit `448a406c8cc87de425964d8d6aa412f608d67b71` (#25–31 pendientes de integración), con selección cautelosa del Resumen y sin marts de mapa. Ver [auditoría y evidencia](../docs/evidence/data-valuation/README.md). No incorporar dumps raw al repositorio.

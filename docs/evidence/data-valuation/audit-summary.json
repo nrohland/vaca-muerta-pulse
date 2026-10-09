@@ -1,0 +1,64 @@
+{
+  "checked_on": "2026-10-09",
+  "official_resource": {
+    "extracted_at": "2026-10-09T19:07:30.997493+00:00",
+    "hash_scope": "original official download CSV bytes",
+    "id": "fb7a47a0-cba9-4667-a004-6f6c1c346c23",
+    "normalized_ndjson_sha256": "fb8c0f26eb64da588b271a17b5e691ef052c8e390a434e49cfdea6c6a76aaa8a",
+    "period_rows": {
+      "2026-01-01": 82948,
+      "2026-02-01": 83001,
+      "2026-03-01": 83035,
+      "2026-04-01": 82949,
+      "2026-05-01": 83033,
+      "2026-06-01": 82476,
+      "2026-07-01": 82549,
+      "2026-08-01": 79576,
+      "2026-09-01": 4108
+    },
+    "raw_rows": 663675,
+    "sha256": "cba1522b4a550bec6380a37e9135fac2bcac49164965240a7676f9b0377182b3",
+    "source_last_modified": "2026-10-09T10:04:00.449091",
+    "transport": "official_download_csv",
+    "url": "https://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c/resource/fb7a47a0-cba9-4667-a004-6f6c1c346c23/download/produccin-de-pozos-de-gas-y-petrleo-2026.csv",
+    "year": 2026
+  },
+  "official_csv_latest_record_month": "2026-09-01",
+  "latest_accepted_month": "2026-08-01",
+  "datastore": {
+    "rows": 561000,
+    "latest_month": "2026-07-01"
+  },
+  "ingested_at": "2026-10-09T19:14:31.383000+00:00",
+  "review_release_generated_at": "2026-10-09T19:18:34.059703+00:00",
+  "published_at": null,
+  "release_version": "2026-08-01-1bf27be1365a",
+  "release_sha256": "1bf27be1365a1520f757f7b1fa6b936a1fc07fe7f07a0f3e7a831b7bfd21688b",
+  "source_metadata_unchanged_after_download": true,
+  "diagnosis": "CSV ahead of DataStore used by ingestion. September partial excluded by accepted-period gate.",
+  "dbt": {
+    "models_seeds_success": 11,
+    "tests_pass": 76,
+    "warnings": 0,
+    "errors": 0,
+    "skips": 0,
+    "pipeline_commit": "448a406c8cc87de425964d8d6aa412f608d67b71",
+    "indirect_selection": "cautious"
+  },
+  "ui_manual_checks": [
+    "desktop/notebook fit without vertical scroll",
+    "tablet/mobile responsive; 320px no horizontal overflow after fix",
+    "oil/gas, volume/value, monthly period",
+    "dark/light",
+    "24/36 table row counts and 12-month default",
+    "exact chart tooltip and monthly Brent reference",
+    "methodology tooltip with full numeric precision",
+    "January2023 missing comparators",
+    "June2026 gas rate +2.3% vs monthly volume -1.0%",
+    "entity navigation and browser back preserve fluid/month/mode",
+    "keyboard ArrowRight tabs",
+    "gas monetary unavailable with physical fallback",
+    "source/extraction/ingestion/publication dates disclosure"
+  ],
+  "browser_automation": "blocked before test execution by macOS MachPortRendezvousServer permission denial; axe unexecuted"
+}

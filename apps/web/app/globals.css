@@ -1120,3 +1120,270 @@ footer a {
     height: 98px;
   }
 }
+/* analytics-ui: retain card hierarchy; reclaim title/metadata space for analysis. */
+.masthead {
+  min-height: 48px;
+}
+.global-filters {
+  gap: 16px;
+  padding: 8px 0 12px;
+}
+.mode-control {
+  margin-left: auto;
+}
+.metric-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+.metric-help {
+  position: relative;
+}
+.metric-help summary {
+  list-style: none;
+  color: var(--muted);
+  padding: 2px 4px;
+  font-size: 13px;
+}
+.metric-help summary::-webkit-details-marker {
+  display: none;
+}
+.metric-help p {
+  position: absolute;
+  top: 28px;
+  right: 0;
+  z-index: 10;
+  width: min(300px, 75vw);
+  padding: 14px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 8px 25px #0002;
+  font-size: 12px;
+}
+.kpi-card--primary .metric-help summary {
+  color: var(--hero-muted);
+}
+.kpi-comparisons {
+  gap: 6px 14px;
+}
+.comparison-label {
+  color: var(--muted);
+}
+.kpi-card--primary .comparison-label {
+  color: var(--hero-muted);
+}
+.chart-final {
+  text-align: right;
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 2px;
+}
+.chart-final strong {
+  color: var(--ink);
+}
+.availability-note {
+  border-left: 3px solid var(--accent);
+  background: var(--surface);
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.provenance {
+  max-width: 680px;
+}
+.provenance summary {
+  text-align: right;
+}
+.provenance p {
+  margin: 8px 0;
+  font-size: 11px;
+}
+footer .status-badge {
+  margin-left: 5px;
+}
+.bar-track {
+  height: 5px;
+}
+@media (min-width: 1101px) {
+  .kpi-grid {
+    grid-template-columns: 1.55fr repeat(3, minmax(0, 1fr));
+  }
+  .kpi-card {
+    padding: 12px 16px 9px;
+  }
+  .kpi-card:not(.kpi-card--primary) .kpi-value {
+    font-size: 28px;
+  }
+  .kpi-comparisons {
+    font-size: 11px;
+  }
+  .line-chart {
+    height: clamp(160px, 23vh, 220px);
+  }
+  .module-heading > div:first-child {
+    display: block;
+  }
+  .module-heading p {
+    font-size: 11px;
+  }
+  .ranking-row {
+    min-height: 45px;
+    padding: 7px 0;
+    row-gap: 5px;
+  }
+  .entity-name,
+  .bar-value,
+  .share-value,
+  .yoy-value {
+    font-size: 12px;
+  }
+  .ranking-scale {
+    font-size: 10px;
+  }
+  .scope-note {
+    font-size: 10px;
+    margin: 7px 0;
+  }
+}
+@media (min-width: 1101px) and (max-height: 800px) {
+  .line-chart {
+    height: 145px;
+  }
+  .ranking-row {
+    min-height: 41px;
+    padding: 5px 0;
+  }
+}
+@media (max-width: 850px) {
+  .global-filters {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .mode-control {
+    margin-left: 0;
+  }
+  .kpi-comparisons {
+    gap: 6px 10px;
+    font-size: 11px;
+  }
+}
+@media (max-width: 600px) {
+  .masthead {
+    min-height: 58px;
+  }
+  .mode-control {
+    width: 100%;
+  }
+  .mode-control button {
+    flex: 1;
+  }
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+  .kpi-card--primary {
+    grid-column: auto;
+  }
+  .kpi-card:not(.kpi-card--primary) .kpi-value {
+    font-size: 28px;
+  }
+  .kpi-card .kpi-context {
+    font-size: 11px;
+  }
+  .kpi-comparisons {
+    gap: 10px 24px;
+    font-size: 12px;
+  }
+  .metric-label {
+    font-size: 11px;
+  }
+  .metric-help p {
+    width: min(300px, 78vw);
+  }
+  .chart-final {
+    font-size: 10px;
+  }
+  .provenance summary {
+    text-align: left;
+  }
+}
+@media (pointer: coarse) {
+  .metric-help summary {
+    padding: 10px;
+    min-height: 44px;
+  }
+  .metric-help p {
+    top: 46px;
+  }
+}
+@media (min-width: 1101px) {
+  .global-filters {
+    padding: 4px 0 6px;
+  }
+  .line-chart {
+    height: clamp(160px, 20vh, 190px);
+  }
+  .ranking-row {
+    min-height: 36px;
+    padding: 3px 0;
+    row-gap: 3px;
+  }
+}
+@media (min-width: 1101px) and (max-height: 800px) {
+  .kpi-card {
+    padding: 9px 14px 7px;
+  }
+  .kpi-card--primary .kpi-value {
+    font-size: 32px;
+  }
+  .kpi-card:not(.kpi-card--primary) .kpi-value {
+    font-size: 25px;
+  }
+  .kpi-value {
+    margin: 4px 0;
+  }
+  .line-chart {
+    height: 130px;
+  }
+  .module-heading > div:first-child {
+    display: flex;
+    gap: 10px;
+  }
+  .ranking-row {
+    min-height: 34px;
+    padding: 3px 0;
+  }
+}
+@media (min-width: 1101px) and (max-height: 800px) {
+  .masthead {
+    min-height: 44px;
+  }
+  .global-filters {
+    padding: 2px 0;
+  }
+  .kpi-card {
+    padding: 6px 14px;
+  }
+  .metric-help summary {
+    padding: 0 4px;
+  }
+  .kpi-context {
+    min-height: 14px;
+    line-height: 14px;
+  }
+  .kpi-comparisons {
+    margin-bottom: 1px;
+  }
+}
+@media (max-width: 600px) {
+  .module-controls {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .module-controls .text-action {
+    font-size: 11px;
+  }
+}
