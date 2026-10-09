@@ -422,7 +422,7 @@ export default function Page() {
               )}
             </span>
           </span>
-          <details className="provenance">
+          <details id="methodology" className="provenance">
             <summary>{t("Fuentes y metodología")}</summary>
             <p>
               {t(

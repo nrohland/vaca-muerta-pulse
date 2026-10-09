@@ -88,12 +88,12 @@ export const translations: Record<string, string> = {
     "National reference and energy conversion not yet validated.",
   "Precio Brent no disponible para este mes. No se calcula un valor sin respaldo.":
     "Brent price is unavailable for this month. No value is calculated without a verified reference.",
-  "{note} Fórmula: volumen mensual en bbl × {price} USD/bbl ({period}). Fuente: EIA. Actualizada {date}. Valor exacto: {value} USD. Comparaciones con volumen y precio de cada mes.":
-    "{note} Formula: monthly volume in bbl × {price} USD/bbl ({period}). Source: EIA. Updated {date}. Exact value: {value} USD. Comparisons use each month’s volume and price.",
+  "{note} Fórmula: volumen mensual en bbl × {price} USD/bbl ({period}). Fuente: EIA. Actualizada {date}. Valor presentado: {value} USD. Comparaciones con volumen y precio de cada mes.":
+    "{note} Formula: monthly volume in bbl × {price} USD/bbl ({period}). Source: EIA. Updated {date}. Displayed value: {value} USD. Comparisons use each month’s volume and price.",
   "{help} Diario = valor mensual / {days} días calendario.":
     "{help} Daily = monthly value / {days} calendar days.",
-  "Volumen mensual / {days} días calendario. Tasa exacta: {value} {unit}. Las comparaciones usan tasas diarias, no volúmenes mensuales.":
-    "Monthly volume / {days} calendar days. Exact rate: {value} {unit}. Comparisons use daily rates, not monthly volumes.",
+  "Volumen mensual / {days} días calendario. Tasa presentada: {value} {unit}. Las comparaciones usan tasas diarias, no volúmenes mensuales.":
+    "Monthly volume / {days} calendar days. Displayed rate: {value} {unit}. Comparisons use daily rates, not monthly volumes.",
   "{volume}. Las comparaciones usan volúmenes mensuales; pueden diferir de la tasa diaria por los días de cada mes.":
     "{volume}. Comparisons use monthly volumes; they may differ from daily rates because of the number of days in each month.",
   "Pozos únicos con producción positiva de {fluid} durante {period}. Las comparaciones usan esta cantidad de pozos, no tasas ni volumen. Base ausente o cero: sin comparador.":
@@ -186,6 +186,43 @@ Object.assign(translations, {
   "Aprobación no corresponde a esta versión y manifiesto":
     "Approval does not match this release and manifest",
   "Referencia geográfica inválida": "Invalid geographic reference",
+  "Evolución de producción y valor": "Production and value over time",
+  "Volumen mensual · escala desde cero.":
+    "Monthly volume · scale starts at zero.",
+  "Producción física": "Physical production",
+  "Valor estimado": "Estimated value",
+  "Mensual · escalas independientes desde cero; alturas no comparables.":
+    "Monthly · independent scales from zero; heights are not comparable.",
+  "El selector Volumen / Valor estimado controla KPIs y rankings; aquí se muestran ambas series disponibles.":
+    "The Volume / Estimated value selector controls KPIs and rankings; this chart shows both available series.",
+  "Gas: valor estimado pendiente de una referencia nacional y conversión energética validadas.":
+    "Gas: estimated value awaits a validated national reference and energy conversion.",
+  "Volumen mensual ({unit})": "Monthly volume ({unit})",
+  "Valor mensual (USD estimados)": "Monthly value (estimated USD)",
+  "Valores mensuales. Los meses o precios ausentes no equivalen a cero.":
+    "Monthly values. Missing months or prices do not equal zero.",
+  "Producción: {value}": "Production: {value}",
+  "Valor estimado: {value}": "Estimated value: {value}",
+  "Volver a {label}": "Back to {label}",
+  "Metodología completa": "Full methodology",
+  "Unidad: {unit} · Período: {period}": "Unit: {unit} · Period: {period}",
+  "Fuente: Secretaría de Energía · formación Vaca Muerta.":
+    "Source: Secretariat of Energy · Vaca Muerta formation.",
+  "Fuente: EIA · Brent mensual; volumen: Secretaría de Energía.":
+    "Source: EIA · monthly Brent; volume: Secretariat of Energy.",
+  "Volumen producido durante el mes dividido por sus días calendario.":
+    "Monthly production volume divided by calendar days.",
+  "Valor mensual a precio histórico Brent dividido por los días del mes.":
+    "Monthly value at historical Brent price divided by calendar days.",
+  "Volumen producido durante el mes seleccionado.":
+    "Production volume during the selected month.",
+  "Volumen mensual multiplicado por el precio Brent de ese mes.":
+    "Monthly volume multiplied by that month’s Brent price.",
+  "Pozos únicos con producción positiva durante el mes.":
+    "Unique wells with positive production during the month.",
+  "Precio promedio mensual Brent utilizado como referencia, no precio efectivo de venta.":
+    "Monthly average Brent reference price, not the actual sale price.",
+  "Valor apresentado: {value}": "Displayed value: {value}",
 });
 export function formatters(language: Language) {
   const locale = locales[language];
@@ -213,6 +250,14 @@ export function formatters(language: Language) {
     const divisor = magnitude >= 999995 ? 1e6 : magnitude >= 999.995 ? 1e3 : 1;
     return `${number(value / divisor, 2, 0)}${divisor === 1 ? "" : `${language === "es" ? " " : ""}${divisor === 1e6 ? "M" : "K"}`}`;
   };
+  const currency = (value: number | null | undefined) =>
+    value == null
+      ? t("No disponible")
+      : `${language === "es" ? "US$" : "USD"} ${compact(value)}`;
+  const physical = (value: number | null | undefined, fluid: "oil" | "gas") =>
+    value == null
+      ? t("No disponible")
+      : `${fluid === "oil" ? compact(value) : number(value, 2, 0)} ${fluid === "oil" ? "bbl" : "MMm³"}`;
   const million = (value: number | null | undefined, decimals = 1) =>
     value == null ? t("No disponible") : number(value / 1e6, decimals);
   const month = (period: string, short = false) => {
@@ -222,7 +267,11 @@ export function formatters(language: Language) {
       timeZone: "UTC",
     }).format(new Date(`${period}T00:00:00Z`));
     return short
-      ? text
+      ? new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" })
+          .format(new Date(`${period}T00:00:00Z`))
+          .replace(/\.$/, "") +
+          " " +
+          period.slice(2, 4)
       : text.charAt(0).toLocaleUpperCase(locale) + text.slice(1);
   };
   const date = (value: string | null | undefined) => {
@@ -241,13 +290,15 @@ export function formatters(language: Language) {
     );
   };
   const percent = (v: number, signed = false) =>
-    `${signed ? (v > 0 ? "+" : v < 0 ? "−" : "") : ""}${number(signed ? Math.abs(v) : v)}${language === "es" ? " " : ""}%`;
+    `${signed ? (v > 0 ? "+" : v < 0 ? "−" : "") : ""}${number(signed ? Math.abs(v) : v)}%`;
   return {
     language,
     locale,
     t,
     number,
     exact,
+    currency,
+    physical,
     compact,
     million,
     month,

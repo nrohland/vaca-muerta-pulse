@@ -1,0 +1,90 @@
+{
+  "validation_date": "2026-10-09",
+  "unit_tests": {
+    "passed": 20,
+    "failed": 0
+  },
+  "typecheck": "passed",
+  "static_build": "passed",
+  "browser_runner": "blocked before test execution: macOS MachPortRendezvousServer Permission denied (1100)",
+  "ui_observations": [
+    {
+      "viewport": "1440x900",
+      "language": "es",
+      "theme": "light",
+      "fluid": "oil",
+      "comparison": "yoy",
+      "bars": 12,
+      "value_lines": 1,
+      "visible_y_axes": 0,
+      "tooltip_physical": "20,76 M bbl",
+      "tooltip_value": "US$ 1.891,17 M",
+      "physical_change": "+27,2%",
+      "value_change": "+70,7%"
+    },
+    {
+      "viewport": "1366x768",
+      "language": "es",
+      "theme": "light",
+      "scroll_height": 768,
+      "scroll_width": 1366
+    },
+    {
+      "viewport": "1440x900",
+      "language": "en",
+      "theme": "dark",
+      "mode": "value",
+      "comparison": "mom",
+      "daily_value": "61.01 M USD/day",
+      "monthly_value": "1,891.2 M USD",
+      "monthly_value_change": "+13.3%",
+      "horizontal_overflow": false
+    },
+    {
+      "viewport": "1440x900",
+      "language": "en",
+      "theme": "light",
+      "spaced_percent": false,
+      "horizontal_overflow": false
+    },
+    {
+      "viewport": "768x1024",
+      "language": "en",
+      "theme": "dark",
+      "fluid": "gas",
+      "requested_mode": "value",
+      "bars": 12,
+      "value_lines": 0,
+      "scroll_width": 768,
+      "availability_explained": true
+    },
+    {
+      "viewport": "390x844",
+      "language": "es",
+      "theme": "light",
+      "fluid": "oil",
+      "comparison": "mom",
+      "scroll_width": 390,
+      "bars": 12,
+      "value_lines": 1,
+      "mobile_back_activation": true,
+      "table_inner_scroll_width": 640,
+      "table_container_width": 324
+    }
+  ],
+  "interactions": {
+    "ranges_12_24_36": true,
+    "enter_opens": true,
+    "space_returns": true,
+    "escape_returns": true,
+    "focus_on_return_button": true,
+    "focus_restored_to_info": true,
+    "one_active_back": true,
+    "inactive_faces_inert": true,
+    "card_dimensions_unchanged_when_opened": true,
+    "brief_tooltip_hover_observed": true,
+    "full_period_accessible_on_compact_dates": true
+  },
+  "reduced_motion": "CSS branch inspected: front/back transitions disabled; not emulated in the blocked automated runner",
+  "unchanged": "public data, metric calculation helpers, pipeline and harness"
+}

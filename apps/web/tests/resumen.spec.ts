@@ -244,7 +244,7 @@ test("monetary mode updates metrics and units; gas availability and price failur
     "Precio de referencia Brent",
   );
   await expect(
-    page.getByRole("heading", { name: "Evolución del valor estimado" }),
+    page.getByRole("heading", { name: "Evolución de producción y valor" }),
   ).toBeVisible();
   await page.locator(".ranking-operators .ranking-row").first().click();
   expect(new URL(page.url()).searchParams.get("mode")).toBe("value");
@@ -297,9 +297,13 @@ test("language persistence, exact ranking values, selected comparisons and zero-
   );
   await expect(page.locator(".ranking-amount").first()).toHaveAttribute(
     "title",
-    `${formatters("en").exact(top.volume)} bbl`,
+    `${formatters("en").number(top.volume, 0)} bbl`,
   );
-  await expect(page.locator(".recharts-yAxis")).toContainText("0");
+  await expect(page.locator(".recharts-yAxis")).toHaveCount(0);
+  await expect(page.locator(".line-chart")).toHaveAttribute(
+    "data-physical-min",
+    "0",
+  );
   await expect(page.locator(".chart-end-label")).toHaveCount(1);
   await expect(page.locator(".chart-final")).toHaveCount(0);
   await page.reload();
@@ -315,8 +319,57 @@ test("language persistence, exact ranking values, selected comparisons and zero-
     .click();
   await page.getByText("View data table", { exact: true }).click();
   await expect(page.locator("table")).toContainText(
-    formatters("en").month(shiftMonth(latest, -12)),
+    formatters("en").month(shiftMonth(latest, -12), true),
   );
   await page.getByRole("button", { name: "Dark mode", exact: true }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+});
+
+test("combined monthly series, bounded tooltip, reversible KPI and compact table", async ({
+  page,
+}) => {
+  await page.goto(base);
+  await ready(page);
+  await expect(page.locator(".recharts-bar-rectangle")).toHaveCount(12);
+  await expect(page.locator(".recharts-line-curve")).toBeVisible();
+  await expect(page.locator(".recharts-yAxis")).toHaveCount(0);
+  const info = page.getByRole("button", {
+    name: "Metodología de Producción diaria",
+    exact: true,
+  });
+  const before = await page.locator(".kpi-card").first().boundingBox();
+  await info.hover();
+  await expect(page.getByRole("tooltip")).toContainText("días calendario");
+  await info.press("Enter");
+  await expect(page.locator('.kpi-card[data-flipped="true"]')).toHaveCount(1);
+  const back = page.getByRole("button", {
+    name: "Volver a Producción diaria",
+    exact: true,
+  });
+  await expect(back).toBeFocused();
+  expect(await page.locator(".kpi-card").first().boundingBox()).toEqual(before);
+  await page
+    .getByRole("button", {
+      name: "Metodología de Volumen mensual",
+      exact: true,
+    })
+    .click();
+  await expect(page.locator('.kpi-card[data-flipped="true"]')).toHaveCount(1);
+  await page
+    .getByRole("button", { name: "Volver a Volumen mensual", exact: true })
+    .press("Space");
+  await expect(page.locator('.kpi-card[data-flipped="true"]')).toHaveCount(0);
+  await page.locator(".recharts-bar-rectangle").last().hover();
+  await expect(page.locator(".chart-tooltip")).toContainText("20,76 M bbl");
+  await expect(page.locator(".chart-tooltip")).toContainText("US$ 1.891,17 M");
+  await page.getByText("Ver tabla de datos", { exact: true }).click();
+  await expect(page.locator('time[datetime="2026-08-01"]').first()).toHaveText(
+    "ago 26",
+  );
+  await page.getByRole("button", { name: "Gas", exact: true }).click();
+  await expect(page.locator(".recharts-line-curve")).toHaveCount(0);
+  await expect(page.locator(".recharts-bar-rectangle")).toHaveCount(12);
+  await expect(page.locator(".chart-context")).toContainText(
+    "referencia nacional",
+  );
 });

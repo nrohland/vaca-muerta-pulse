@@ -46,7 +46,7 @@ test("compact formats preserve magnitude, precision and locale; exact values rem
   assert.equal(en.number(669802, 0), "669,802");
   assert.equal(es.exact(10353166.125), "10.353.166,125");
   assert.equal(en.exact(10353166.125), "10,353,166.125");
-  assert.equal(es.percent(27.2, true), "+27,2 %");
+  assert.equal(es.percent(27.2, true), "+27,2%");
   assert.equal(en.percent(27.2, true), "+27.2%");
   assert.equal(es.compact(null), "No disponible");
   assert.equal(en.compact(null), "Unavailable");
@@ -114,4 +114,18 @@ test("monthly and yearly entity comparisons use exact calendar bases and same-pe
     "mom",
   );
   assert.equal(readSelection("?comparison=annual-total").comparison, "yoy");
+});
+
+test("tooltip presentation uses bounded precision and compact monthly dates", () => {
+  const es = formatters("es"),
+    en = formatters("en");
+  assert.equal(es.currency(1891200000), "US$ 1.891,2 M");
+  assert.equal(en.currency(1891200000), "USD 1,891.2M");
+  assert.equal(es.physical(20763871.222585436, "oil"), "20,76 M bbl");
+  assert.equal(en.physical(2958.950899444006, "gas"), "2,958.95 MMm³");
+  assert.equal(es.percent(-3.4, true), "−3,4%");
+  assert.equal(en.percent(-3.4, true), "−3.4%");
+  assert.equal(es.month("2026-08-01", true), "ago 26");
+  assert.equal(en.month("2026-08-01", true), "Aug 26");
+  assert.equal(es.currency(null), "No disponible");
 });
