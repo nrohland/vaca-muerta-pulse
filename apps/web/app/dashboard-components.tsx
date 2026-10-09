@@ -12,8 +12,6 @@ import {
 } from "recharts";
 import {
   availableRanges,
-  month,
-  number,
   prepareEntities,
   trend,
   type Entity,
@@ -26,57 +24,41 @@ import {
   metric,
   referencePrice,
   entityValue,
-  entityYoY,
+  entityComparison,
+  comparisonOffset,
+  shiftMonth,
+  nonnegativeDomain,
+  type Comparison,
   effectiveMode,
   estimationNote,
   type Mode,
   type Prices,
   type Metric,
 } from "../lib/metrics";
-const exact = (value: number | null) =>
-  value == null
-    ? "No disponible"
-    : new Intl.NumberFormat("es-AR", { maximumFractionDigits: 20 }).format(
-        value,
-      );
-const display = (value: number | null, decimals = 1) =>
-  value == null ? "No disponible" : number(value, decimals);
-const compact = (value: number | null, decimals = 1) =>
-  value == null ? "No disponible" : number(value / 1e6, decimals);
+import { useLocale } from "../lib/locale";
 function Comparisons({
   metric: m,
   period,
+  comparison,
 }: {
   metric: Metric;
   period: string;
+  comparison: Comparison;
 }) {
+  const { t, month } = useLocale();
+  const base = month(shiftMonth(period, comparisonOffset(comparison)));
   return (
-    <>
-      {(
-        [
-          ["YoY", -12, m.yoy],
-          ["MoM", -1, m.mom],
-        ] as const
-      ).map(([label, offset, value]) => (
-        <span key={label} title={`vs. ${comparisonMonth(period, offset)}`}>
-          <span className="comparison-label">{label}</span>{" "}
-          <Change value={value} compact />
-        </span>
-      ))}
-    </>
+    <span title={t("vs. {period}", { period: base })}>
+      <span className="comparison-label">
+        {t(comparison === "mom" ? "Mensual" : "Interanual")}
+      </span>{" "}
+      <Change value={m[comparison]} compact />
+      <span className="sr-only"> · {t("vs. {period}", { period: base })}</span>
+    </span>
   );
 }
 const rateUnit = (f: Fluid) => (f === "oil" ? "bbl/d" : "MMm³/d");
 const volumeUnit = (f: Fluid) => (f === "oil" ? "bbl" : "MMm³");
-export function periodTitle(p: string) {
-  const label = month(p);
-  return label.charAt(0).toLocaleUpperCase("es-AR") + label.slice(1);
-}
-function comparisonMonth(p: string, offset: number) {
-  const d = new Date(`${p}T00:00:00Z`);
-  d.setUTCMonth(d.getUTCMonth() + offset);
-  return month(d.toISOString().slice(0, 10));
-}
 export function Change({
   value,
   compact = false,
@@ -84,20 +66,19 @@ export function Change({
   value: number | null | undefined;
   compact?: boolean;
 }) {
+  const { t, percent } = useLocale();
   if (value == null && compact)
     return (
-      <span className="change neutral" title="Sin comparador">
+      <span className="change neutral" title={t("Sin comparador")}>
         <span aria-hidden="true">—</span>
-        <span className="sr-only">Sin comparador</span>
+        <span className="sr-only">{t("Sin comparador")}</span>
       </span>
     );
   return (
     <span
       className={`change ${value == null || value === 0 ? "neutral" : value > 0 ? "positive" : "negative"}`}
     >
-      {value == null
-        ? "Sin comparador"
-        : `${value > 0 ? "+" : value < 0 ? "−" : ""}${number(Math.abs(value))}%`}
+      {value == null ? t("Sin comparador") : percent(value, true)}
     </span>
   );
 }
@@ -124,6 +105,7 @@ export function KpiCard({
   tooltip?: string;
   onDetail?: () => void;
 }) {
+  const { t, locale } = useLocale();
   return (
     <article
       className={`kpi-card kpi-card--${variant}`}
@@ -134,7 +116,9 @@ export function KpiCard({
         <span className="metric-label">{label}</span>
         {tooltip && (
           <details className="metric-help">
-            <summary aria-label={`Metodología de ${label}`}>ⓘ</summary>
+            <summary aria-label={t("Metodología de {label}", { label })}>
+              ⓘ
+            </summary>
             <p>{tooltip}</p>
           </details>
         )}
@@ -150,8 +134,10 @@ export function KpiCard({
           <button
             className="icon-action"
             onClick={onDetail}
-            title="Detalle próximamente"
-            aria-label={`Próximamente: detalle de ${label.toLocaleLowerCase("es-AR")}`}
+            title={t("Detalle próximamente")}
+            aria-label={t("Próximamente: detalle de {label}", {
+              label: label.toLocaleLowerCase(locale),
+            })}
           >
             ↗
           </button>
@@ -200,32 +186,37 @@ export function GlobalFilters({
   period,
   periods,
   mode,
+  comparison,
   onFluid,
   onPeriod,
   onMode,
+  onComparison,
 }: {
   fluid: Fluid;
   period: string;
   periods: string[];
   mode: Mode;
+  comparison: Comparison;
   onFluid: (f: Fluid) => void;
   onPeriod: (p: string) => void;
   onMode: (m: Mode) => void;
+  onComparison: (c: Comparison) => void;
 }) {
+  const { t, month } = useLocale();
   return (
     <div className="global-filters">
       <fieldset className="fluid-control">
-        <legend className="sr-only">Fluido</legend>
+        <legend className="sr-only">{t("Fluido")}</legend>
         {(["oil", "gas"] as Fluid[]).map((f) => (
           <button key={f} aria-pressed={fluid === f} onClick={() => onFluid(f)}>
-            {f === "oil" ? "Petróleo" : "Gas"}
+            {t(f === "oil" ? "Petróleo" : "Gas")}
           </button>
         ))}
       </fieldset>
       <label className="period-selector">
-        <span className="sr-only">Período</span>
+        <span className="sr-only">{t("Período")}</span>
         <select
-          aria-label="Mes de producción"
+          aria-label={t("Mes de producción")}
           value={period}
           disabled={!periods.length}
           onChange={(e) => onPeriod(e.target.value)}
@@ -235,16 +226,28 @@ export function GlobalFilters({
             .reverse()
             .map((p) => (
               <option key={p} value={p}>
-                {periodTitle(p)}
+                {month(p)}
               </option>
             ))}
         </select>
       </label>
       <fieldset className="fluid-control mode-control">
-        <legend className="sr-only">Unidad de análisis</legend>
+        <legend className="sr-only">{t("Unidad de análisis")}</legend>
         {(["volume", "value"] as Mode[]).map((m) => (
           <button key={m} aria-pressed={mode === m} onClick={() => onMode(m)}>
-            {m === "volume" ? "Volumen" : "Valor estimado"}
+            {t(m === "volume" ? "Volumen" : "Valor estimado")}
+          </button>
+        ))}
+      </fieldset>
+      <fieldset className="fluid-control comparison-control">
+        <legend className="sr-only">{t("Comparación temporal")}</legend>
+        {(["mom", "yoy"] as Comparison[]).map((c) => (
+          <button
+            key={c}
+            aria-pressed={comparison === c}
+            onClick={() => onComparison(c)}
+          >
+            {t(c === "mom" ? "Mensual" : "Interanual")}
           </button>
         ))}
       </fieldset>
@@ -258,6 +261,8 @@ function TrendTooltip({
   fluid,
   mode,
   prices,
+  rows,
+  comparison,
 }: {
   active?: boolean;
   payload?: readonly { value?: number | string | (number | string)[] }[];
@@ -265,20 +270,39 @@ function TrendTooltip({
   fluid: Fluid;
   mode: Mode;
   prices: Prices | null;
+  rows: Row[];
+  comparison: Comparison;
 }) {
+  const { t, exact, number, month } = useLocale();
   const value = payload?.[0]?.value;
   if (!active || value == null || label == null) return null;
+  const period = String(label),
+    row = rows.find((r) => r.fluid === fluid && r.periodo === period);
   return (
     <div className="chart-tooltip">
-      <span>{periodTitle(String(label))}</span>
+      <span>{month(period)}</span>
       <strong>
         {exact(Number(value))}{" "}
-        {mode === "value" ? "USD/día estimados" : rateUnit(fluid)}
+        {mode === "value" ? t("USD/día estimados") : rateUnit(fluid)}
       </strong>
+      <span>
+        {t(comparison === "mom" ? "Mensual" : "Interanual")}:{" "}
+        <Change
+          value={
+            row ? metric(row, rows, prices, "rate", mode)[comparison] : null
+          }
+        />
+      </span>
+      <span>
+        {t("vs. {period}", {
+          period: month(shiftMonth(period, comparisonOffset(comparison))),
+        })}
+      </span>
       {mode === "value" && (
         <span>
-          Brent: {display(referencePrice(prices, String(label), fluid), 2)}{" "}
-          USD/bbl · EIA
+          {t("Brent: {price} USD/bbl · EIA", {
+            price: number(referencePrice(prices, period, fluid), 2),
+          })}
         </span>
       )}
     </div>
@@ -293,6 +317,7 @@ export function Evolution({
   range,
   setRange,
   onDetail,
+  comparison,
 }: {
   rows: Row[];
   mode: Mode;
@@ -302,36 +327,40 @@ export function Evolution({
   range: number;
   setRange: (n: number) => void;
   onDetail: () => void;
+  comparison: Comparison;
 }) {
+  const { t, number, compact, month } = useLocale();
   const ranges = availableRanges(rows, fluid, period),
-    selected = ranges.includes(range) ? range : (ranges[0] ?? 12),
-    series = trend(rows, fluid, period, selected).map((point) => {
-      const row = rows.find(
-        (r) => r.fluid === fluid && r.periodo === point.periodo,
-      );
-      return {
-        ...point,
-        rate:
-          mode === "value" && row
-            ? metric(row, rows, prices, "rate", mode).value
-            : mode === "value"
-              ? null
-              : point.rate,
-      };
-    });
-  const unit = mode === "value" ? "USD/día estimados" : rateUnit(fluid);
-  const last = series.at(-1);
+    selected = ranges.includes(range) ? range : (ranges[0] ?? 12);
+  const series = trend(rows, fluid, period, selected).map((point) => {
+    const row = rows.find(
+      (r) => r.fluid === fluid && r.periodo === point.periodo,
+    );
+    const m = row ? metric(row, rows, prices, "rate", mode) : null;
+    return {
+      ...point,
+      rate: m?.value ?? null,
+      delta: m?.[comparison] ?? null,
+      base: shiftMonth(point.periodo, comparisonOffset(comparison)),
+    };
+  });
+  const unit = mode === "value" ? t("USD/día estimados") : rateUnit(fluid),
+    last = series.at(-1);
+  const finalLabel =
+    last?.rate == null
+      ? ""
+      : `${compact(last.rate)} ${mode === "value" ? "USD/d" : rateUnit(fluid)}`;
   return (
     <ChartCard
-      title={
+      title={t(
         mode === "value"
           ? "Evolución del valor estimado"
-          : "Evolución de la producción"
-      }
-      subtitle={`Tasa diaria equivalente · ${unit}`}
+          : "Evolución de la producción",
+      )}
+      subtitle={t("Tasa diaria equivalente · {unit}", { unit })}
       className="evolution"
       controls={
-        <div className="ranges" aria-label="Período de evolución">
+        <div className="ranges" aria-label={t("Período de evolución")}>
           {ranges.map((n) => (
             <button
               key={n}
@@ -345,7 +374,7 @@ export function Evolution({
       }
       action={
         <button className="text-action" onClick={onDetail}>
-          Producción · Próximamente <span aria-hidden="true">↗</span>
+          {t("Producción · Próximamente")} <span aria-hidden="true">↗</span>
         </button>
       }
     >
@@ -353,33 +382,25 @@ export function Evolution({
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={series}
-            margin={{ left: 0, right: 24, top: 22, bottom: 0 }}
+            margin={{ left: 0, right: 24, top: 30, bottom: 8 }}
           >
             <CartesianGrid vertical={false} stroke="var(--chart-grid)" />
             <XAxis
               dataKey="periodo"
-              tickFormatter={(v) =>
-                new Intl.DateTimeFormat("es-AR", {
-                  month: "short",
-                  year: "2-digit",
-                  timeZone: "UTC",
-                }).format(new Date(`${v}T00:00:00Z`))
-              }
+              tickFormatter={(v) => month(v, true)}
+              padding={{ left: 12, right: 16 }}
               minTickGap={60}
               tick={{ fill: "var(--muted)", fontSize: 11 }}
-              tickMargin={12}
+              tickMargin={10}
               axisLine={false}
               tickLine={false}
             />
             <YAxis
-              width={mode === "value" ? 75 : 65}
-              domain={["auto", "auto"]}
-              tickCount={3}
-              tickFormatter={(v) =>
-                mode === "value"
-                  ? `${number(v / 1e6, 1)} M`
-                  : number(v, fluid === "oil" ? 0 : 1)
-              }
+              width={70}
+              domain={nonnegativeDomain}
+              tickCount={4}
+              interval={0}
+              tickFormatter={compact}
               tick={{ fill: "var(--muted)", fontSize: 11 }}
               tickMargin={8}
               axisLine={false}
@@ -387,7 +408,13 @@ export function Evolution({
             />
             <Tooltip
               content={
-                <TrendTooltip fluid={fluid} mode={mode} prices={prices} />
+                <TrendTooltip
+                  fluid={fluid}
+                  mode={mode}
+                  prices={prices}
+                  rows={rows}
+                  comparison={comparison}
+                />
               }
               cursor={{ stroke: "var(--rule)" }}
             />
@@ -405,48 +432,58 @@ export function Evolution({
               <ReferenceDot
                 x={last.periodo}
                 y={last.rate}
-                r={4}
+                r={5}
                 fill="var(--accent)"
                 stroke="var(--surface)"
+                label={({ viewBox }: any) => (
+                  <text
+                    className="chart-end-label"
+                    x={viewBox.x - 10}
+                    y={viewBox.y - 13}
+                    textAnchor="end"
+                    fill="var(--ink)"
+                    fontSize={11}
+                  >
+                    {finalLabel}
+                  </text>
+                )}
               />
             )}
           </LineChart>
         </ResponsiveContainer>
       </div>
-      {last?.rate != null && (
-        <p className="chart-final">
-          {periodTitle(last.periodo)} ·{" "}
-          <strong>
-            {number(last.rate, mode === "value" || fluid === "oil" ? 0 : 2)}{" "}
-            {unit}
-          </strong>
-        </p>
-      )}
       <details className="data-disclosure">
-        <summary>Ver tabla de datos</summary>
+        <summary>{t("Ver tabla de datos")}</summary>
         <table>
           <caption>
-            Tasa diaria equivalente del mes. Los meses o precios ausentes no
-            equivalen a cero.
+            {t(
+              "Tasa diaria equivalente del mes. Los meses o precios ausentes no equivalen a cero.",
+            )}
           </caption>
           <thead>
             <tr>
-              <th>Mes</th>
-              <th>Tasa ({unit})</th>
+              <th>{t("Mes")}</th>
+              <th>{t("Tasa ({unit})", { unit })}</th>
+              <th>{t(comparison === "mom" ? "Mensual" : "Interanual")}</th>
+              <th>{t("Base de comparación")}</th>
             </tr>
           </thead>
           <tbody>
             {series.map((r) => (
               <tr key={r.periodo}>
-                <th>{r.label}</th>
+                <th>{month(r.periodo)}</th>
                 <td>
                   {r.rate == null
-                    ? "No disponible"
+                    ? t("No disponible")
                     : number(
                         r.rate,
                         mode === "value" || fluid === "oil" ? 0 : 2,
                       )}
                 </td>
+                <td>
+                  <Change value={r.delta} />
+                </td>
+                <td>{month(r.base)}</td>
               </tr>
             ))}
           </tbody>
@@ -506,6 +543,7 @@ export function RankingCard({
   current,
   fluid,
   dimension,
+  comparison,
   onNavigate,
 }: {
   mode: Mode;
@@ -514,31 +552,40 @@ export function RankingCard({
   current: Row;
   fluid: Fluid;
   dimension: "company" | "area";
+  comparison: Comparison;
   onNavigate: (tab: Tab, id?: string) => void;
 }) {
+  const { t, compact, exact, percent, month } = useLocale();
   const operators = dimension === "company",
     tab = operators ? "operators" : "areas",
     shown = prepareEntities(entities, fluid, dimension, current.periodo).top;
   return (
     <ModuleCard
-      title={operators ? "Principales operadores" : "Principales áreas"}
-      subtitle={`Top 5 · ${mode === "value" ? "valor bruto estimado · USD" : `volumen mensual · ${volumeUnit(fluid)}`}`}
+      title={t(operators ? "Principales operadores" : "Principales áreas")}
+      subtitle={t(
+        mode === "value"
+          ? "Top 5 · valor bruto estimado · USD"
+          : "Top 5 · volumen mensual · {unit}",
+        { unit: volumeUnit(fluid) },
+      )}
       className={`ranking-card ${operators ? "ranking-operators" : "ranking-areas"}`}
       action={
         <button className="text-action" onClick={() => onNavigate(tab)}>
-          {operators ? "Operadores" : "Áreas"} · Próximamente ↗
+          {t("{section} · Próximamente ↗", {
+            section: t(operators ? "Operadores" : "Áreas"),
+          })}
         </button>
       }
     >
       <div className="ranking-columns" aria-hidden="true">
-        <span>{operators ? "Operador" : "Área"}</span>
-        <span>{mode === "value" ? "Valor estimado" : "Producción"}</span>
-        {operators && <span>Cuota</span>}
-        <span>YoY</span>
+        <span>{t(operators ? "Operador" : "Área")}</span>
+        <span>{t(mode === "value" ? "Valor estimado" : "Producción")}</span>
+        {operators && <span>{t("Cuota")}</span>}
+        <span>{t(comparison === "mom" ? "Mensual" : "Interanual")}</span>
       </div>
       <ol className="ranking-list">
         {shown.map((e) => {
-          // Display composition on a true 0–100% total-volume scale. No growth calculations in UI.
+          // Prepared volumes retain the true total-volume denominator in both comparisons.
           const share =
             current.volume > 0 &&
             (mode === "volume" ||
@@ -565,23 +612,36 @@ export function RankingCard({
                 </span>
                 <span className="bar-value">
                   <span className="mobile-label">
-                    {mode === "value" ? "USD estimados" : "Producción"}
+                    {t(mode === "value" ? "USD estimados" : "Producción")}
                   </span>
-                  <span title={exact(entityValue(e, prices, mode))}>
-                    {mode === "value"
-                      ? `${compact(entityValue(e, prices, mode))} M`
-                      : number(e.volume, fluid === "oil" ? 0 : 2)}
+                  <span
+                    className="ranking-amount"
+                    title={`${exact(entityValue(e, prices, mode))} ${mode === "value" ? "USD" : volumeUnit(fluid)}`}
+                  >
+                    {compact(entityValue(e, prices, mode))}
                   </span>
                 </span>
                 {operators && (
                   <span className="share-value">
-                    <span className="mobile-label">Cuota</span>
-                    {share == null ? "No disponible" : `${number(share)}%`}
+                    <span className="mobile-label">{t("Cuota")}</span>
+                    {share == null ? t("No disponible") : percent(share)}
                   </span>
                 )}
-                <span className="yoy-value">
-                  <span className="mobile-label">YoY</span>
-                  <Change value={entityYoY(e, prices, mode)} compact />
+                <span
+                  className="yoy-value"
+                  title={t("vs. {period}", {
+                    period: month(
+                      shiftMonth(current.periodo, comparisonOffset(comparison)),
+                    ),
+                  })}
+                >
+                  <span className="mobile-label">
+                    {t(comparison === "mom" ? "Mensual" : "Interanual")}
+                  </span>
+                  <Change
+                    value={entityComparison(e, prices, mode, comparison)}
+                    compact
+                  />
                 </span>
                 <span className="bar-track" aria-hidden="true">
                   <span style={{ width: `${share ?? 0}%` }} />
@@ -593,12 +653,16 @@ export function RankingCard({
       </ol>
       {!shown.length && (
         <p className="empty">
-          Sin {operators ? "operadores" : "áreas"} para este período.
+          {t(
+            operators
+              ? "Sin operadores para este período."
+              : "Sin áreas para este período.",
+          )}
         </p>
       )}
       <p className="ranking-scale">
-        Barras: participación en el total · escala 0–100%
-        {mode === "value" && " · Referencia uniforme, no ingresos efectivos"}
+        {t("Barras: participación en el total · escala 0–100%")}
+        {mode === "value" && t(" · Referencia uniforme, no ingresos efectivos")}
       </p>
     </ModuleCard>
   );
@@ -614,6 +678,7 @@ export function SummaryDashboard({
   onNavigate,
   mode,
   prices,
+  comparison,
 }: {
   current: Row;
   rows: Row[];
@@ -625,104 +690,144 @@ export function SummaryDashboard({
   onNavigate: (tab: Tab, id?: string) => void;
   mode: Mode;
   prices: Prices | null;
+  comparison: Comparison;
 }) {
+  const { t, number, exact, million, month, date } = useLocale();
   const shownMode = effectiveMode(mode, fluid),
     monetary = shownMode === "value";
-  const daily = metric(current, rows, prices, "rate", shownMode);
-  const monthly = metric(current, rows, prices, "volume", shownMode);
-  const wells = metric(current, rows, prices, "wells");
-  const fourth = metric(current, rows, prices, monetary ? "price" : "estimate");
-  const price = referencePrice(prices, period, fluid);
+  const daily = metric(current, rows, prices, "rate", shownMode),
+    monthly = metric(current, rows, prices, "volume", shownMode),
+    wells = metric(current, rows, prices, "wells"),
+    fourth = metric(current, rows, prices, monetary ? "price" : "estimate");
+  const price = referencePrice(prices, period, fluid),
+    note = t(estimationNote);
   const physicalVolume =
     fluid === "oil"
       ? `${exact(current.volume)} bbl`
       : `${exact(current.volume * 1e6)} m³ (${exact(current.volume)} MMm³)`;
   const valuationHelp =
     price == null
-      ? fluid === "gas"
-        ? (prices?.gas.reason ?? "Referencia nacional sin validar.")
-        : "Precio Brent no disponible para este mes. No se calcula un valor sin respaldo."
-      : `${estimationNote} Fórmula: volumen mensual en bbl × ${number(price, 2)} USD/bbl (${periodTitle(period)}). Fuente: EIA. Actualizada ${prices?.source.source_updated_at}. Valor exacto: ${exact(current.volume * price)} USD. Comparaciones con volumen y precio de cada mes.`;
+      ? t(
+          fluid === "gas"
+            ? "Referencia nacional y conversión energética sin validar."
+            : "Precio Brent no disponible para este mes. No se calcula un valor sin respaldo.",
+        )
+      : t(
+          "{note} Fórmula: volumen mensual en bbl × {price} USD/bbl ({period}). Fuente: EIA. Actualizada {date}. Valor exacto: {value} USD. Comparaciones con volumen y precio de cada mes.",
+          {
+            note,
+            price: number(price, 2),
+            period: month(period),
+            date: date(prices?.source.source_updated_at),
+            value: exact(current.volume * price),
+          },
+        );
+  const comparisons = (m: Metric) => (
+    <Comparisons metric={m} period={period} comparison={comparison} />
+  );
   return (
     <>
-      <h1 className="sr-only">Resumen de Vaca Muerta</h1>
+      <h1 className="sr-only">{t("Resumen de Vaca Muerta")}</h1>
       {mode === "value" && fluid === "gas" && (
         <p className="availability-note" role="status">
-          Valor estimado no disponible para gas. Falta validar una referencia
-          nacional comparable y la conversión energética. Se muestran unidades
-          físicas.
+          {t(
+            "Valor estimado no disponible para gas. Falta validar una referencia nacional comparable y la conversión energética. Se muestran unidades físicas.",
+          )}
         </p>
       )}
       {monetary && price == null && (
         <p className="availability-note" role="status">
-          Precio Brent no disponible para este período; el valor estimado
-          permanece sin calcular.
+          {t(
+            "Precio Brent no disponible para este período; el valor estimado permanece sin calcular.",
+          )}
         </p>
       )}
       <div className="kpi-grid">
         <KpiCard
           variant="primary"
-          label={monetary ? "Valor diario estimado" : "Producción diaria"}
+          label={t(monetary ? "Valor diario estimado" : "Producción diaria")}
           value={
             monetary
-              ? compact(daily.value, 2)
-              : display(daily.value, fluid === "oil" ? 0 : 2)
+              ? million(daily.value, 2)
+              : number(daily.value, fluid === "oil" ? 0 : 2)
           }
-          unit={monetary ? "M USD/día" : rateUnit(fluid)}
-          context={periodTitle(period)}
-          comparisons={<Comparisons metric={daily} period={period} />}
+          unit={monetary ? t("M USD/día") : rateUnit(fluid)}
+          context={month(period)}
+          comparisons={comparisons(daily)}
           tooltip={
             monetary
-              ? `${valuationHelp} Diario = valor mensual / ${current.days_in_month} días calendario.`
-              : `Volumen mensual / ${current.days_in_month} días calendario. Tasa exacta: ${exact(current.rate)} ${rateUnit(fluid)}. YoY y MoM comparan tasas diarias, no volúmenes mensuales.`
+              ? t("{help} Diario = valor mensual / {days} días calendario.", {
+                  help: valuationHelp,
+                  days: Number(current.days_in_month),
+                })
+              : t(
+                  "Volumen mensual / {days} días calendario. Tasa exacta: {value} {unit}. Las comparaciones usan tasas diarias, no volúmenes mensuales.",
+                  {
+                    days: Number(current.days_in_month),
+                    value: exact(current.rate),
+                    unit: rateUnit(fluid),
+                  },
+                )
           }
           onDetail={() => onNavigate("production")}
         />
         <KpiCard
-          label={monetary ? "Valor mensual estimado" : "Volumen mensual"}
+          label={t(monetary ? "Valor mensual estimado" : "Volumen mensual")}
           value={
             monetary || fluid === "oil"
-              ? compact(monthly.value)
-              : display(monthly.value, 1)
+              ? million(monthly.value)
+              : number(monthly.value, 1)
           }
           unit={monetary ? "M USD" : fluid === "oil" ? "M bbl" : "MMm³"}
-          context={periodTitle(period)}
-          comparisons={<Comparisons metric={monthly} period={period} />}
+          context={month(period)}
+          comparisons={comparisons(monthly)}
           tooltip={
             monetary
               ? valuationHelp
-              : `${physicalVolume}. YoY y MoM comparan volúmenes mensuales; pueden diferir de la tasa diaria por los días de cada mes.`
+              : t(
+                  "{volume}. Las comparaciones usan volúmenes mensuales; pueden diferir de la tasa diaria por los días de cada mes.",
+                  { volume: physicalVolume },
+                )
           }
           onDetail={() => onNavigate("production")}
         />
         <KpiCard
-          label="Pozos productivos"
-          value={display(wells.value, 0)}
-          unit="pozos"
-          context="Con producción positiva"
-          comparisons={<Comparisons metric={wells} period={period} />}
-          tooltip={`Pozos únicos con producción positiva de ${fluid === "oil" ? "petróleo" : "gas"} durante ${periodTitle(period)}. YoY y MoM comparan esta cantidad de pozos; no tasas ni volumen. Base ausente o cero: sin comparador.`}
+          label={t("Pozos productivos")}
+          value={number(wells.value, 0)}
+          unit={t("pozos")}
+          context={t("Con producción positiva")}
+          comparisons={comparisons(wells)}
+          tooltip={t(
+            "Pozos únicos con producción positiva de {fluid} durante {period}. Las comparaciones usan esta cantidad de pozos, no tasas ni volumen. Base ausente o cero: sin comparador.",
+            {
+              fluid: t(fluid === "oil" ? "Petróleo" : "Gas").toLowerCase(),
+              period: month(period),
+            },
+          )}
           onDetail={() => onNavigate("activity")}
         />
         <KpiCard
-          label={
-            monetary ? "Precio de referencia Brent" : "Valor bruto estimado"
-          }
-          value={monetary ? display(fourth.value, 2) : compact(fourth.value)}
+          label={t(
+            monetary ? "Precio de referencia Brent" : "Valor bruto estimado",
+          )}
+          value={monetary ? number(fourth.value, 2) : million(fourth.value)}
           unit={
             fourth.value == null ? undefined : monetary ? "USD/bbl" : "M USD"
           }
-          context={
+          context={t(
             monetary
               ? "Promedio mensual · EIA"
               : fourth.value == null
                 ? "Estimación pendiente"
-                : "A precio Brent · estimación"
-          }
-          comparisons={<Comparisons metric={fourth} period={period} />}
+                : "A precio Brent · estimación",
+          )}
+          comparisons={comparisons(fourth)}
           tooltip={
             monetary
-              ? `Europe Brent Spot Price FOB. Promedio mensual en USD/bbl, EIA (${prices?.source.source_updated_at}). YoY/MoM comparan precios. ${estimationNote}`
+              ? t(
+                  "Europe Brent Spot Price FOB. Promedio mensual en USD/bbl, EIA ({date}). Las comparaciones usan precios. {note}",
+                  { date: date(prices?.source.source_updated_at), note },
+                )
               : valuationHelp
           }
         />
@@ -735,6 +840,7 @@ export function SummaryDashboard({
         setRange={setRange}
         mode={shownMode}
         prices={prices}
+        comparison={comparison}
         onDetail={() => onNavigate("production")}
       />
       <div className="ranking-grid">
@@ -747,6 +853,7 @@ export function SummaryDashboard({
             dimension={dimension}
             mode={shownMode}
             prices={prices}
+            comparison={comparison}
             onNavigate={onNavigate}
           />
         ))}

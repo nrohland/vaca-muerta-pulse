@@ -1,4 +1,7 @@
 import type { Entity, Fluid, Row } from "./contract.ts";
+export type Comparison = "mom" | "yoy";
+export const comparisonOffset = (comparison: Comparison) =>
+  comparison === "mom" ? -1 : -12;
 export type Mode = "volume" | "value";
 export type Prices = {
   schema_version: 1;
@@ -150,6 +153,26 @@ export function entityYoY(e: Entity, prices: Prices | null, mode: Mode) {
     ),
   );
 }
+export function entityComparison(
+  e: Entity,
+  prices: Prices | null,
+  mode: Mode,
+  comparison: Comparison,
+) {
+  if (comparison === "yoy") return entityYoY(e, prices, mode);
+  if (mode === "volume") return e.mom_volume_pct as number | null;
+  return change(
+    entityValue(e, prices, mode),
+    valuedVolume(
+      e.mom_volume as number | null,
+      e.fluid,
+      shiftMonth(e.periodo, -1),
+      prices,
+    ),
+  );
+}
+// Nonnegative quantities always retain an honest zero origin. Recharts chooses nice ticks.
+export const nonnegativeDomain: [number, "auto"] = [0, "auto"];
 export function effectiveMode(mode: Mode, fluid: Fluid) {
   return fluid === "gas" ? "volume" : mode;
 }

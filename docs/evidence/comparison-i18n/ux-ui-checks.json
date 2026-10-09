@@ -1,0 +1,756 @@
+{
+  "checks": [
+    {
+      "name": "ux-es-interanual-desktop",
+      "filters": [
+        "Petróleo",
+        "Volumen",
+        "Interanual"
+      ],
+      "height": 900,
+      "kpis": [
+        {
+          "comparison": "Interanual +27,2 % · vs. Agosto de 2025",
+          "value": "669.802bbl/d"
+        },
+        {
+          "comparison": "Interanual +27,2 % · vs. Agosto de 2025",
+          "value": "20,8M bbl"
+        },
+        {
+          "comparison": "Interanual +21,0 % · vs. Agosto de 2025",
+          "value": "2.678pozos"
+        },
+        {
+          "comparison": "Interanual +70,7 % · vs. Agosto de 2025",
+          "value": "1.891,2M USD"
+        }
+      ],
+      "labelBounds": {
+        "bottom": 26.4761962890625,
+        "height": 180,
+        "left": 1212.7890625,
+        "right": 1287,
+        "top": 13.4761962890625,
+        "width": 1342
+      },
+      "language": "es-AR",
+      "lastLabel": "669,8 K bbl/d",
+      "rankings": [
+        {
+          "compact": "10,35 M",
+          "tooltip": "10.353.165,95978535 bbl"
+        },
+        {
+          "compact": "2,53 M",
+          "tooltip": "2.527.251,8106202083 bbl"
+        },
+        {
+          "compact": "2,43 M",
+          "tooltip": "2.427.635,183982934 bbl"
+        },
+        {
+          "compact": "1,33 M",
+          "tooltip": "1.325.628,693040953 bbl"
+        },
+        {
+          "compact": "1,12 M",
+          "tooltip": "1.119.425,620540131 bbl"
+        },
+        {
+          "compact": "2,86 M",
+          "tooltip": "2.860.800,1675525773 bbl"
+        },
+        {
+          "compact": "2,51 M",
+          "tooltip": "2.509.423,474078667 bbl"
+        },
+        {
+          "compact": "2,24 M",
+          "tooltip": "2.238.366,972258471 bbl"
+        },
+        {
+          "compact": "1,82 M",
+          "tooltip": "1.820.966,9339378376 bbl"
+        },
+        {
+          "compact": "1,44 M",
+          "tooltip": "1.444.411,3291456487 bbl"
+        }
+      ],
+      "scrollHeight": 900,
+      "scrollWidth": 1440,
+      "theme": "light",
+      "width": 1440,
+      "zeroTickVisible": true
+    },
+    {
+      "name": "ux-es-mensual-desktop",
+      "filters": [
+        "Petróleo",
+        "Volumen",
+        "Mensual"
+      ],
+      "height": 900,
+      "kpis": [
+        {
+          "comparison": "Mensual +4,1 % · vs. Julio de 2026",
+          "value": "669.802bbl/d"
+        },
+        {
+          "comparison": "Mensual +4,1 % · vs. Julio de 2026",
+          "value": "20,8M bbl"
+        },
+        {
+          "comparison": "Mensual +1,7 % · vs. Julio de 2026",
+          "value": "2.678pozos"
+        },
+        {
+          "comparison": "Mensual +13,3 % · vs. Julio de 2026",
+          "value": "1.891,2M USD"
+        }
+      ],
+      "labelBounds": {
+        "bottom": 26.4761962890625,
+        "height": 180,
+        "left": 1212.7890625,
+        "right": 1287,
+        "top": 13.4761962890625,
+        "width": 1342
+      },
+      "language": "es-AR",
+      "lastLabel": "669,8 K bbl/d",
+      "rankings": [
+        {
+          "compact": "10,35 M",
+          "tooltip": "10.353.165,95978535 bbl"
+        },
+        {
+          "compact": "2,53 M",
+          "tooltip": "2.527.251,8106202083 bbl"
+        },
+        {
+          "compact": "2,43 M",
+          "tooltip": "2.427.635,183982934 bbl"
+        },
+        {
+          "compact": "1,33 M",
+          "tooltip": "1.325.628,693040953 bbl"
+        },
+        {
+          "compact": "1,12 M",
+          "tooltip": "1.119.425,620540131 bbl"
+        },
+        {
+          "compact": "2,86 M",
+          "tooltip": "2.860.800,1675525773 bbl"
+        },
+        {
+          "compact": "2,51 M",
+          "tooltip": "2.509.423,474078667 bbl"
+        },
+        {
+          "compact": "2,24 M",
+          "tooltip": "2.238.366,972258471 bbl"
+        },
+        {
+          "compact": "1,82 M",
+          "tooltip": "1.820.966,9339378376 bbl"
+        },
+        {
+          "compact": "1,44 M",
+          "tooltip": "1.444.411,3291456487 bbl"
+        }
+      ],
+      "scrollHeight": 900,
+      "scrollWidth": 1440,
+      "theme": "light",
+      "width": 1440,
+      "zeroTickVisible": true
+    },
+    {
+      "name": "ux-en-yearly-desktop",
+      "filters": [
+        "Oil",
+        "Volume",
+        "Year over year"
+      ],
+      "height": 900,
+      "kpis": [
+        {
+          "comparison": "Year over year +27.2% · vs. August 2025",
+          "value": "669,802bbl/d"
+        },
+        {
+          "comparison": "Year over year +27.2% · vs. August 2025",
+          "value": "20.8M bbl"
+        },
+        {
+          "comparison": "Year over year +21.0% · vs. August 2025",
+          "value": "2,678wells"
+        },
+        {
+          "comparison": "Year over year +70.7% · vs. August 2025",
+          "value": "1,891.2M USD"
+        }
+      ],
+      "labelBounds": {
+        "bottom": 26.4761962890625,
+        "height": 180,
+        "left": 1215.7734375,
+        "right": 1287,
+        "top": 13.4761962890625,
+        "width": 1342
+      },
+      "language": "en-US",
+      "lastLabel": "669.8K bbl/d",
+      "rankings": [
+        {
+          "compact": "10.35M",
+          "tooltip": "10,353,165.95978535 bbl"
+        },
+        {
+          "compact": "2.53M",
+          "tooltip": "2,527,251.8106202083 bbl"
+        },
+        {
+          "compact": "2.43M",
+          "tooltip": "2,427,635.183982934 bbl"
+        },
+        {
+          "compact": "1.33M",
+          "tooltip": "1,325,628.693040953 bbl"
+        },
+        {
+          "compact": "1.12M",
+          "tooltip": "1,119,425.620540131 bbl"
+        },
+        {
+          "compact": "2.86M",
+          "tooltip": "2,860,800.1675525773 bbl"
+        },
+        {
+          "compact": "2.51M",
+          "tooltip": "2,509,423.474078667 bbl"
+        },
+        {
+          "compact": "2.24M",
+          "tooltip": "2,238,366.972258471 bbl"
+        },
+        {
+          "compact": "1.82M",
+          "tooltip": "1,820,966.9339378376 bbl"
+        },
+        {
+          "compact": "1.44M",
+          "tooltip": "1,444,411.3291456487 bbl"
+        }
+      ],
+      "scrollHeight": 900,
+      "scrollWidth": 1440,
+      "theme": "light",
+      "width": 1440,
+      "zeroTickVisible": true
+    },
+    {
+      "name": "ux-en-monthly-desktop",
+      "filters": [
+        "Oil",
+        "Volume",
+        "Monthly"
+      ],
+      "height": 900,
+      "kpis": [
+        {
+          "comparison": "Monthly +4.1% · vs. July 2026",
+          "value": "669,802bbl/d"
+        },
+        {
+          "comparison": "Monthly +4.1% · vs. July 2026",
+          "value": "20.8M bbl"
+        },
+        {
+          "comparison": "Monthly +1.7% · vs. July 2026",
+          "value": "2,678wells"
+        },
+        {
+          "comparison": "Monthly +13.3% · vs. July 2026",
+          "value": "1,891.2M USD"
+        }
+      ],
+      "labelBounds": {
+        "bottom": 26.4761962890625,
+        "height": 180,
+        "left": 1215.7734375,
+        "right": 1287,
+        "top": 13.4761962890625,
+        "width": 1342
+      },
+      "language": "en-US",
+      "lastLabel": "669.8K bbl/d",
+      "rankings": [
+        {
+          "compact": "10.35M",
+          "tooltip": "10,353,165.95978535 bbl"
+        },
+        {
+          "compact": "2.53M",
+          "tooltip": "2,527,251.8106202083 bbl"
+        },
+        {
+          "compact": "2.43M",
+          "tooltip": "2,427,635.183982934 bbl"
+        },
+        {
+          "compact": "1.33M",
+          "tooltip": "1,325,628.693040953 bbl"
+        },
+        {
+          "compact": "1.12M",
+          "tooltip": "1,119,425.620540131 bbl"
+        },
+        {
+          "compact": "2.86M",
+          "tooltip": "2,860,800.1675525773 bbl"
+        },
+        {
+          "compact": "2.51M",
+          "tooltip": "2,509,423.474078667 bbl"
+        },
+        {
+          "compact": "2.24M",
+          "tooltip": "2,238,366.972258471 bbl"
+        },
+        {
+          "compact": "1.82M",
+          "tooltip": "1,820,966.9339378376 bbl"
+        },
+        {
+          "compact": "1.44M",
+          "tooltip": "1,444,411.3291456487 bbl"
+        }
+      ],
+      "scrollHeight": 900,
+      "scrollWidth": 1440,
+      "theme": "light",
+      "width": 1440,
+      "zeroTickVisible": true
+    },
+    {
+      "name": "ux-en-yearly-dark-desktop",
+      "filters": [
+        "Oil",
+        "Volume",
+        "Year over year"
+      ],
+      "height": 900,
+      "kpis": [
+        {
+          "comparison": "Year over year +27.2% · vs. August 2025",
+          "value": "669,802bbl/d"
+        },
+        {
+          "comparison": "Year over year +27.2% · vs. August 2025",
+          "value": "20.8M bbl"
+        },
+        {
+          "comparison": "Year over year +21.0% · vs. August 2025",
+          "value": "2,678wells"
+        },
+        {
+          "comparison": "Year over year +70.7% · vs. August 2025",
+          "value": "1,891.2M USD"
+        }
+      ],
+      "labelBounds": {
+        "bottom": 26.4761962890625,
+        "height": 180,
+        "left": 1215.7734375,
+        "right": 1287,
+        "top": 13.4761962890625,
+        "width": 1342
+      },
+      "language": "en-US",
+      "lastLabel": "669.8K bbl/d",
+      "rankings": [
+        {
+          "compact": "10.35M",
+          "tooltip": "10,353,165.95978535 bbl"
+        },
+        {
+          "compact": "2.53M",
+          "tooltip": "2,527,251.8106202083 bbl"
+        },
+        {
+          "compact": "2.43M",
+          "tooltip": "2,427,635.183982934 bbl"
+        },
+        {
+          "compact": "1.33M",
+          "tooltip": "1,325,628.693040953 bbl"
+        },
+        {
+          "compact": "1.12M",
+          "tooltip": "1,119,425.620540131 bbl"
+        },
+        {
+          "compact": "2.86M",
+          "tooltip": "2,860,800.1675525773 bbl"
+        },
+        {
+          "compact": "2.51M",
+          "tooltip": "2,509,423.474078667 bbl"
+        },
+        {
+          "compact": "2.24M",
+          "tooltip": "2,238,366.972258471 bbl"
+        },
+        {
+          "compact": "1.82M",
+          "tooltip": "1,820,966.9339378376 bbl"
+        },
+        {
+          "compact": "1.44M",
+          "tooltip": "1,444,411.3291456487 bbl"
+        }
+      ],
+      "scrollHeight": 900,
+      "scrollWidth": 1440,
+      "theme": "dark",
+      "width": 1440,
+      "zeroTickVisible": true
+    },
+    {
+      "name": "ux-en-monthly-value-dark-desktop",
+      "filters": [
+        "Oil",
+        "Estimated value",
+        "Monthly"
+      ],
+      "height": 900,
+      "kpis": [
+        {
+          "comparison": "Monthly +13.3% · vs. July 2026",
+          "value": "61.01M USD/day"
+        },
+        {
+          "comparison": "Monthly +13.3% · vs. July 2026",
+          "value": "1,891.2M USD"
+        },
+        {
+          "comparison": "Monthly +1.7% · vs. July 2026",
+          "value": "2,678wells"
+        },
+        {
+          "comparison": "Monthly +8.7% · vs. July 2026",
+          "value": "91.08USD/bbl"
+        }
+      ],
+      "labelBounds": {
+        "bottom": 35.3983154296875,
+        "height": 180,
+        "left": 1211.015625,
+        "right": 1287,
+        "top": 22.3983154296875,
+        "width": 1342
+      },
+      "language": "en-US",
+      "lastLabel": "61.01M USD/d",
+      "rankings": [
+        {
+          "compact": "942.97M",
+          "tooltip": "942,966,355.6172496 USD"
+        },
+        {
+          "compact": "230.18M",
+          "tooltip": "230,182,094.91128856 USD"
+        },
+        {
+          "compact": "221.11M",
+          "tooltip": "221,109,012.55716562 USD"
+        },
+        {
+          "compact": "120.74M",
+          "tooltip": "120,738,261.36217 USD"
+        },
+        {
+          "compact": "101.96M",
+          "tooltip": "101,957,285.51879515 USD"
+        },
+        {
+          "compact": "260.56M",
+          "tooltip": "260,561,679.26068875 USD"
+        },
+        {
+          "compact": "228.56M",
+          "tooltip": "228,558,290.019085 USD"
+        },
+        {
+          "compact": "203.87M",
+          "tooltip": "203,870,463.83330154 USD"
+        },
+        {
+          "compact": "165.85M",
+          "tooltip": "165,853,668.34305826 USD"
+        },
+        {
+          "compact": "131.56M",
+          "tooltip": "131,556,983.85858569 USD"
+        }
+      ],
+      "scrollHeight": 900,
+      "scrollWidth": 1440,
+      "theme": "dark",
+      "width": 1440,
+      "zeroTickVisible": true
+    },
+    {
+      "name": "ux-es-mensual-value-dark-desktop",
+      "filters": [
+        "Petróleo",
+        "Valor estimado",
+        "Mensual"
+      ],
+      "height": 900,
+      "kpis": [
+        {
+          "comparison": "Mensual +13,3 % · vs. Julio de 2026",
+          "value": "61,01M USD/día"
+        },
+        {
+          "comparison": "Mensual +13,3 % · vs. Julio de 2026",
+          "value": "1.891,2M USD"
+        },
+        {
+          "comparison": "Mensual +1,7 % · vs. Julio de 2026",
+          "value": "2.678pozos"
+        },
+        {
+          "comparison": "Mensual +8,7 % · vs. Julio de 2026",
+          "value": "91,08USD/bbl"
+        }
+      ],
+      "labelBounds": {
+        "bottom": 35.3983154296875,
+        "height": 180,
+        "left": 1208.0234375,
+        "right": 1287,
+        "top": 22.3983154296875,
+        "width": 1342
+      },
+      "language": "es-AR",
+      "lastLabel": "61,01 M USD/d",
+      "rankings": [
+        {
+          "compact": "942,97 M",
+          "tooltip": "942.966.355,6172496 USD"
+        },
+        {
+          "compact": "230,18 M",
+          "tooltip": "230.182.094,91128856 USD"
+        },
+        {
+          "compact": "221,11 M",
+          "tooltip": "221.109.012,55716562 USD"
+        },
+        {
+          "compact": "120,74 M",
+          "tooltip": "120.738.261,36217 USD"
+        },
+        {
+          "compact": "101,96 M",
+          "tooltip": "101.957.285,51879515 USD"
+        },
+        {
+          "compact": "260,56 M",
+          "tooltip": "260.561.679,26068875 USD"
+        },
+        {
+          "compact": "228,56 M",
+          "tooltip": "228.558.290,019085 USD"
+        },
+        {
+          "compact": "203,87 M",
+          "tooltip": "203.870.463,83330154 USD"
+        },
+        {
+          "compact": "165,85 M",
+          "tooltip": "165.853.668,34305826 USD"
+        },
+        {
+          "compact": "131,56 M",
+          "tooltip": "131.556.983,85858569 USD"
+        }
+      ],
+      "scrollHeight": 900,
+      "scrollWidth": 1440,
+      "theme": "dark",
+      "width": 1440,
+      "zeroTickVisible": true
+    },
+    {
+      "name": "ux-es-gas-unavailable-desktop",
+      "filters": [
+        "Gas",
+        "Valor estimado",
+        "Mensual"
+      ],
+      "height": 900,
+      "kpis": [
+        {
+          "comparison": "Mensual −1,2 % · vs. Julio de 2026",
+          "value": "95,45MMm³/d"
+        },
+        {
+          "comparison": "Mensual −1,2 % · vs. Julio de 2026",
+          "value": "2.959,0MMm³"
+        },
+        {
+          "comparison": "Mensual +1,7 % · vs. Julio de 2026",
+          "value": "2.884pozos"
+        },
+        {
+          "comparison": "Mensual —Sin comparador · vs. Julio de 2026",
+          "value": "No disponible"
+        }
+      ],
+      "labelBounds": {
+        "bottom": 24.6866455078125,
+        "height": 180,
+        "left": 1206.828125,
+        "right": 1287,
+        "top": 11.6866455078125,
+        "width": 1342
+      },
+      "language": "es-AR",
+      "lastLabel": "95,45 MMm³/d",
+      "rankings": [
+        {
+          "compact": "644,13",
+          "tooltip": "644,131229711 MMm³"
+        },
+        {
+          "compact": "643,18",
+          "tooltip": "643,1802600000004 MMm³"
+        },
+        {
+          "compact": "507,17",
+          "tooltip": "507,1746070000005 MMm³"
+        },
+        {
+          "compact": "346,62",
+          "tooltip": "346,61842269899995 MMm³"
+        },
+        {
+          "compact": "326,04",
+          "tooltip": "326,04162144299966 MMm³"
+        },
+        {
+          "compact": "636,48",
+          "tooltip": "636,482959471 MMm³"
+        },
+        {
+          "compact": "423,04",
+          "tooltip": "423,0357770000002 MMm³"
+        },
+        {
+          "compact": "346,56",
+          "tooltip": "346,5648330799999 MMm³"
+        },
+        {
+          "compact": "297,25",
+          "tooltip": "297,2530990999999 MMm³"
+        },
+        {
+          "compact": "241,89",
+          "tooltip": "241,89377060000004 MMm³"
+        }
+      ],
+      "scrollHeight": 900,
+      "scrollWidth": 1440,
+      "theme": "light",
+      "width": 1440,
+      "zeroTickVisible": true
+    },
+    {
+      "name": "ux-tablet-methodology-open",
+      "endLabel": "669,8 K bbl/d",
+      "filters": [
+        "Petróleo",
+        "Volumen",
+        "Interanual"
+      ],
+      "height": 1024,
+      "labelBounds": {
+        "bottom": 33.4266357421875,
+        "height": 245,
+        "left": 552.7890625,
+        "right": 627,
+        "top": 20.4266357421875,
+        "width": 682
+      },
+      "language": "es-AR",
+      "scrollWidth": 768,
+      "theme": "dark",
+      "width": 768
+    },
+    {
+      "name": "ux-mobile-320-methodology-open",
+      "endLabel": "669,8 K bbl/d",
+      "filters": [
+        "Petróleo",
+        "Volumen",
+        "Interanual"
+      ],
+      "height": 740,
+      "labelBounds": {
+        "bottom": 30.75341796875,
+        "height": 220,
+        "left": 124.7890625,
+        "right": 199,
+        "top": 17.75341796875,
+        "width": 254
+      },
+      "language": "es-AR",
+      "scrollWidth": 320,
+      "theme": "dark",
+      "width": 320
+    },
+    {
+      "name": "ux-value-mobile",
+      "endLabel": "61.01M USD/d",
+      "filters": [
+        "Oil",
+        "Estimated value",
+        "Year over year"
+      ],
+      "height": 844,
+      "labelBounds": {
+        "bottom": 42.8619384765625,
+        "height": 220,
+        "left": 193.015625,
+        "right": 269,
+        "top": 29.8619384765625,
+        "width": 324
+      },
+      "language": "en-US",
+      "scrollWidth": 390,
+      "theme": "dark",
+      "width": 390
+    }
+  ],
+  "manualObservations": {
+    "languagePersistsOnReload": true,
+    "monetaryTooltip": {
+      "period": "2026-08-01",
+      "comparison": "mom",
+      "base": "2026-07-01",
+      "valueUsdPerDay": 61005593.25655101,
+      "formattedPercent": "+13.3%",
+      "brentUsdPerBbl": 91.08
+    },
+    "earlyMissingComparators": "2023-01-01 year-over-year has no comparison data; no invented variation",
+    "zeroAxisConfirmedBySnapshots": true,
+    "automatedBrowserSuite": "Blocked before test by macOS MachPortRendezvousServer permission denial; axe not passed"
+  }
+}

@@ -2,7 +2,8 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { readFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
-import { metric, validatePrices } from "../lib/metrics";
+import { metric, validatePrices, shiftMonth } from "../lib/metrics";
+import { formatters } from "../lib/i18n";
 import { number, prepareEntities, type Release } from "../lib/contract";
 const release: Release = JSON.parse(
   readFileSync("public/data/release.json", "utf8"),
@@ -40,9 +41,11 @@ test("real snapshot matches KPIs and both top-five rankings for oil and gas", as
     await expect(
       page.locator(".kpi-card--primary .kpi-comparisons"),
     ).toContainText(number(r.yoy_rate_pct!));
+    await page.getByRole("button", { name: "Mensual", exact: true }).click();
     await expect(
       page.locator(".kpi-card--primary .kpi-comparisons"),
     ).toContainText(number(r.mom_rate_pct!));
+    await page.getByRole("button", { name: "Interanual", exact: true }).click();
     await expect(page.locator(".kpi-card").nth(2)).toContainText(
       number(r.positive_producing_wells, 0),
     );
@@ -69,7 +72,7 @@ test("real snapshot matches KPIs and both top-five rankings for oil and gas", as
         const row = card.locator("li").nth(i),
           e = top[i];
         await expect(row.locator(".bar-value")).toContainText(
-          number(e.volume, fluid === "oil" ? 0 : 2),
+          formatters("es").compact(e.volume),
         );
         await expect(row.locator(".yoy-value")).toContainText(
           e.yoy_volume_pct == null
@@ -262,4 +265,58 @@ test("monetary mode updates metrics and units; gas availability and price failur
     "métricas físicas siguen disponibles",
   );
   await expect(page.locator(".kpi-card").nth(3)).toContainText("No disponible");
+});
+
+test("language persistence, exact ranking values, selected comparisons and zero-origin chart", async ({
+  page,
+}) => {
+  await page.goto(base);
+  await ready(page);
+  const absolute = await page
+    .locator(".kpi-card--primary .kpi-value")
+    .innerText();
+  await page.getByRole("button", { name: "Mensual", exact: true }).click();
+  await expect(page.locator(".ranking-columns").first()).toContainText(
+    "Mensual",
+  );
+  await expect(page.locator(".kpi-card--primary .kpi-value")).toHaveText(
+    absolute,
+  );
+  await page.getByRole("button", { name: "English", exact: true }).click();
+  await expect(
+    page.getByRole("tab", { name: "Overview", exact: true }),
+  ).toBeVisible();
+  await expect(page.locator("html")).toHaveAttribute("lang", "en-US");
+  await expect(page.locator(".ranking-columns").first()).toContainText(
+    "Monthly",
+  );
+  const top = prepareEntities(release.entities, "oil", "company", latest)
+    .top[0];
+  await expect(page.locator(".ranking-amount").first()).toHaveText(
+    formatters("en").compact(top.volume),
+  );
+  await expect(page.locator(".ranking-amount").first()).toHaveAttribute(
+    "title",
+    `${formatters("en").exact(top.volume)} bbl`,
+  );
+  await expect(page.locator(".recharts-yAxis")).toContainText("0");
+  await expect(page.locator(".chart-end-label")).toHaveCount(1);
+  await expect(page.locator(".chart-final")).toHaveCount(0);
+  await page.reload();
+  await ready(page);
+  await expect(
+    page.getByRole("button", { name: "English", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await expect(
+    page.getByRole("button", { name: "Monthly", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await page
+    .getByRole("button", { name: "Year over year", exact: true })
+    .click();
+  await page.getByText("View data table", { exact: true }).click();
+  await expect(page.locator("table")).toContainText(
+    formatters("en").month(shiftMonth(latest, -12)),
+  );
+  await page.getByRole("button", { name: "Dark mode", exact: true }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
 });

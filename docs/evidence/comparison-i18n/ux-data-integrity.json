@@ -1,0 +1,27 @@
+{
+  "base_branch": "feat/resumen-data-valuation",
+  "files": [
+    {
+      "file": "apps/web/public/data/release.json",
+      "sha256": "1bf27be1365a1520f757f7b1fa6b936a1fc07fe7f07a0f3e7a831b7bfd21688b",
+      "unchanged_from_base": true
+    },
+    {
+      "file": "apps/web/public/data/manifest.json",
+      "sha256": "135da53961d5b615b0444b474adff917a3514d1326ff55af09e43ecd8a62582d",
+      "unchanged_from_base": true
+    },
+    {
+      "file": "apps/web/public/data/prices.json",
+      "sha256": "ae002c79d9bbd84254c4d47a44eaac2b560f10f611e3a4b2daa475d98678182e",
+      "unchanged_from_base": true
+    },
+    {
+      "file": "apps/web/public/data/valuation-manifest.json",
+      "sha256": "5afd4bb46dd5df5750717fe46e0143b1289352d6e71febd48bc9b2bcd52c33a7",
+      "unchanged_from_base": true
+    }
+  ],
+  "sources_and_pipeline_modified": false,
+  "harness_modified": false
+}

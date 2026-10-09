@@ -50,3 +50,13 @@ El Resumen conserva la arquitectura de cards de 003 y aplica [004-data-valuation
 Todas las cards conservan sus propias variaciones y ayuda metodológica accesible. El gráfico y rankings adaptan unidades y comparaciones al modo, con barras de participación sobre el total. `mode=volume|value` se conserva junto con fluido/mes al navegar. La fuente, estado y fechas viven en el footer desplegable. Los destinos pendientes se identifican como Próximamente.
 
 La evidencia nueva y las limitaciones de ejecución están en [data-valuation](../../docs/evidence/data-valuation/README.md). Las descripciones anteriores corresponden a la primera iteración, no a este snapshot actualizado. Harness, configuración del runner y servidor de pruebas permanecen intactos; las expectativas UI se actualizan al contrato nuevo.
+
+## Comparaciones e idiomas (005)
+
+Se aplica analytics-ui conservando los componentes y artefactos de 004. `lib/i18n.ts` centraliza ES/EN, formatos Intl y mensajes; `lib/locale.tsx` comparte el idioma entre componentes. La preferencia se guarda en `localStorage` bajo `vm-language`, con fallback español cuando almacenamiento no está disponible. Se actualizan idioma del documento, título y descripción. Nombres propios permanecen intactos.
+
+`comparison=mom|yoy` define exclusivamente la base temporal y se conserva junto con fluido/mes/modo en la URL. Por defecto interanual. KPIs, rankings, tooltip y tabla muestran sólo la comparación seleccionada e identifican el mes base. Las variaciones físicas de entidades siguen usando los campos preparados; las monetarias usan volumen y precio históricos de cada período, sin modificar datos o ranking.
+
+Rankings muestran K/M con máximo dos decimales, valor completo y unidad en tooltip. El gráfico mantiene la serie física o monetaria, eje desde cero y máximo/ticks automáticos. La etiqueta del último punto aparece arriba a su izquierda, sin repetición bajo X. Una vista de cambio porcentual o índice base 100 queda como posible futura exploración; no se trunca el eje automáticamente.
+
+Spec y evidencia: [005](../../specs/005-comparison-i18n/spec.md), [revisión UX](../../docs/evidence/comparison-i18n/README.md). Sin cambios de fuentes, pipeline, datos ni harness.

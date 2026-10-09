@@ -1387,3 +1387,67 @@ footer .status-badge {
     font-size: 11px;
   }
 }
+
+/* Localized controls retain the shared compact header and card hierarchy. */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.language-control button {
+  padding: 5px 8px;
+  font-size: 11px;
+}
+.comparison-control {
+  margin-left: 0;
+}
+.global-filters {
+  gap: 10px;
+}
+.chart-end-label {
+  paint-order: stroke;
+  stroke: var(--surface);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+  font-weight: 600;
+}
+.data-disclosure table {
+  min-width: 0;
+}
+.data-disclosure th,
+.data-disclosure td {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .brand {
+    font-size: 16px;
+  }
+  .header-actions {
+    gap: 5px;
+  }
+  .mode-control,
+  .comparison-control {
+    width: 100%;
+  }
+  .comparison-control button {
+    flex: 1;
+  }
+  .language-control button {
+    padding: 5px 7px;
+  }
+  .data-disclosure th,
+  .data-disclosure td {
+    font-size: 10px;
+    padding: 6px 3px;
+  }
+}
+@media (min-width: 601px) {
+  .ranking-columns,
+  .ranking-row {
+    grid-template-columns: minmax(0, 1fr) 90px 60px 90px;
+  }
+  .ranking-areas .ranking-columns,
+  .ranking-areas .ranking-row {
+    grid-template-columns: minmax(0, 1fr) 90px 90px;
+  }
+}

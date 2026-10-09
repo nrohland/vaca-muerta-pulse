@@ -6,7 +6,7 @@
     "dev": "next dev --webpack",
     "build": "next build --webpack",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test tests/contract.test.ts tests/navigation.test.ts tests/metrics.test.ts",
+    "test": "node --experimental-strip-types --test tests/contract.test.ts tests/navigation.test.ts tests/metrics.test.ts tests/i18n.test.ts",
     "test:browser": "playwright test"
   },
   "dependencies": {

@@ -15,22 +15,55 @@ import {
   validatePair,
   validateApproval,
   sha256,
-  month,
   type Release,
   type Manifest,
   type Approval,
 } from "../lib/contract";
+import { LocaleProvider } from "../lib/locale";
+import {
+  formatters,
+  readLanguage,
+  languageStorageKey,
+  translations,
+  type Language,
+} from "../lib/i18n";
 const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "/vaca-muerta-pulse";
 type Data = { release: Release; manifest: Manifest; approval: Approval | null };
 const initial: Selection = {
   tab: "summary",
   fluid: "oil",
   mode: "volume",
+  comparison: "yoy",
   month: "",
   operator: "",
   area: "",
 };
 export default function Page() {
+  const [language, setLanguage] = useState<Language>("es");
+  const { t, month, date } = formatters(language);
+  function changeLanguage(next: Language) {
+    setLanguage(next);
+    try {
+      localStorage.setItem(languageStorageKey, next);
+    } catch {}
+  }
+  useEffect(() => {
+    try {
+      setLanguage(readLanguage(localStorage.getItem(languageStorageKey)));
+    } catch {}
+  }, []);
+  useEffect(() => {
+    document.documentElement.lang = language === "es" ? "es-AR" : "en-US";
+    document.title = t("Vaca Muerta en datos");
+    document
+      .querySelector('meta[name="description"]')
+      ?.setAttribute(
+        "content",
+        t(
+          "Producción mensual de petróleo y gas de Vaca Muerta. Vista previa de agregados oficiales.",
+        ),
+      );
+  }, [language]);
   const [data, setData] = useState<Data | null>(null),
     [error, setError] = useState(""),
     [loading, setLoading] = useState(true),
@@ -40,12 +73,13 @@ export default function Page() {
     [dark, setDark] = useState(false),
     [prices, setPrices] = useState<Prices | null>(null),
     [priceError, setPriceError] = useState("");
-  const { tab, fluid, month: period, mode } = selection;
+  const { tab, fluid, month: period, mode, comparison } = selection;
   function readUrl() {
     return readSelection(window.location.search);
   }
   function update(patch: Partial<Selection>) {
-    const next = { ...selection, ...patch };
+    // URL updates are synchronous: rapid filter changes retain the latest context.
+    const next = { ...readUrl(), ...patch };
     if (patch.tab) {
       if (patch.tab !== "operators") next.operator = "";
       if (patch.tab !== "areas") next.area = "";
@@ -186,9 +220,9 @@ export default function Page() {
     document.getElementById(`tab-${tabs[target][0]}`)?.focus();
   }
   return (
-    <>
+    <LocaleProvider language={language}>
       <a className="skip" href="#main">
-        Ir al contenido
+        {t("Ir al contenido")}
       </a>
       <div className="page" data-fluid={fluid}>
         <header className="masthead">
@@ -200,39 +234,55 @@ export default function Page() {
               update({ tab: "summary" });
             }}
           >
-            Vaca Muerta en datos
+            {t("Vaca Muerta en datos")}
           </a>
-          <button
-            className="theme-button"
-            onClick={() => setDark((d) => !d)}
-            aria-pressed={dark}
-            aria-label={dark ? "Modo claro" : "Modo oscuro"}
-            title={dark ? "Modo claro" : "Modo oscuro"}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.7"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
+          <div className="header-actions">
+            <fieldset className="fluid-control language-control">
+              <legend className="sr-only">{t("Idioma")}</legend>
+              {(["es", "en"] as const).map((l) => (
+                <button
+                  key={l}
+                  lang={l}
+                  aria-pressed={language === l}
+                  aria-label={l === "es" ? "Español" : "English"}
+                  onClick={() => changeLanguage(l)}
+                >
+                  {l.toUpperCase()}
+                </button>
+              ))}
+            </fieldset>
+            <button
+              className="theme-button"
+              onClick={() => setDark((d) => !d)}
+              aria-pressed={dark}
+              aria-label={t(dark ? "Modo claro" : "Modo oscuro")}
+              title={t(dark ? "Modo claro" : "Modo oscuro")}
             >
-              {dark ? (
-                <>
-                  <circle cx="12" cy="12" r="4" />
-                  <path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
-                </>
-              ) : (
-                <path d="M20.5 14.2A8.7 8.7 0 0 1 9.8 3.5a8.7 8.7 0 1 0 10.7 10.7Z" />
-              )}
-            </svg>
-          </button>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                {dark ? (
+                  <>
+                    <circle cx="12" cy="12" r="4" />
+                    <path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+                  </>
+                ) : (
+                  <path d="M20.5 14.2A8.7 8.7 0 0 1 9.8 3.5a8.7 8.7 0 1 0 10.7 10.7Z" />
+                )}
+              </svg>
+            </button>
+          </div>
         </header>
         <nav
           className="tabs"
           role="tablist"
-          aria-label="Vistas de Vaca Muerta en datos"
+          aria-label={t("Vistas de Vaca Muerta en datos")}
         >
           {tabs.map(([id, label], i) => (
             <button
@@ -245,7 +295,7 @@ export default function Page() {
               onKeyDown={(e) => keyboardTab(e, i)}
               onClick={() => update({ tab: id })}
             >
-              {label}
+              {t(label)}
             </button>
           ))}
         </nav>
@@ -255,36 +305,43 @@ export default function Page() {
             period={period}
             periods={data?.manifest.source.accepted_periods ?? []}
             mode={mode}
+            comparison={comparison}
+            onComparison={(comparison) => update({ comparison })}
             onMode={(mode) => update({ mode })}
             onFluid={(f) => update({ fluid: f })}
             onPeriod={(p) => update({ month: p })}
           />
           {priceError && !loading && (
             <p className="availability-note" role="status">
-              {priceError} Las métricas físicas siguen disponibles.
+              {t(
+                translations[priceError]
+                  ? priceError
+                  : "Referencia de precios no disponible.",
+              )}{" "}
+              {t("Las métricas físicas siguen disponibles.")}
             </p>
           )}
           {loading ? (
             <div className="state" role="status">
-              Cargando agregados oficiales y verificando integridad…
+              {t("Cargando agregados oficiales y verificando integridad…")}
             </div>
           ) : error ? (
             <div className="state" role="alert">
-              <h1>Datos no disponibles</h1>
-              <p>{error}</p>
+              <h1>{t("Datos no disponibles")}</h1>
+              <p>{t(translations[error] ? error : "Datos no disponibles.")}</p>
               <button onClick={() => setAttempt((n) => n + 1)}>
-                Reintentar
+                {t("Reintentar")}
               </button>
             </div>
           ) : !current ? (
             <div className="state">
-              <h1>Sin datos para este período</h1>
+              <h1>{t("Sin datos para este período")}</h1>
               <button
                 onClick={() =>
                   update({ month: data!.manifest.source.approved_period })
                 }
               >
-                Volver al último mes disponible
+                {t("Volver al último mes disponible")}
               </button>
             </div>
           ) : (
@@ -297,6 +354,7 @@ export default function Page() {
               {tab === "summary" ? (
                 <SummaryDashboard
                   mode={mode}
+                  comparison={comparison}
                   prices={prices}
                   current={current}
                   rows={rows}
@@ -315,15 +373,17 @@ export default function Page() {
                 />
               ) : (
                 <div className="state planned-view">
-                  <p className="eyebrow">Próximamente</p>
-                  <h1>{destinationLabel(selection, entities)}</h1>
-                  <p>Esta vista estará disponible en una próxima etapa.</p>
+                  <p className="eyebrow">{t("Próximamente")}</p>
+                  <h1>{destinationLabel(selection, entities, t)}</h1>
+                  <p>
+                    {t("Esta vista estará disponible en una próxima etapa.")}
+                  </p>
                   <button
                     onClick={() =>
                       update({ tab: "summary", operator: "", area: "" })
                     }
                   >
-                    Volver al Resumen
+                    {t("Volver al Resumen")}
                   </button>
                 </div>
               )}
@@ -332,83 +392,106 @@ export default function Page() {
         </main>
         <footer>
           <span>
-            Fuente:{" "}
+            {t("Fuente:")}{" "}
             <a href="https://datos.energia.gob.ar/dataset/produccion-de-petroleo-y-gas-por-pozo">
-              Secretaría de Energía · Capítulo IV
+              {t("Secretaría de Energía · Capítulo IV")}
             </a>
             {data && (
               <>
-                {" "}
-                · Producción hasta {month(
-                  data.manifest.source.approved_period,
-                )}{" "}
+                {t(" · Producción hasta {period}", {
+                  period: month(data.manifest.source.approved_period),
+                })}{" "}
                 {!data.approval && (
                   <span
                     className="status-badge"
-                    title="Candidato validado técnicamente; promoción pública pendiente"
+                    title={t(
+                      "Candidato validado técnicamente; promoción pública pendiente",
+                    )}
                   >
-                    Preliminar
+                    {t("Preliminar")}
                   </span>
                 )}
               </>
             )}
             <span>
-              {" "}
-              · Vaca Muerta · No convencional.{" "}
-              {fluid === "oil"
-                ? estimationNote
-                : "Valorización del gas pendiente."}
+              {t(" · Vaca Muerta · No convencional. ")}
+              {t(
+                fluid === "oil"
+                  ? estimationNote
+                  : "Valorización del gas pendiente.",
+              )}
             </span>
           </span>
           <details className="provenance">
-            <summary>Fuentes y metodología</summary>
+            <summary>{t("Fuentes y metodología")}</summary>
             <p>
-              Universo: formación Vaca Muerta y recurso no convencional.
-              Operador declarado por mes; transferencias de activos pueden
-              modificar los rankings. Área: permiso o concesión. Los datos
-              oficiales son revisables; se conserva el último snapshot validado
-              y la promoción pública permanece pendiente.
+              {t(
+                "Universo: formación Vaca Muerta y recurso no convencional. Operador declarado por mes; transferencias de activos pueden modificar los rankings. Área: permiso o concesión. Los datos oficiales son revisables; se conserva el último snapshot validado y la promoción pública permanece pendiente.",
+              )}
             </p>
             {data && (
               <div>
                 <p>
-                  Producción: {month(data.manifest.source.approved_period)}.
-                  Ingesta del warehouse:{" "}
-                  {data.manifest.source.ingested_at ?? "no informada"}. Release
-                  preparado: {data.manifest.generated_at}. Publicación:{" "}
-                  {data.approval?.approved_at ?? "pendiente de aprobación"}.
+                  {t(
+                    "Producción: {period}. Ingesta: {ingested}. Versión preparada: {generated}. Publicación: {published}.",
+                    {
+                      period: month(data.manifest.source.approved_period),
+                      ingested: date(data.manifest.source.ingested_at),
+                      generated: date(data.manifest.generated_at),
+                      published: data.approval
+                        ? date(data.approval.approved_at)
+                        : t("pendiente de aprobación"),
+                    },
+                  )}
                 </p>
                 {data.manifest.source.resources.map((r) => (
                   <p key={r.id}>
-                    {r.year}: fuente actualizada{" "}
-                    {r.source_last_modified ?? "no informada"}; extracción{" "}
-                    {r.extracted_at ?? "no informada"}.
+                    {t(
+                      "{year}: fuente actualizada {updated}; extracción {extracted}.",
+                      {
+                        year: r.year ?? "—",
+                        updated: date(r.source_last_modified),
+                        extracted: date(r.extracted_at),
+                      },
+                    )}
                   </p>
                 ))}
                 <a download href={`${base}/data/manifest.json`}>
-                  Manifiesto de producción
+                  {t("Manifiesto de producción")}
                 </a>
               </div>
             )}
             {prices && (
               <p>
-                Brent:{" "}
-                <a href={prices.source.url}>EIA · promedio mensual USD/bbl</a>.
-                Actualizada {prices.source.source_updated_at}; ingesta{" "}
-                {prices.source.retrieved_at}. Valor mensual = bbl × precio del
-                mismo mes; diario = valor mensual / días calendario.
-                Comparaciones calculadas sobre cada valor estimado. No
-                representa facturación efectiva. Referencia uniforme para
-                entidades; no incorpora calidad, descuentos, costos, regalías o
-                tipo de cambio. Gas:{" "}
-                <a href={prices.gas.reviewed_sources[0]}>precios nacionales</a>{" "}
-                revisados, sin serie comparable y conversión energética
-                validadas.
+                {t("Brent:")}{" "}
+                <a href={prices.source.url}>
+                  {t("EIA · promedio mensual USD/bbl")}
+                </a>
+                .{" "}
+                {t(
+                  "Actualizada {updated}; ingesta {retrieved}. Valor mensual = bbl × precio del mismo mes; diario = valor mensual / días calendario. Comparaciones calculadas sobre cada valor estimado. No representa facturación efectiva. Referencia uniforme para entidades; no incorpora calidad, descuentos, costos, regalías o tipo de cambio.",
+                  {
+                    updated: date(prices.source.source_updated_at),
+                    retrieved: date(prices.source.retrieved_at),
+                  },
+                )}{" "}
+                {t("Gas:")}{" "}
+                <a href={prices.gas.reviewed_sources[0]}>
+                  {t("precios nacionales")}
+                </a>{" "}
+                {t(
+                  "revisados, sin serie comparable y conversión energética validadas.",
+                )}
               </p>
             )}
+            <p>
+              {t(
+                "Escala desde cero. Una vista porcentual o índice base 100 podría incorporarse en el futuro.",
+              )}
+            </p>
           </details>
         </footer>
       </div>
-    </>
+    </LocaleProvider>
   );
 }
