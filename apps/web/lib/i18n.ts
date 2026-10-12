@@ -273,6 +273,44 @@ Object.assign(translations, {
   "Gráfico desplazable de pozos productivos": "Scrollable producing wells chart",
   "El gráfico combinado utiliza escalas independientes para volumen y USD, ambas desde cero. Comparar la evolución de cada serie, no sus alturas entre sí.": "The combined chart uses independent volume and USD scales, both starting at zero. Compare changes within each series, rather than heights across series.",
 });
+Object.assign(translations, {
+  "Explorar la producción": "Explore production",
+  "Evolución, comparaciones y datos mensuales de Vaca Muerta.": "Trends, comparisons and monthly data for Vaca Muerta.",
+  "Producción mensual": "Monthly production",
+  "Cambio absoluto": "Absolute change",
+  "Valor del mes menos el valor de su base calendario exacta.": "Monthly value minus its exact calendar comparison value.",
+  "Crecimiento acumulado": "Year-to-date growth",
+  "Suma enero–mes frente al mismo período del año anterior; requiere todos los meses y precios necesarios.": "January-to-selected-month total versus the same period last year; requires all relevant months and prices.",
+  "Enero–{month} vs. {year}": "January–{month} vs. {year}",
+  "Acumulado: {value}": "YTD: {value}",
+  "Máximo mensual disponible": "Available monthly peak",
+  "Mayor total mensual del histórico disponible hasta el mes seleccionado; no es un récord de toda la historia de Vaca Muerta.": "Largest monthly total in the available history up to the selected month; not an all-time Vaca Muerta record.",
+  "Histórico incompleto para valorar": "Incomplete valuation history",
+  "Desde {period}": "Since {period}",
+  "Comparación entre años": "Year comparison",
+  "Totales por mes · {unit}": "Monthly totals · {unit}",
+  "Gráfico de comparación entre años": "Year comparison chart",
+  "Meses sin registro o posteriores al período seleccionado: sin dato.": "Missing records or months after the selected period: no data.",
+  "Ver comparación en tabla": "View comparison table",
+  "Cambio absoluto por mes": "Absolute monthly change",
+  "{comparison} · {unit}": "{comparison} · {unit}",
+  "Gráfico de cambios absolutos": "Absolute changes chart",
+  "Diferencia de totales mensuales; no de tasas diarias. Sin base exacta, no se calcula.": "Change in monthly totals, not daily rates. No exact comparison month, no calculation.",
+  "Ver datos y bases de comparación": "View data and comparison periods",
+  "Datos mensuales": "Monthly data",
+  "{count} registros de {requested} meses · {start} – {end}": "{count} records across {requested} months · {start} – {end}",
+  "Descargar CSV": "Download CSV",
+  "Cambios absolutos en {unit}. Celdas vacías en CSV indican datos no disponibles.": "Absolute changes in {unit}. Empty CSV cells mean unavailable data.",
+  "Tabla de producción mensual": "Monthly production table",
+  "Base MoM": "MoM period",
+  "Base YoY": "YoY period",
+  "Fuente: Secretaría de Energía · Capítulo IV. USD: volumen × Brent mensual EIA; estimación, no facturación.": "Source: Secretaría de Energía · Capítulo IV. USD: volume × EIA monthly Brent; estimate, not revenue."
+});
+Object.assign(translations, {
+  "Diferencia frente al mes base.": "Difference from the comparison month.",
+  "Acumulado enero–mes vs. año anterior.": "Year-to-date total versus last year.",
+  "Mayor mes dentro del histórico disponible.": "Largest month in the available history.",
+});
 export function formatters(language: Language) {
   const locale = locales[language];
   const t = (key: string, vars: Record<string, string | number> = {}) =>

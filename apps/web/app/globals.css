@@ -1910,3 +1910,38 @@ footer .status-badge {
 }
 .ranking-item .ranking-meta .bar-value { flex: 1 0 auto; }
 .ranking-item .ranking-meta .yoy-value { margin-left: auto; }
+
+/* Production drill-down uses the existing KPI and module anatomy. */
+.production-dashboard { min-width: 0; }
+.production-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 8px 0 20px; }
+.production-heading h1 { font-size: 26px; line-height: 1.2; margin: 3px 0 6px; letter-spacing: -.6px; }
+.production-heading p { margin: 0; color: var(--muted); font-size: 13px; }
+.production-heading .eyebrow { font-size: 10px; letter-spacing: .12em; }
+.production-period { color: var(--muted); font-size: 12px; }
+.production-neutral { color: var(--muted); font-variant-numeric: tabular-nums; }
+.production-chart-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 20px; margin: 20px 0; }
+.production-year-key { width: 16px; height: 3px; border-radius: 2px; }
+.production-plot-scroll, .production-table-scroll { overflow-x: auto; max-width: 100%; }
+.production-small-plot { height: 240px; min-width: 440px; }
+.production-table-link { display: inline-block; margin-top: 8px; }
+.production-download { background: var(--surface); border: 1px solid var(--rule); color: var(--ink); border-radius: 6px; padding: 8px 12px; font: inherit; font-size: 12px; cursor: pointer; min-height: 36px; }
+.production-data table { width: 100%; min-width: 1060px; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
+.production-data th, .production-data td { text-align: right; white-space: nowrap; border-bottom: 1px solid var(--rule); padding: 11px 12px; }
+.production-data thead th { font-size: 10px; color: var(--muted); font-weight: 550; }
+.production-data th:first-child { text-align: left; padding-left: 0; }
+.production-data tbody th { font-weight: 500; }
+.production-selected-column { background: var(--paper); font-weight: 550; }
+.production-data .chart-context { margin: 10px 0; }
+@media (max-width: 900px) {
+  .production-chart-grid { grid-template-columns: minmax(0,1fr); gap: 16px; }
+}
+@media (max-width: 600px) {
+  .production-heading { align-items: flex-start; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .production-heading h1 { font-size: 23px; }
+  .production-small-plot { height: 220px; }
+  .production-download { min-height: 44px; }
+  .production-data .module-heading { align-items: flex-start; flex-wrap: wrap; }
+}
+.production-dashboard .kpi-card--primary .production-neutral { color: var(--hero-muted); }
+.production-table-scroll { max-height: 390px; overflow: auto; }
+.production-data thead th { position: sticky; top: 0; background: var(--surface); z-index: 1; }

@@ -1,0 +1,62 @@
+[
+  {
+    "charts": [
+      {
+        "height": 220,
+        "width": 440
+      },
+      {
+        "height": 220,
+        "width": 440
+      }
+    ],
+    "pageWidth": 320,
+    "table": 390,
+    "width": 320
+  },
+  {
+    "charts": [
+      {
+        "height": 220,
+        "width": 440
+      },
+      {
+        "height": 220,
+        "width": 440
+      }
+    ],
+    "pageWidth": 390,
+    "table": 390,
+    "width": 390
+  },
+  {
+    "charts": [
+      {
+        "height": 240,
+        "width": 682
+      },
+      {
+        "height": 240,
+        "width": 682
+      }
+    ],
+    "pageWidth": 768,
+    "table": 390,
+    "width": 768
+  },
+  {
+    "charts": [
+      {
+        "height": 240,
+        "width": 644
+      },
+      {
+        "height": 240,
+        "width": 644
+      }
+    ],
+    "pageWidth": 1440,
+    "table": 390,
+    "width": 1440
+  }
+]

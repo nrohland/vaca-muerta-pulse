@@ -1,0 +1,258 @@
+[
+  {
+    "lang": "es",
+    "fluid": "oil",
+    "mode": "volume",
+    "cmp": "mom",
+    "firstRow": "ago 202620.763.871,22669.802,391,081.891.173.390,95827.301,82jul 20264.440.702,39ago 2025",
+    "kpis": [
+      "20,76 Mbbl",
+      "+827,3 Kbbl",
+      "+33,2%",
+      "20,76 Mbbl"
+    ],
+    "monetaryLines": 1,
+    "overflow": false,
+    "tableRows": 36
+  },
+  {
+    "lang": "es",
+    "fluid": "oil",
+    "mode": "volume",
+    "cmp": "yoy",
+    "firstRow": "ago 202620.763.871,22669.802,391,081.891.173.390,95827.301,82jul 20264.440.702,39ago 2025",
+    "kpis": [
+      "20,76 Mbbl",
+      "+4,44 Mbbl",
+      "+33,2%",
+      "20,76 Mbbl"
+    ],
+    "monetaryLines": 1,
+    "overflow": false,
+    "tableRows": 36
+  },
+  {
+    "lang": "es",
+    "fluid": "oil",
+    "mode": "value",
+    "cmp": "mom",
+    "firstRow": "ago 202620.763.871,22669.802,391,081.891.173.390,95221.286.337,79jul 2026783.319.922,38ago 2025",
+    "kpis": [
+      "1.891,17 MUSD",
+      "+221,29 MUSD",
+      "+70,2%",
+      "2.167,67 MUSD"
+    ],
+    "monetaryLines": 1,
+    "overflow": false,
+    "tableRows": 36
+  },
+  {
+    "lang": "es",
+    "fluid": "oil",
+    "mode": "value",
+    "cmp": "yoy",
+    "firstRow": "ago 202620.763.871,22669.802,391,081.891.173.390,95221.286.337,79jul 2026783.319.922,38ago 2025",
+    "kpis": [
+      "1.891,17 MUSD",
+      "+783,32 MUSD",
+      "+70,2%",
+      "2.167,67 MUSD"
+    ],
+    "monetaryLines": 1,
+    "overflow": false,
+    "tableRows": 36
+  },
+  {
+    "lang": "es",
+    "fluid": "gas",
+    "mode": "volume",
+    "cmp": "mom",
+    "firstRow": "ago 20262.958.950.899,4495.450.029,01No disponibleNo disponible-35.381.509,8jul 2026166.269.745,96ago 2025",
+    "kpis": [
+      "2.958,95MMm³",
+      "−35,38MMm³",
+      "+11,9%",
+      "2.994,33MMm³"
+    ],
+    "monetaryLines": 0,
+    "overflow": false,
+    "tableRows": 36
+  },
+  {
+    "lang": "es",
+    "fluid": "gas",
+    "mode": "volume",
+    "cmp": "yoy",
+    "firstRow": "ago 20262.958.950.899,4495.450.029,01No disponibleNo disponible-35.381.509,8jul 2026166.269.745,96ago 2025",
+    "kpis": [
+      "2.958,95MMm³",
+      "+166,27MMm³",
+      "+11,9%",
+      "2.994,33MMm³"
+    ],
+    "monetaryLines": 0,
+    "overflow": false,
+    "tableRows": 36
+  },
+  {
+    "lang": "es",
+    "fluid": "gas",
+    "mode": "value",
+    "cmp": "mom",
+    "firstRow": "ago 20262.958.950.899,4495.450.029,01No disponibleNo disponible-35.381.509,8jul 2026166.269.745,96ago 2025",
+    "kpis": [
+      "2.958,95MMm³",
+      "−35,38MMm³",
+      "+11,9%",
+      "2.994,33MMm³"
+    ],
+    "monetaryLines": 0,
+    "overflow": false,
+    "tableRows": 36
+  },
+  {
+    "lang": "es",
+    "fluid": "gas",
+    "mode": "value",
+    "cmp": "yoy",
+    "firstRow": "ago 20262.958.950.899,4495.450.029,01No disponibleNo disponible-35.381.509,8jul 2026166.269.745,96ago 2025",
+    "kpis": [
+      "2.958,95MMm³",
+      "+166,27MMm³",
+      "+11,9%",
+      "2.994,33MMm³"
+    ],
+    "monetaryLines": 0,
+    "overflow": false,
+    "tableRows": 36
+  },
+  {
+    "lang": "en",
+    "fluid": "oil",
+    "mode": "volume",
+    "cmp": "mom",
+    "firstRow": "Aug 202620,763,871.22669,802.391.081,891,173,390.95827,301.82Jul 20264,440,702.39Aug 2025",
+    "kpis": [
+      "20.76Mbbl",
+      "+827.3Kbbl",
+      "+33.2%",
+      "20.76Mbbl"
+    ],
+    "monetaryLines": 1,
+    "overflow": false,
+    "tableRows": 36
+  },
+  {
+    "lang": "en",
+    "fluid": "oil",
+    "mode": "volume",
+    "cmp": "yoy",
+    "firstRow": "Aug 202620,763,871.22669,802.391.081,891,173,390.95827,301.82Jul 20264,440,702.39Aug 2025",
+    "kpis": [
+      "20.76Mbbl",
+      "+4.44Mbbl",
+      "+33.2%",
+      "20.76Mbbl"
+    ],
+    "monetaryLines": 1,
+    "overflow": false,
+    "tableRows": 36
+  },
+  {
+    "lang": "en",
+    "fluid": "oil",
+    "mode": "value",
+    "cmp": "mom",
+    "firstRow": "Aug 202620,763,871.22669,802.391.081,891,173,390.95221,286,337.79Jul 2026783,319,922.38Aug 2025",
+    "kpis": [
+      "1,891.17MUSD",
+      "+221.29MUSD",
+      "+70.2%",
+      "2,167.67MUSD"
+    ],
+    "monetaryLines": 1,
+    "overflow": false,
+    "tableRows": 36
+  },
+  {
+    "lang": "en",
+    "fluid": "oil",
+    "mode": "value",
+    "cmp": "yoy",
+    "firstRow": "Aug 202620,763,871.22669,802.391.081,891,173,390.95221,286,337.79Jul 2026783,319,922.38Aug 2025",
+    "kpis": [
+      "1,891.17MUSD",
+      "+783.32MUSD",
+      "+70.2%",
+      "2,167.67MUSD"
+    ],
+    "monetaryLines": 1,
+    "overflow": false,
+    "tableRows": 36
+  },
+  {
+    "lang": "en",
+    "fluid": "gas",
+    "mode": "volume",
+    "cmp": "mom",
+    "firstRow": "Aug 20262,958,950,899.4495,450,029.01UnavailableUnavailable-35,381,509.8Jul 2026166,269,745.96Aug 2025",
+    "kpis": [
+      "2,958.95MMm³",
+      "−35.38MMm³",
+      "+11.9%",
+      "2,994.33MMm³"
+    ],
+    "monetaryLines": 0,
+    "overflow": false,
+    "tableRows": 36
+  },
+  {
+    "lang": "en",
+    "fluid": "gas",
+    "mode": "volume",
+    "cmp": "yoy",
+    "firstRow": "Aug 20262,958,950,899.4495,450,029.01UnavailableUnavailable-35,381,509.8Jul 2026166,269,745.96Aug 2025",
+    "kpis": [
+      "2,958.95MMm³",
+      "+166.27MMm³",
+      "+11.9%",
+      "2,994.33MMm³"
+    ],
+    "monetaryLines": 0,
+    "overflow": false,
+    "tableRows": 36
+  },
+  {
+    "lang": "en",
+    "fluid": "gas",
+    "mode": "value",
+    "cmp": "mom",
+    "firstRow": "Aug 20262,958,950,899.4495,450,029.01UnavailableUnavailable-35,381,509.8Jul 2026166,269,745.96Aug 2025",
+    "kpis": [
+      "2,958.95MMm³",
+      "−35.38MMm³",
+      "+11.9%",
+      "2,994.33MMm³"
+    ],
+    "monetaryLines": 0,
+    "overflow": false,
+    "tableRows": 36
+  },
+  {
+    "lang": "en",
+    "fluid": "gas",
+    "mode": "value",
+    "cmp": "yoy",
+    "firstRow": "Aug 20262,958,950,899.4495,450,029.01UnavailableUnavailable-35,381,509.8Jul 2026166,269,745.96Aug 2025",
+    "kpis": [
+      "2,958.95MMm³",
+      "+166.27MMm³",
+      "+11.9%",
+      "2,994.33MMm³"
+    ],
+    "monetaryLines": 0,
+    "overflow": false,
+    "tableRows": 36
+  }
+]

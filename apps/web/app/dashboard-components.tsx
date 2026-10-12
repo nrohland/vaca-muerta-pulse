@@ -401,8 +401,10 @@ export function Evolution({
   onDetail,
   comparison,
   kind = "production",
+  detailView = false,
 }: {
   kind?: "production" | "wells";
+  detailView?: boolean;
   rows: Row[];
   mode: Mode;
   prices: Prices | null;
@@ -459,7 +461,7 @@ export function Evolution({
       base: shiftMonth(point.periodo, comparisonOffset(comparison)),
     };
   });
-  const monetary = !wells && fluid === "oil";
+  const monetary = !wells && fluid === "oil" && (!detailView || series.some(p => p.estimated != null));
   const last = series.at(-1);
   const lastValue = monetary ? last?.estimated : last?.physical;
   return (
@@ -471,7 +473,7 @@ export function Evolution({
       )}
       className={wells ? "evolution wells-evolution" : "evolution production-evolution"}
       controls={!wells &&
-        <div className="ranges" aria-label={t("Período de evolución")}>
+        <div className="ranges" role={detailView ? "group" : undefined} aria-label={t("Período de evolución")}>
           {historyRanges.map((n) => (
             <button
               key={n}
@@ -483,7 +485,7 @@ export function Evolution({
           ))}
         </div>
       }
-      action={
+      action={!detailView &&
         <button className="text-action" onClick={onDetail}>
           {t(wells ? "Actividad · Próximamente" : "Producción · Próximamente")} <span aria-hidden="true">↗</span>
         </button>
@@ -535,6 +537,7 @@ export function Evolution({
         >
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart
+              accessibilityLayer={!detailView}
               data={series}
               margin={{ left: 12, right: 24, top: 30, bottom: 8 }}
               barCategoryGap={coverage.requested >= 36 ? "15%" : "22%"}
@@ -620,8 +623,8 @@ export function Evolution({
           {t("Deslizá para explorar los meses →")}
         </p>
       )}
-      {!wells && !monetary && <p className="chart-context">{t("Gas: valor estimado no disponible.")}</p>}
-      <details className="data-disclosure">
+      {!wells && !monetary && <p className="chart-context">{t(fluid === "gas" ? "Gas: valor estimado no disponible." : "Referencia de precios no disponible.")}</p>}
+      {!detailView && <details className="data-disclosure">
         <summary>{t("Ver tabla de datos")}</summary>
         <table>
           <caption>
@@ -695,7 +698,7 @@ export function Evolution({
             ))}
           </tbody>
         </table>
-      </details>
+      </details>}
     </ChartCard>
   );
 }

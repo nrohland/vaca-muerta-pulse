@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { defaultHistoryRange } from "../lib/history";
 
 import { validatePrices, estimationNote, type Prices } from "../lib/metrics";
+import { ProductionDashboard } from "./production-dashboard";
 import { SummaryDashboard, GlobalFilters } from "./dashboard-components";
 import {
   tabs,
@@ -372,6 +373,8 @@ export default function Page() {
                     })
                   }
                 />
+              ) : tab === "production" ? (
+                <ProductionDashboard rows={rows} current={current} prices={prices} mode={mode} comparison={comparison} range={range} setRange={setRange} />
               ) : (
                 <div className="state planned-view">
                   <p className="eyebrow">{t("Próximamente")}</p>

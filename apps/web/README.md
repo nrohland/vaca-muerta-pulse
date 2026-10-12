@@ -60,3 +60,9 @@ Se aplica analytics-ui conservando los componentes y artefactos de 004. `lib/i18
 Rankings muestran K/M con máximo dos decimales, valor completo y unidad en tooltip. El gráfico mantiene la serie física o monetaria, eje desde cero y máximo/ticks automáticos. La etiqueta del último punto aparece arriba a su izquierda, sin repetición bajo X. Una vista de cambio porcentual o índice base 100 queda como posible futura exploración; no se trunca el eje automáticamente.
 
 Spec y evidencia: [005](../../specs/005-comparison-i18n/spec.md), [revisión UX](../../docs/evidence/comparison-i18n/README.md). Sin cambios de fuentes, pipeline, datos ni harness.
+
+## Producción
+
+La pestaña Producción usa el mismo snapshot y precios validados del Resumen, sin cambiar pipeline o fuentes. KPIs de total mensual, cambio absoluto MoM/YoY, crecimiento del acumulado enero–mes contra igual período del año anterior (requiere cobertura completa) y máximo del histórico disponible hasta cutoff. Comparación de los últimos tres años calendario, gráfico de cambios absolutos y tabla descargable CSV para el rango 12/24/36/Histórico. USD usa el precio de cada mes; gas conserva volumen con aviso de valor no disponible.
+
+Spec: [010-production-drilldown](../../specs/010-production-drilldown.md). Pruebas adicionales: desde apps/web ejecutar `node --experimental-strip-types --test tests/production.test.ts` y `npx playwright test tests/production.spec.ts` (el runner existente requiere Chromium disponible y un puerto libre mediante ESTRATO_TEST_PORT). No se modifica la configuración de tests ni el harness.

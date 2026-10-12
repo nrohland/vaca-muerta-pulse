@@ -1,0 +1,45 @@
+{
+  "lang": "en-US",
+  "theme": "dark",
+  "width": 390,
+  "violations": [],
+  "passes": 30,
+  "incomplete": [
+    {
+      "id": "color-contrast",
+      "node_count": 288,
+      "sample_nodes": [
+        {
+          "target": [
+            "button[aria-controls=\"_r_0_-back\"]"
+          ],
+          "summary": "Fix any of the following:\n  Element content contains only non-text characters"
+        },
+        {
+          "target": [
+            "button[aria-controls=\"_r_1_-back\"]"
+          ],
+          "summary": "Fix any of the following:\n  Element content contains only non-text characters"
+        },
+        {
+          "target": [
+            "button[aria-controls=\"_r_2_-back\"]"
+          ],
+          "summary": "Fix any of the following:\n  Element content contains only non-text characters"
+        },
+        {
+          "target": [
+            "button[aria-controls=\"_r_3_-back\"]"
+          ],
+          "summary": "Fix any of the following:\n  Element content contains only non-text characters"
+        },
+        {
+          "target": [
+            ".chart-end-label"
+          ],
+          "summary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+        }
+      ]
+    }
+  ]
+}

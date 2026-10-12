@@ -1,0 +1,54 @@
+(node:58563) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/nicolasrohland/Documents/Codex/2026-10-11/referenced-chatgpt-conversation-this-is-an/work/vaca-muerta-pulse/apps/web/tests/contract.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/nicolasrohland/Documents/Codex/2026-10-11/referenced-chatgpt-conversation-this-is-an/work/vaca-muerta-pulse/apps/web/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ real official candidate satisfies schema, provenance, pair and hash (7.0175ms)
+✔ reject malformed numeric metrics, units, duplicate grains and approval claims (197.191167ms)
+✔ calendar trend preserves missing months as gaps, never zero or adjacent month (18.838167ms)
+✔ both fluids and dimensions select exact precomputed ranks, signed deltas and rest (4.897292ms)
+✔ prepared responses include source period formula, scope rejection and fluid units (3.403625ms)
+✔ publication approval binds exact manifest bytes, version, payload hash and actor (0.456583ms)
+✔ latest validated period is the accepted cutoff; duplicate or unvalidated month rejected (29.34225ms)
+(node:58564) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/nicolasrohland/Documents/Codex/2026-10-11/referenced-chatgpt-conversation-this-is-an/work/vaca-muerta-pulse/apps/web/tests/i18n.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/nicolasrohland/Documents/Codex/2026-10-11/referenced-chatgpt-conversation-this-is-an/work/vaca-muerta-pulse/apps/web/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ compact formats preserve magnitude, precision and locale; exact values remain available (35.636833ms)
+✔ dates, variables, preferences and known diagnostics have equivalent localized semantics (6.232042ms)
+✔ monthly and yearly entity comparisons use exact calendar bases and same-period historical prices for all entities (706.422125ms)
+✔ tooltip presentation uses bounded precision and compact monthly dates (0.68825ms)
+✔ requested historical windows retain real coverage, every observation and missing-month gaps (20.676583ms)
+(node:58565) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/nicolasrohland/Documents/Codex/2026-10-11/referenced-chatgpt-conversation-this-is-an/work/vaca-muerta-pulse/apps/web/tests/metrics.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/nicolasrohland/Documents/Codex/2026-10-11/referenced-chatgpt-conversation-this-is-an/work/vaca-muerta-pulse/apps/web/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ physical comparisons reproduce dbt for every accepted month, independently for volume and daily rate (13.641333ms)
+✔ each monetary month uses its own historical price and calendar days; comparisons include price changes (61.010375ms)
+✔ productive wells compare unique positive counts, not production growth (2.05ms)
+✔ uniform monetary entity references reconcile to totals and retain honest total-denominator shares (169.259042ms)
+✔ missing prices, missing calendar bases, zero bases and gas never create invented monetary values (1.675042ms)
+✔ reference-price comparisons can use verified prices before the production-history window (8.37175ms)
+(node:58566) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/nicolasrohland/Documents/Codex/2026-10-11/referenced-chatgpt-conversation-this-is-an/work/vaca-muerta-pulse/apps/web/tests/navigation.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/nicolasrohland/Documents/Codex/2026-10-11/referenced-chatgpt-conversation-this-is-an/work/vaca-muerta-pulse/apps/web/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ changing a section never borrows the title of an unrelated selected area (1.206791ms)
+✔ unrecognized destinations default to overview without losing valid filters (0.127417ms)
+✔ localize section destinations while preserving proper entity names (1.142208ms)
+(node:58567) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/nicolasrohland/Documents/Codex/2026-10-11/referenced-chatgpt-conversation-this-is-an/work/vaca-muerta-pulse/apps/web/tests/production.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/nicolasrohland/Documents/Codex/2026-10-11/referenced-chatgpt-conversation-this-is-an/work/vaca-muerta-pulse/apps/web/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ absolute volume changes reconcile with every prepared MoM/YoY delta; monetary uses each historical price (119.992791ms)
+✔ YTD sums exact January–selected months and peak excludes future data (6.21125ms)
+✔ missing months, missing prices and a zero base preserve honest nulls and signed deltas (2.802666ms)
+✔ year comparison aligns calendar months with gaps, no future observations and no mutated source (3.034583ms)
+✔ CSV roundtrips raw precision, units, nulls, zeroes, signs and exact base dates (17.249084ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1139.499834
