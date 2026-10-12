@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { defaultHistoryRange } from "../lib/history";
 
 import { validatePrices, estimationNote, type Prices } from "../lib/metrics";
 import { SummaryDashboard, GlobalFilters } from "./dashboard-components";
@@ -69,7 +70,7 @@ export default function Page() {
     [loading, setLoading] = useState(true),
     [attempt, setAttempt] = useState(0),
     [selection, setSelection] = useState<Selection>(initial),
-    [range, setRange] = useState(12),
+    [range, setRange] = useState(defaultHistoryRange),
     [dark, setDark] = useState(false),
     [prices, setPrices] = useState<Prices | null>(null),
     [priceError, setPriceError] = useState("");
@@ -398,9 +399,6 @@ export default function Page() {
             </a>
             {data && (
               <>
-                {t(" · Producción hasta {period}", {
-                  period: month(data.manifest.source.approved_period),
-                })}{" "}
                 {!data.approval && (
                   <span
                     className="status-badge"
@@ -413,17 +411,14 @@ export default function Page() {
                 )}
               </>
             )}
-            <span>
-              {t(" · Vaca Muerta · No convencional. ")}
-              {t(
-                fluid === "oil"
-                  ? estimationNote
-                  : "Valorización del gas pendiente.",
-              )}
-            </span>
           </span>
           <details id="methodology" className="provenance">
             <summary>{t("Fuentes y metodología")}</summary>
+            <p>
+              {t(
+                "Producción diaria = volumen mensual / días calendario. Volumen mensual = suma de la producción registrada. Pozos productivos = pozos únicos con producción positiva. Las comparaciones usan cada métrica y su período correspondiente; bases ausentes o cero no generan variaciones.",
+              )}
+            </p>
             <p>
               {t(
                 "Universo: formación Vaca Muerta y recurso no convencional. Operador declarado por mes; transferencias de activos pueden modificar los rankings. Área: permiso o concesión. Los datos oficiales son revisables; se conserva el último snapshot validado y la promoción pública permanece pendiente.",
@@ -484,6 +479,7 @@ export default function Page() {
                 )}
               </p>
             )}
+            <p>{t("El gráfico combinado utiliza escalas independientes para volumen y USD, ambas desde cero. Comparar la evolución de cada serie, no sus alturas entre sí.")}</p>
             <p>
               {t(
                 "Escala desde cero. Una vista porcentual o índice base 100 podría incorporarse en el futuro.",

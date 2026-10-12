@@ -83,8 +83,7 @@ test("real snapshot matches KPIs and both top-five rankings for oil and gas", as
           .locator(".bar-track>span")
           .evaluate((el: any) => parseFloat(el.style.width));
         expect(width).toBeCloseTo((e.volume / r.volume) * 100, 6);
-        if (dimension === "company")
-          await expect(row.locator(".share-value")).toContainText(
+        await expect(row.locator(".share-value")).toContainText(
             number((e.volume / r.volume) * 100),
           );
       }
@@ -116,8 +115,8 @@ test("filters, chart ranges, early missing comparisons and URL reload", async ({
   await expect(page.getByLabel("Mes de producción")).toHaveValue(
     manifest.source.accepted_periods[0],
   );
-  await page.getByText("Ver tabla de datos", { exact: true }).click();
-  await expect(page.locator("table")).toBeVisible();
+  await page.locator(".production-evolution").getByText("Ver tabla de datos", { exact: true }).click();
+  await expect(page.locator(".production-evolution table")).toBeVisible();
 });
 test("progressive destinations retain filters and entity identity through browser history", async ({
   page,
@@ -196,7 +195,7 @@ for (const [name, width, height] of [
     await page.setViewportSize({ width, height });
     await page.goto(base);
     await ready(page);
-    await expect(page.locator(".recharts-line-curve")).toBeVisible();
+    await expect(page.locator(".production-evolution .recharts-line-curve")).toBeVisible();
     if (width >= 1101)
       expect(
         await page.evaluate(
@@ -228,9 +227,7 @@ test("monetary mode updates metrics and units; gas availability and price failur
 }) => {
   await page.goto(base);
   await ready(page);
-  await page
-    .getByRole("button", { name: "Valor estimado", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Valor USD", exact: true }).click();
   const r = release.production.find(
     (r) => r.fluid === "oil" && r.periodo === latest,
   )!;
@@ -276,7 +273,7 @@ test("language persistence, exact ranking values, selected comparisons and zero-
     .locator(".kpi-card--primary .kpi-value")
     .innerText();
   await page.getByRole("button", { name: "Mensual", exact: true }).click();
-  await expect(page.locator(".ranking-columns").first()).toContainText(
+  await expect(page.locator(".ranking-comparison-label").first()).toContainText(
     "Mensual",
   );
   await expect(page.locator(".kpi-card--primary .kpi-value")).toHaveText(
@@ -287,20 +284,20 @@ test("language persistence, exact ranking values, selected comparisons and zero-
     page.getByRole("tab", { name: "Overview", exact: true }),
   ).toBeVisible();
   await expect(page.locator("html")).toHaveAttribute("lang", "en-US");
-  await expect(page.locator(".ranking-columns").first()).toContainText(
+  await expect(page.locator(".ranking-comparison-label").first()).toContainText(
     "Monthly",
   );
   const top = prepareEntities(release.entities, "oil", "company", latest)
     .top[0];
   await expect(page.locator(".ranking-amount").first()).toHaveText(
-    formatters("en").compact(top.volume),
+    `${formatters("en").compact(top.volume)} bbl`,
   );
   await expect(page.locator(".ranking-amount").first()).toHaveAttribute(
     "title",
     `${formatters("en").number(top.volume, 0)} bbl`,
   );
   await expect(page.locator(".recharts-yAxis")).toHaveCount(0);
-  await expect(page.locator(".line-chart")).toHaveAttribute(
+  await expect(page.locator(".production-evolution .line-chart")).toHaveAttribute(
     "data-physical-min",
     "0",
   );
@@ -317,8 +314,8 @@ test("language persistence, exact ranking values, selected comparisons and zero-
   await page
     .getByRole("button", { name: "Year over year", exact: true })
     .click();
-  await page.getByText("View data table", { exact: true }).click();
-  await expect(page.locator("table")).toContainText(
+  await page.locator(".production-evolution").getByText("View data table", { exact: true }).click();
+  await expect(page.locator(".production-evolution table")).toContainText(
     formatters("en").month(shiftMonth(latest, -12), true),
   );
   await page.getByRole("button", { name: "Dark mode", exact: true }).click();
@@ -330,8 +327,8 @@ test("combined monthly series, bounded tooltip, reversible KPI and compact table
 }) => {
   await page.goto(base);
   await ready(page);
-  await expect(page.locator(".recharts-bar-rectangle")).toHaveCount(12);
-  await expect(page.locator(".recharts-line-curve")).toBeVisible();
+  await expect(page.locator(".recharts-bar-rectangle")).toHaveCount(36);
+  await expect(page.locator(".production-evolution .recharts-line-curve")).toBeVisible();
   await expect(page.locator(".recharts-yAxis")).toHaveCount(0);
   const info = page.getByRole("button", {
     name: "Metodología de Producción diaria",
@@ -339,7 +336,7 @@ test("combined monthly series, bounded tooltip, reversible KPI and compact table
   });
   const before = await page.locator(".kpi-card").first().boundingBox();
   await info.hover();
-  await expect(page.getByRole("tooltip")).toContainText("días calendario");
+  await expect(page.getByRole("tooltip")).toContainText("Promedio diario");
   await info.press("Enter");
   await expect(page.locator('.kpi-card[data-flipped="true"]')).toHaveCount(1);
   const back = page.getByRole("button", {
@@ -362,14 +359,67 @@ test("combined monthly series, bounded tooltip, reversible KPI and compact table
   await page.locator(".recharts-bar-rectangle").last().hover();
   await expect(page.locator(".chart-tooltip")).toContainText("20,76 M bbl");
   await expect(page.locator(".chart-tooltip")).toContainText("US$ 1.891,17 M");
-  await page.getByText("Ver tabla de datos", { exact: true }).click();
+  await page.locator(".production-evolution").getByText("Ver tabla de datos", { exact: true }).click();
   await expect(page.locator('time[datetime="2026-08-01"]').first()).toHaveText(
     "ago 26",
   );
   await page.getByRole("button", { name: "Gas", exact: true }).click();
-  await expect(page.locator(".recharts-line-curve")).toHaveCount(0);
-  await expect(page.locator(".recharts-bar-rectangle")).toHaveCount(12);
+  await expect(page.locator(".production-evolution .recharts-line-curve")).toHaveCount(0);
+  await expect(page.locator(".recharts-bar-rectangle")).toHaveCount(36);
   await expect(page.locator(".chart-context")).toContainText(
-    "referencia nacional",
+    "no disponible",
   );
+});
+
+test("historical windows, explicit partial coverage and compact information", async ({
+  page,
+}) => {
+  await page.goto(base);
+  await ready(page);
+  await expect(
+    page.getByRole("button", { name: "36m", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  for (const [label, count] of [
+    ["12m", 12],
+    ["24m", 24],
+    ["36m", 36],
+    ["Histórico", 44],
+  ] as const) {
+    await page.getByRole("button", { name: label, exact: true }).click();
+    await expect(page.locator(".recharts-bar-rectangle")).toHaveCount(count);
+    await expect(
+      page.getByRole("button", { name: label, exact: true }),
+    ).toHaveAttribute("aria-pressed", "true");
+  }
+  await expect(page.locator(".history-coverage")).toContainText("Histórico disponible: ene 2023 – ago 2026");
+  await page.locator(".recharts-bar-rectangle").last().hover();
+  await expect(page.locator(".chart-tooltip .tooltip-row")).toHaveCount(2);
+  await expect(page.locator(".chart-tooltip")).not.toContainText("Interanual");
+  await expect(page.locator(".chart-tooltip")).not.toContainText("Brent");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.locator(".production-evolution .chart-scroll-hint")).toBeVisible();
+  expect(
+    await page
+      .locator(".production-evolution .chart-scroll")
+      .evaluate((e) => e.scrollWidth > e.clientWidth),
+  ).toBe(true);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page.locator(".production-evolution .chart-scroll").focus();
+  await page.keyboard.press("Home");
+  await page
+    .getByRole("button", {
+      name: "Metodología de Volumen mensual",
+      exact: true,
+    })
+    .click();
+  await expect(
+    page.locator('.kpi-card[data-flipped="true"] .kpi-methodology'),
+  ).toContainText("Suma de la producción");
+  await expect(
+    page.locator('.kpi-card[data-flipped="true"] .kpi-methodology'),
+  ).not.toContainText("Unidad:");
 });

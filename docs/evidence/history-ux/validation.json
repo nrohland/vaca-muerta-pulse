@@ -1,0 +1,56 @@
+{
+  "validation_date": "2026-10-09",
+  "unit_tests": {
+    "passed": 21,
+    "failed": 0
+  },
+  "typecheck": "passed",
+  "static_build": "passed",
+  "history": {
+    "first": "2023-01-01",
+    "last": "2026-08-01",
+    "months_per_product": 44,
+    "requested_ranges": [
+      12,
+      24,
+      36,
+      60
+    ],
+    "shown_months": [
+      12,
+      24,
+      36,
+      44
+    ],
+    "default_months": 36
+  },
+  "browser_validation": "pending",
+  "screenshots": "pending",
+  "browser_blockers": [
+    "Chromium: MachPortRendezvousServer permission denied (1100)",
+    "WebKit: Abort trap 6; exit 134",
+    "Integrated browser control tool unavailable in this session"
+  ],
+  "data_integrity": [
+    {
+      "file": "apps/web/public/data/manifest.json",
+      "unchanged": true,
+      "sha256": "135da53961d5b615b0444b474adff917a3514d1326ff55af09e43ecd8a62582d"
+    },
+    {
+      "file": "apps/web/public/data/prices.json",
+      "unchanged": true,
+      "sha256": "ae002c79d9bbd84254c4d47a44eaac2b560f10f611e3a4b2daa475d98678182e"
+    },
+    {
+      "file": "apps/web/public/data/release.json",
+      "unchanged": true,
+      "sha256": "1bf27be1365a1520f757f7b1fa6b936a1fc07fe7f07a0f3e7a831b7bfd21688b"
+    },
+    {
+      "file": "apps/web/public/data/valuation-manifest.json",
+      "unchanged": true,
+      "sha256": "5afd4bb46dd5df5750717fe46e0143b1289352d6e71febd48bc9b2bcd52c33a7"
+    }
+  ]
+}

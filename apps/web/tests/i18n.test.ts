@@ -1,3 +1,9 @@
+import {
+  historyWindow,
+  historyTicks,
+  historyRanges,
+  defaultHistoryRange,
+} from "../lib/history.ts";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -128,4 +134,77 @@ test("tooltip presentation uses bounded precision and compact monthly dates", ()
   assert.equal(es.month("2026-08-01", true), "ago 26");
   assert.equal(en.month("2026-08-01", true), "Aug 26");
   assert.equal(es.currency(null), "No disponible");
+});
+
+test("requested historical windows retain real coverage, every observation and missing-month gaps", () => {
+  for (const fluid of ["oil", "gas"] as const) {
+    for (const [range, count, first] of [
+      [12, 12, "2025-09-01"],
+      [24, 24, "2024-09-01"],
+      [36, 36, "2023-09-01"],
+      [60, 44, "2023-01-01"],
+    ] as const) {
+      const window = historyWindow(
+        release.production,
+        fluid,
+        "2026-08-01",
+        range,
+      );
+      assert.equal(window.requested, range);
+      assert.equal(window.points.length, count);
+      assert.equal(window.available, count);
+      assert.equal(window.start, first);
+      assert.equal(window.end, "2026-08-01");
+      assert.equal(window.partial, range === 60);
+      for (const point of window.points)
+        assert.equal(
+          point.rate,
+          release.production.find(
+            (r) => r.fluid === fluid && r.periodo === point.periodo,
+          )?.rate,
+        );
+      assert.ok(
+        historyTicks(
+          window.points.map((p) => p.periodo),
+          range,
+        ).length <= 8,
+      );
+    }
+  }
+  const before = JSON.stringify(release.production);
+  const missing = historyWindow(
+    release.production.filter((r) => r.periodo !== "2026-06-01"),
+    "oil",
+    "2026-08-01",
+    36,
+  );
+  assert.equal(missing.points.length, 36);
+  assert.equal(missing.available, 35);
+  assert.equal(
+    missing.points.find((p) => p.periodo === "2026-06-01")?.rate,
+    null,
+  );
+  assert.equal(
+    historyWindow(release.production, "gas", "2023-01-01", 60).points.length,
+    1,
+  );
+  assert.equal(historyWindow([], "oil", "2026-08-01", 60).points.length, 0);
+  assert.equal(JSON.stringify(release.production), before);
+  assert.equal(defaultHistoryRange, 36);
+  assert.deepEqual(historyRanges, [12, 24, 36, 0]);
+  const all = historyWindow(release.production, "oil", "2026-08-01", 0);
+  assert.equal(all.requested, 44);
+  assert.equal(all.available, 44);
+  assert.equal(all.partial, false);
+  assert.equal(all.start, "2023-01-01");
+  assert.equal(formatters("es").historyMonth("2023-01-01"), "ene 2023");
+  assert.equal(formatters("en").historyMonth("2026-08-01"), "Aug 2026");
+  const earlier = {...release.production.find(r => r.fluid === "oil")!, periodo: "2020-01-01"};
+  const extended = historyWindow([earlier, ...release.production], "oil", "2026-08-01", 0);
+  assert.equal(extended.requested, 80);
+  assert.equal(extended.points.length, 80);
+  assert.equal(extended.points.find(p => p.periodo === "2020-02-01")?.rate, null);
+  assert.equal(historyWindow([], "oil", "2026-08-01", 0).points.length, 0);
+  assert.equal(formatters("es").monthYear("2026-08-01"), "Agosto 2026");
+  assert.equal(formatters("en").monthYear("2026-08-01"), "August 2026");
 });

@@ -1,0 +1,409 @@
+{
+  "matrix": [
+    {
+      "lang": "es",
+      "fluid": "oil",
+      "mode": "volume",
+      "comparison": "mom",
+      "bars": 36,
+      "cards": 4,
+      "charts": 1,
+      "kpis": [
+        "669.802bbl/d",
+        "20,8M bbl",
+        "2.678pozos",
+        "1.891,2M USD"
+      ],
+      "lines": 1,
+      "pageOverflow": false
+    },
+    {
+      "lang": "es",
+      "fluid": "oil",
+      "mode": "volume",
+      "comparison": "yoy",
+      "bars": 36,
+      "cards": 4,
+      "charts": 1,
+      "kpis": [
+        "669.802bbl/d",
+        "20,8M bbl",
+        "2.678pozos",
+        "1.891,2M USD"
+      ],
+      "lines": 1,
+      "pageOverflow": false
+    },
+    {
+      "lang": "es",
+      "fluid": "oil",
+      "mode": "value",
+      "comparison": "mom",
+      "bars": 36,
+      "cards": 4,
+      "charts": 1,
+      "kpis": [
+        "61,01M USD/día",
+        "1.891,2M USD",
+        "2.678pozos",
+        "91,08USD/bbl"
+      ],
+      "lines": 1,
+      "pageOverflow": false
+    },
+    {
+      "lang": "es",
+      "fluid": "oil",
+      "mode": "value",
+      "comparison": "yoy",
+      "bars": 36,
+      "cards": 4,
+      "charts": 1,
+      "kpis": [
+        "61,01M USD/día",
+        "1.891,2M USD",
+        "2.678pozos",
+        "91,08USD/bbl"
+      ],
+      "lines": 1,
+      "pageOverflow": false
+    },
+    {
+      "lang": "es",
+      "fluid": "gas",
+      "mode": "volume",
+      "comparison": "mom",
+      "bars": 36,
+      "cards": 4,
+      "charts": 1,
+      "kpis": [
+        "95,45MMm³/d",
+        "2.959,0MMm³",
+        "2.884pozos",
+        "No disponible"
+      ],
+      "lines": 0,
+      "pageOverflow": false
+    },
+    {
+      "lang": "es",
+      "fluid": "gas",
+      "mode": "volume",
+      "comparison": "yoy",
+      "bars": 36,
+      "cards": 4,
+      "charts": 1,
+      "kpis": [
+        "95,45MMm³/d",
+        "2.959,0MMm³",
+        "2.884pozos",
+        "No disponible"
+      ],
+      "lines": 0,
+      "pageOverflow": false
+    },
+    {
+      "lang": "es",
+      "fluid": "gas",
+      "mode": "value",
+      "comparison": "mom",
+      "bars": 36,
+      "cards": 4,
+      "charts": 1,
+      "kpis": [
+        "95,45MMm³/d",
+        "2.959,0MMm³",
+        "2.884pozos",
+        "No disponible"
+      ],
+      "lines": 0,
+      "notice": "Valor estimado no disponible para gas. Falta validar una referencia nacional comparable y la conversión energética. Se muestran unidades físicas.",
+      "pageOverflow": false
+    },
+    {
+      "lang": "es",
+      "fluid": "gas",
+      "mode": "value",
+      "comparison": "yoy",
+      "bars": 36,
+      "cards": 4,
+      "charts": 1,
+      "kpis": [
+        "95,45MMm³/d",
+        "2.959,0MMm³",
+        "2.884pozos",
+        "No disponible"
+      ],
+      "lines": 0,
+      "notice": "Valor estimado no disponible para gas. Falta validar una referencia nacional comparable y la conversión energética. Se muestran unidades físicas.",
+      "pageOverflow": false
+    },
+    {
+      "lang": "en",
+      "fluid": "oil",
+      "mode": "volume",
+      "comparison": "mom",
+      "bars": 36,
+      "cards": 4,
+      "charts": 1,
+      "kpis": [
+        "669,802bbl/d",
+        "20.8M bbl",
+        "2,678wells",
+        "1,891.2M USD"
+      ],
+      "lines": 1,
+      "pageOverflow": false
+    },
+    {
+      "lang": "en",
+      "fluid": "oil",
+      "mode": "volume",
+      "comparison": "yoy",
+      "bars": 36,
+      "cards": 4,
+      "charts": 1,
+      "kpis": [
+        "669,802bbl/d",
+        "20.8M bbl",
+        "2,678wells",
+        "1,891.2M USD"
+      ],
+      "lines": 1,
+      "pageOverflow": false
+    },
+    {
+      "lang": "en",
+      "fluid": "oil",
+      "mode": "value",
+      "comparison": "mom",
+      "bars": 36,
+      "cards": 4,
+      "charts": 1,
+      "kpis": [
+        "61.01M USD/day",
+        "1,891.2M USD",
+        "2,678wells",
+        "91.08USD/bbl"
+      ],
+      "lines": 1,
+      "pageOverflow": false
+    },
+    {
+      "lang": "en",
+      "fluid": "oil",
+      "mode": "value",
+      "comparison": "yoy",
+      "bars": 36,
+      "cards": 4,
+      "charts": 1,
+      "kpis": [
+        "61.01M USD/day",
+        "1,891.2M USD",
+        "2,678wells",
+        "91.08USD/bbl"
+      ],
+      "lines": 1,
+      "pageOverflow": false
+    },
+    {
+      "lang": "en",
+      "fluid": "gas",
+      "mode": "volume",
+      "comparison": "mom",
+      "bars": 36,
+      "cards": 4,
+      "charts": 1,
+      "kpis": [
+        "95.45MMm³/d",
+        "2,959.0MMm³",
+        "2,884wells",
+        "Unavailable"
+      ],
+      "lines": 0,
+      "pageOverflow": false
+    },
+    {
+      "lang": "en",
+      "fluid": "gas",
+      "mode": "volume",
+      "comparison": "yoy",
+      "bars": 36,
+      "cards": 4,
+      "charts": 1,
+      "kpis": [
+        "95.45MMm³/d",
+        "2,959.0MMm³",
+        "2,884wells",
+        "Unavailable"
+      ],
+      "lines": 0,
+      "pageOverflow": false
+    },
+    {
+      "lang": "en",
+      "fluid": "gas",
+      "mode": "value",
+      "comparison": "mom",
+      "bars": 36,
+      "cards": 4,
+      "charts": 1,
+      "kpis": [
+        "95.45MMm³/d",
+        "2,959.0MMm³",
+        "2,884wells",
+        "Unavailable"
+      ],
+      "lines": 0,
+      "notice": "Estimated gas value is unavailable. A comparable national reference and energy conversion still need validation. Physical units are shown.",
+      "pageOverflow": false
+    },
+    {
+      "lang": "en",
+      "fluid": "gas",
+      "mode": "value",
+      "comparison": "yoy",
+      "bars": 36,
+      "cards": 4,
+      "charts": 1,
+      "kpis": [
+        "95.45MMm³/d",
+        "2,959.0MMm³",
+        "2,884wells",
+        "Unavailable"
+      ],
+      "lines": 0,
+      "notice": "Estimated gas value is unavailable. A comparable national reference and energy conversion still need validation. Physical units are shown.",
+      "pageOverflow": false
+    }
+  ],
+  "ranges": [
+    {
+      "fluid": "Oil",
+      "range": "12m",
+      "bars": 12,
+      "scrollHint": 0
+    },
+    {
+      "fluid": "Oil",
+      "range": "24m",
+      "bars": 24,
+      "scrollHint": 0
+    },
+    {
+      "fluid": "Oil",
+      "range": "36m",
+      "bars": 36,
+      "scrollHint": 0
+    },
+    {
+      "fluid": "Oil",
+      "range": "History",
+      "bars": 44,
+      "coverage": "Available history: Jan 2023 – Aug 2026",
+      "scrollHint": 0
+    },
+    {
+      "fluid": "Gas",
+      "range": "12m",
+      "bars": 12,
+      "scrollHint": 0
+    },
+    {
+      "fluid": "Gas",
+      "range": "24m",
+      "bars": 24,
+      "scrollHint": 0
+    },
+    {
+      "fluid": "Gas",
+      "range": "36m",
+      "bars": 36,
+      "scrollHint": 0
+    },
+    {
+      "fluid": "Gas",
+      "range": "History",
+      "bars": 44,
+      "coverage": "Available history: Jan 2023 – Aug 2026",
+      "scrollHint": 0
+    }
+  ],
+  "kpi": [
+    {
+      "label": "Producción diaria",
+      "backText": "Producción diaria↶Volumen mensual dividido por los días del período.Fuente: Secretaría de Energía.Ver metodología →",
+      "focused": "Volver a Producción diaria",
+      "openCards": 1,
+      "overflow": false
+    },
+    {
+      "label": "Volumen mensual",
+      "backText": "Volumen mensual↶Suma de la producción registrada durante el mes.Fuente: Secretaría de Energía.Ver metodología →",
+      "focused": "Volver a Volumen mensual",
+      "openCards": 1,
+      "overflow": false
+    },
+    {
+      "label": "Pozos productivos",
+      "backText": "Pozos productivos↶Pozos únicos con producción positiva durante el mes.Fuente: Secretaría de Energía.Ver metodología →",
+      "focused": "Volver a Pozos productivos",
+      "openCards": 1,
+      "overflow": false
+    },
+    {
+      "label": "Valor bruto estimado",
+      "backText": "Valor bruto estimado↶Volumen mensual × precio del período. Estimación, no facturación efectiva.Fuente: Secretaría de Energía · EIA.Ver metodología →",
+      "focused": "Volver a Valor bruto estimado",
+      "openCards": 1,
+      "overflow": false
+    }
+  ],
+  "tooltip": {
+    "chart": {
+      "bottom": 536.3984375,
+      "height": 238,
+      "left": 33,
+      "right": 357,
+      "top": 298.3984375,
+      "width": 324,
+      "x": 33,
+      "y": 298.3984375
+    },
+    "left": 748,
+    "pageWidth": 390,
+    "style": "visibility: visible; pointer-events: none; position: absolute; top: 0px; left: 0px; transform: translate(760px, 8px);",
+    "tooltip": {
+      "bottom": 391.3984375,
+      "height": 77,
+      "left": 45,
+      "right": 266.15625,
+      "top": 314.3984375,
+      "width": 221.15625,
+      "x": 45,
+      "y": 314.3984375
+    },
+    "width": 390
+  },
+  "mobile": {
+    "width": 390,
+    "pageWidth": 390,
+    "contentWidth": 1072,
+    "tableWidth": 640
+  },
+  "tablet": {
+    "width": 768,
+    "pageWidth": 768
+  },
+  "smallMobile": {
+    "width": 320,
+    "pageWidth": 320
+  },
+  "themes": [
+    "ES/oil/light",
+    "ES/oil/dark",
+    "EN/gas/light",
+    "EN/gas/dark"
+  ],
+  "keyboard": "Enter/Space: one card, back focus, no overflow; ArrowRight: internal scroll"
+}

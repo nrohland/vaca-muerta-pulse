@@ -1,0 +1,68 @@
+{
+  "checked_on": "2026-10-11",
+  "official_catalog_updated": "2026-10-11T10:01:53.545529",
+  "official_annual_resources": [
+    {
+      "name": "Producción de Pozos de Gas y Petróleo – 2026",
+      "id": "fb7a47a0-cba9-4667-a004-6f6c1c346c23"
+    },
+    {
+      "name": "Producción de Pozos de Gas y Petróleo - 2023",
+      "id": "231c39b3-e81e-4398-af8d-b115807f2c25"
+    },
+    {
+      "name": "Producción de Pozos de Gas y Petróleo - 2022",
+      "id": "876b3746-85e2-4039-adeb-b1354436159f"
+    },
+    {
+      "name": "Producción de Pozos de Gas y Petróleo - 2021",
+      "id": "465be754-a372-4c31-b855-81dc5fe3309f"
+    },
+    {
+      "name": "Producción de Pozos de Gas y Petróleo - 2021 (DDJJ abiertas y cerradas)",
+      "id": "cc966108-e577-4043-b553-81173ef83816"
+    },
+    {
+      "name": "Producción de Pozos de Gas y Petróleo - 2022 (DDJJ abiertas y cerradas)",
+      "id": "ae8d5a47-5181-4add-a836-ac19fb104fe1"
+    },
+    {
+      "name": "Producción de Pozos de Gas y Petróleo - 2023 (DDJJ abiertas y cerradas)",
+      "id": "4b31fa79-dc2d-4228-a6ac-7e804cb36d1d"
+    },
+    {
+      "name": "Producción de Pozos de Gas y Petróleo - 2026 (DDJJ abiertas y cerradas)",
+      "id": "85d6e021-a00d-4997-b74e-0b9b43c547fe"
+    }
+  ],
+  "validated_snapshot": {
+    "oil": {
+      "count": 44,
+      "start": "2023-01-01",
+      "end": "2026-08-01"
+    },
+    "gas": {
+      "count": 44,
+      "start": "2023-01-01",
+      "end": "2026-08-01"
+    }
+  },
+  "data_integrity": {
+    "valuation-manifest.json": {
+      "unchanged": true,
+      "sha256": "5afd4bb46dd5df5750717fe46e0143b1289352d6e71febd48bc9b2bcd52c33a7"
+    },
+    "prices.json": {
+      "unchanged": true,
+      "sha256": "ae002c79d9bbd84254c4d47a44eaac2b560f10f611e3a4b2daa475d98678182e"
+    },
+    "release.json": {
+      "unchanged": true,
+      "sha256": "1bf27be1365a1520f757f7b1fa6b936a1fc07fe7f07a0f3e7a831b7bfd21688b"
+    },
+    "manifest.json": {
+      "unchanged": true,
+      "sha256": "135da53961d5b615b0444b474adff917a3514d1326ff55af09e43ecd8a62582d"
+    }
+  }
+}

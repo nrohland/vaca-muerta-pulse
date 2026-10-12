@@ -1,0 +1,1622 @@
+{
+  "matrix": [
+    {
+      "lang": "es",
+      "fluid": "oil",
+      "mode": "volume",
+      "comparison": "mom",
+      "items": [
+        {
+          "comparison": "Mensual+6,3%",
+          "exact": "10.353.166 bbl",
+          "name": "YPF",
+          "production": "10,35 M bbl",
+          "share": "Cuota 49,9%",
+          "width": "49.8614%"
+        },
+        {
+          "comparison": "Mensual−0,3%",
+          "exact": "2.527.252 bbl",
+          "name": "Vista",
+          "production": "2,53 M bbl",
+          "share": "Cuota 12,2%",
+          "width": "12.1714%"
+        },
+        {
+          "comparison": "Mensual+1,3%",
+          "exact": "2.427.635 bbl",
+          "name": "Pluspetrol",
+          "production": "2,43 M bbl",
+          "share": "Cuota 11,7%",
+          "width": "11.6916%"
+        },
+        {
+          "comparison": "Mensual−3,7%",
+          "exact": "1.325.629 bbl",
+          "name": "Shell",
+          "production": "1,33 M bbl",
+          "share": "Cuota 6,4%",
+          "width": "6.3843%"
+        },
+        {
+          "comparison": "Mensual+7,5%",
+          "exact": "1.119.426 bbl",
+          "name": "Pan American Energy",
+          "production": "1,12 M bbl",
+          "share": "Cuota 5,4%",
+          "width": "5.39122%"
+        },
+        {
+          "comparison": "Mensual+8,3%",
+          "exact": "2.860.800 bbl",
+          "name": "LOMA CAMPANA",
+          "production": "2,86 M bbl",
+          "share": "Cuota 13,8%",
+          "width": "13.7778%"
+        },
+        {
+          "comparison": "Mensual−3,4%",
+          "exact": "2.509.423 bbl",
+          "name": "LA AMARGA CHICA",
+          "production": "2,51 M bbl",
+          "share": "Cuota 12,1%",
+          "width": "12.0855%"
+        },
+        {
+          "comparison": "Mensual+17,4%",
+          "exact": "2.238.367 bbl",
+          "name": "BANDURRIA SUR",
+          "production": "2,24 M bbl",
+          "share": "Cuota 10,8%",
+          "width": "10.7801%"
+        },
+        {
+          "comparison": "Mensual+2,7%",
+          "exact": "1.820.967 bbl",
+          "name": "BAJADA DEL PALO OESTE",
+          "production": "1,82 M bbl",
+          "share": "Cuota 8,8%",
+          "width": "8.76988%"
+        },
+        {
+          "comparison": "Mensual+2,7%",
+          "exact": "1.444.411 bbl",
+          "name": "BAJO DEL CHOIQUE - LA INVERNADA",
+          "production": "1,44 M bbl",
+          "share": "Cuota 7,0%",
+          "width": "6.95637%"
+        }
+      ],
+      "pageOverflow": false
+    },
+    {
+      "lang": "es",
+      "fluid": "oil",
+      "mode": "volume",
+      "comparison": "yoy",
+      "items": [
+        {
+          "comparison": "Interanual+19,0%",
+          "exact": "10.353.166 bbl",
+          "name": "YPF",
+          "production": "10,35 M bbl",
+          "share": "Cuota 49,9%",
+          "width": "49.8614%"
+        },
+        {
+          "comparison": "Interanual+23,0%",
+          "exact": "2.527.252 bbl",
+          "name": "Vista",
+          "production": "2,53 M bbl",
+          "share": "Cuota 12,2%",
+          "width": "12.1714%"
+        },
+        {
+          "comparison": "Interanual+80,4%",
+          "exact": "2.427.635 bbl",
+          "name": "Pluspetrol",
+          "production": "2,43 M bbl",
+          "share": "Cuota 11,7%",
+          "width": "11.6916%"
+        },
+        {
+          "comparison": "Interanual+43,7%",
+          "exact": "1.325.629 bbl",
+          "name": "Shell",
+          "production": "1,33 M bbl",
+          "share": "Cuota 6,4%",
+          "width": "6.3843%"
+        },
+        {
+          "comparison": "Interanual+17,5%",
+          "exact": "1.119.426 bbl",
+          "name": "Pan American Energy",
+          "production": "1,12 M bbl",
+          "share": "Cuota 5,4%",
+          "width": "5.39122%"
+        },
+        {
+          "comparison": "Interanual+8,7%",
+          "exact": "2.860.800 bbl",
+          "name": "LOMA CAMPANA",
+          "production": "2,86 M bbl",
+          "share": "Cuota 13,8%",
+          "width": "13.7778%"
+        },
+        {
+          "comparison": "Interanual+11,0%",
+          "exact": "2.509.423 bbl",
+          "name": "LA AMARGA CHICA",
+          "production": "2,51 M bbl",
+          "share": "Cuota 12,1%",
+          "width": "12.0855%"
+        },
+        {
+          "comparison": "Interanual+3,2%",
+          "exact": "2.238.367 bbl",
+          "name": "BANDURRIA SUR",
+          "production": "2,24 M bbl",
+          "share": "Cuota 10,8%",
+          "width": "10.7801%"
+        },
+        {
+          "comparison": "Interanual+15,3%",
+          "exact": "1.820.967 bbl",
+          "name": "BAJADA DEL PALO OESTE",
+          "production": "1,82 M bbl",
+          "share": "Cuota 8,8%",
+          "width": "8.76988%"
+        },
+        {
+          "comparison": "Interanual+257,1%",
+          "exact": "1.444.411 bbl",
+          "name": "BAJO DEL CHOIQUE - LA INVERNADA",
+          "production": "1,44 M bbl",
+          "share": "Cuota 7,0%",
+          "width": "6.95637%"
+        }
+      ],
+      "pageOverflow": false
+    },
+    {
+      "lang": "es",
+      "fluid": "oil",
+      "mode": "value",
+      "comparison": "mom",
+      "items": [
+        {
+          "comparison": "Mensual+15,6%",
+          "exact": "942.966.355,62 USD",
+          "name": "YPF",
+          "production": "942,97 M USD",
+          "share": "Cuota 49,9%",
+          "width": "49.8614%"
+        },
+        {
+          "comparison": "Mensual+8,4%",
+          "exact": "230.182.094,91 USD",
+          "name": "Vista",
+          "production": "230,18 M USD",
+          "share": "Cuota 12,2%",
+          "width": "12.1714%"
+        },
+        {
+          "comparison": "Mensual+10,1%",
+          "exact": "221.109.012,56 USD",
+          "name": "Pluspetrol",
+          "production": "221,11 M USD",
+          "share": "Cuota 11,7%",
+          "width": "11.6916%"
+        },
+        {
+          "comparison": "Mensual+4,8%",
+          "exact": "120.738.261,36 USD",
+          "name": "Shell",
+          "production": "120,74 M USD",
+          "share": "Cuota 6,4%",
+          "width": "6.3843%"
+        },
+        {
+          "comparison": "Mensual+16,9%",
+          "exact": "101.957.285,52 USD",
+          "name": "Pan American Energy",
+          "production": "101,96 M USD",
+          "share": "Cuota 5,4%",
+          "width": "5.39122%"
+        },
+        {
+          "comparison": "Mensual+17,8%",
+          "exact": "260.561.679,26 USD",
+          "name": "LOMA CAMPANA",
+          "production": "260,56 M USD",
+          "share": "Cuota 13,8%",
+          "width": "13.7778%"
+        },
+        {
+          "comparison": "Mensual+5,1%",
+          "exact": "228.558.290,02 USD",
+          "name": "LA AMARGA CHICA",
+          "production": "228,56 M USD",
+          "share": "Cuota 12,1%",
+          "width": "12.0855%"
+        },
+        {
+          "comparison": "Mensual+27,7%",
+          "exact": "203.870.463,83 USD",
+          "name": "BANDURRIA SUR",
+          "production": "203,87 M USD",
+          "share": "Cuota 10,8%",
+          "width": "10.7801%"
+        },
+        {
+          "comparison": "Mensual+11,7%",
+          "exact": "165.853.668,34 USD",
+          "name": "BAJADA DEL PALO OESTE",
+          "production": "165,85 M USD",
+          "share": "Cuota 8,8%",
+          "width": "8.76988%"
+        },
+        {
+          "comparison": "Mensual+11,7%",
+          "exact": "131.556.983,86 USD",
+          "name": "BAJO DEL CHOIQUE - LA INVERNADA",
+          "production": "131,56 M USD",
+          "share": "Cuota 7,0%",
+          "width": "6.95637%"
+        }
+      ],
+      "pageOverflow": false
+    },
+    {
+      "lang": "es",
+      "fluid": "oil",
+      "mode": "value",
+      "comparison": "yoy",
+      "items": [
+        {
+          "comparison": "Interanual+59,7%",
+          "exact": "942.966.355,62 USD",
+          "name": "YPF",
+          "production": "942,97 M USD",
+          "share": "Cuota 49,9%",
+          "width": "49.8614%"
+        },
+        {
+          "comparison": "Interanual+65,0%",
+          "exact": "230.182.094,91 USD",
+          "name": "Vista",
+          "production": "230,18 M USD",
+          "share": "Cuota 12,2%",
+          "width": "12.1714%"
+        },
+        {
+          "comparison": "Interanual+142,1%",
+          "exact": "221.109.012,56 USD",
+          "name": "Pluspetrol",
+          "production": "221,11 M USD",
+          "share": "Cuota 11,7%",
+          "width": "11.6916%"
+        },
+        {
+          "comparison": "Interanual+92,9%",
+          "exact": "120.738.261,36 USD",
+          "name": "Shell",
+          "production": "120,74 M USD",
+          "share": "Cuota 6,4%",
+          "width": "6.3843%"
+        },
+        {
+          "comparison": "Interanual+57,7%",
+          "exact": "101.957.285,52 USD",
+          "name": "Pan American Energy",
+          "production": "101,96 M USD",
+          "share": "Cuota 5,4%",
+          "width": "5.39122%"
+        },
+        {
+          "comparison": "Interanual+45,9%",
+          "exact": "260.561.679,26 USD",
+          "name": "LOMA CAMPANA",
+          "production": "260,56 M USD",
+          "share": "Cuota 13,8%",
+          "width": "13.7778%"
+        },
+        {
+          "comparison": "Interanual+49,0%",
+          "exact": "228.558.290,02 USD",
+          "name": "LA AMARGA CHICA",
+          "production": "228,56 M USD",
+          "share": "Cuota 12,1%",
+          "width": "12.0855%"
+        },
+        {
+          "comparison": "Interanual+38,5%",
+          "exact": "203.870.463,83 USD",
+          "name": "BANDURRIA SUR",
+          "production": "203,87 M USD",
+          "share": "Cuota 10,8%",
+          "width": "10.7801%"
+        },
+        {
+          "comparison": "Interanual+54,7%",
+          "exact": "165.853.668,34 USD",
+          "name": "BAJADA DEL PALO OESTE",
+          "production": "165,85 M USD",
+          "share": "Cuota 8,8%",
+          "width": "8.76988%"
+        },
+        {
+          "comparison": "Interanual+379,3%",
+          "exact": "131.556.983,86 USD",
+          "name": "BAJO DEL CHOIQUE - LA INVERNADA",
+          "production": "131,56 M USD",
+          "share": "Cuota 7,0%",
+          "width": "6.95637%"
+        }
+      ],
+      "pageOverflow": false
+    },
+    {
+      "lang": "es",
+      "fluid": "gas",
+      "mode": "volume",
+      "comparison": "mom",
+      "items": [
+        {
+          "comparison": "Mensual−1,3%",
+          "exact": "644,13 MMm³",
+          "name": "Tecpetrol",
+          "production": "644,13 MMm³",
+          "share": "Cuota 21,8%",
+          "width": "21.7689%"
+        },
+        {
+          "comparison": "Mensual+0,8%",
+          "exact": "643,18 MMm³",
+          "name": "YPF",
+          "production": "643,18 MMm³",
+          "share": "Cuota 21,7%",
+          "width": "21.7368%"
+        },
+        {
+          "comparison": "Mensual−6,3%",
+          "exact": "507,17 MMm³",
+          "name": "Pluspetrol",
+          "production": "507,17 MMm³",
+          "share": "Cuota 17,1%",
+          "width": "17.1404%"
+        },
+        {
+          "comparison": "Mensual+0,7%",
+          "exact": "346,62 MMm³",
+          "name": "Total Austral",
+          "production": "346,62 MMm³",
+          "share": "Cuota 11,7%",
+          "width": "11.7142%"
+        },
+        {
+          "comparison": "Mensual−1,6%",
+          "exact": "326,04 MMm³",
+          "name": "Pan American Energy",
+          "production": "326,04 MMm³",
+          "share": "Cuota 11,0%",
+          "width": "11.0188%"
+        },
+        {
+          "comparison": "Mensual−1,2%",
+          "exact": "636,48 MMm³",
+          "name": "FORTIN DE PIEDRA ",
+          "production": "636,48 MMm³",
+          "share": "Cuota 21,5%",
+          "width": "21.5104%"
+        },
+        {
+          "comparison": "Mensual−7,4%",
+          "exact": "423,04 MMm³",
+          "name": "LA CALERA",
+          "production": "423,04 MMm³",
+          "share": "Cuota 14,3%",
+          "width": "14.2968%"
+        },
+        {
+          "comparison": "Mensual+0,7%",
+          "exact": "346,56 MMm³",
+          "name": "AGUADA PICHANA ESTE  ",
+          "production": "346,56 MMm³",
+          "share": "Cuota 11,7%",
+          "width": "11.7124%"
+        },
+        {
+          "comparison": "Mensual−1,7%",
+          "exact": "297,25 MMm³",
+          "name": "AGUADA PICHANA OESTE ",
+          "production": "297,25 MMm³",
+          "share": "Cuota 10,0%",
+          "width": "10.0459%"
+        },
+        {
+          "comparison": "Mensual+0,2%",
+          "exact": "241,89 MMm³",
+          "name": "SIERRA CHATA",
+          "production": "241,89 MMm³",
+          "share": "Cuota 8,2%",
+          "width": "8.17498%"
+        }
+      ],
+      "pageOverflow": false
+    },
+    {
+      "lang": "es",
+      "fluid": "gas",
+      "mode": "volume",
+      "comparison": "yoy",
+      "items": [
+        {
+          "comparison": "Interanual−1,8%",
+          "exact": "644,13 MMm³",
+          "name": "Tecpetrol",
+          "production": "644,13 MMm³",
+          "share": "Cuota 21,8%",
+          "width": "21.7689%"
+        },
+        {
+          "comparison": "Interanual−2,5%",
+          "exact": "643,18 MMm³",
+          "name": "YPF",
+          "production": "643,18 MMm³",
+          "share": "Cuota 21,7%",
+          "width": "21.7368%"
+        },
+        {
+          "comparison": "Interanual+27,7%",
+          "exact": "507,17 MMm³",
+          "name": "Pluspetrol",
+          "production": "507,17 MMm³",
+          "share": "Cuota 17,1%",
+          "width": "17.1404%"
+        },
+        {
+          "comparison": "Interanual−0,3%",
+          "exact": "346,62 MMm³",
+          "name": "Total Austral",
+          "production": "346,62 MMm³",
+          "share": "Cuota 11,7%",
+          "width": "11.7142%"
+        },
+        {
+          "comparison": "Interanual+8,4%",
+          "exact": "326,04 MMm³",
+          "name": "Pan American Energy",
+          "production": "326,04 MMm³",
+          "share": "Cuota 11,0%",
+          "width": "11.0188%"
+        },
+        {
+          "comparison": "Interanual−1,5%",
+          "exact": "636,48 MMm³",
+          "name": "FORTIN DE PIEDRA ",
+          "production": "636,48 MMm³",
+          "share": "Cuota 21,5%",
+          "width": "21.5104%"
+        },
+        {
+          "comparison": "Interanual+18,3%",
+          "exact": "423,04 MMm³",
+          "name": "LA CALERA",
+          "production": "423,04 MMm³",
+          "share": "Cuota 14,3%",
+          "width": "14.2968%"
+        },
+        {
+          "comparison": "Interanual+2,3%",
+          "exact": "346,56 MMm³",
+          "name": "AGUADA PICHANA ESTE  ",
+          "production": "346,56 MMm³",
+          "share": "Cuota 11,7%",
+          "width": "11.7124%"
+        },
+        {
+          "comparison": "Interanual+10,7%",
+          "exact": "297,25 MMm³",
+          "name": "AGUADA PICHANA OESTE ",
+          "production": "297,25 MMm³",
+          "share": "Cuota 10,0%",
+          "width": "10.0459%"
+        },
+        {
+          "comparison": "Interanual+17,4%",
+          "exact": "241,89 MMm³",
+          "name": "SIERRA CHATA",
+          "production": "241,89 MMm³",
+          "share": "Cuota 8,2%",
+          "width": "8.17498%"
+        }
+      ],
+      "pageOverflow": false
+    },
+    {
+      "lang": "es",
+      "fluid": "gas",
+      "mode": "value",
+      "comparison": "mom",
+      "items": [
+        {
+          "comparison": "Mensual−1,3%",
+          "exact": "644,13 MMm³",
+          "name": "Tecpetrol",
+          "production": "644,13 MMm³",
+          "share": "Cuota 21,8%",
+          "width": "21.7689%"
+        },
+        {
+          "comparison": "Mensual+0,8%",
+          "exact": "643,18 MMm³",
+          "name": "YPF",
+          "production": "643,18 MMm³",
+          "share": "Cuota 21,7%",
+          "width": "21.7368%"
+        },
+        {
+          "comparison": "Mensual−6,3%",
+          "exact": "507,17 MMm³",
+          "name": "Pluspetrol",
+          "production": "507,17 MMm³",
+          "share": "Cuota 17,1%",
+          "width": "17.1404%"
+        },
+        {
+          "comparison": "Mensual+0,7%",
+          "exact": "346,62 MMm³",
+          "name": "Total Austral",
+          "production": "346,62 MMm³",
+          "share": "Cuota 11,7%",
+          "width": "11.7142%"
+        },
+        {
+          "comparison": "Mensual−1,6%",
+          "exact": "326,04 MMm³",
+          "name": "Pan American Energy",
+          "production": "326,04 MMm³",
+          "share": "Cuota 11,0%",
+          "width": "11.0188%"
+        },
+        {
+          "comparison": "Mensual−1,2%",
+          "exact": "636,48 MMm³",
+          "name": "FORTIN DE PIEDRA ",
+          "production": "636,48 MMm³",
+          "share": "Cuota 21,5%",
+          "width": "21.5104%"
+        },
+        {
+          "comparison": "Mensual−7,4%",
+          "exact": "423,04 MMm³",
+          "name": "LA CALERA",
+          "production": "423,04 MMm³",
+          "share": "Cuota 14,3%",
+          "width": "14.2968%"
+        },
+        {
+          "comparison": "Mensual+0,7%",
+          "exact": "346,56 MMm³",
+          "name": "AGUADA PICHANA ESTE  ",
+          "production": "346,56 MMm³",
+          "share": "Cuota 11,7%",
+          "width": "11.7124%"
+        },
+        {
+          "comparison": "Mensual−1,7%",
+          "exact": "297,25 MMm³",
+          "name": "AGUADA PICHANA OESTE ",
+          "production": "297,25 MMm³",
+          "share": "Cuota 10,0%",
+          "width": "10.0459%"
+        },
+        {
+          "comparison": "Mensual+0,2%",
+          "exact": "241,89 MMm³",
+          "name": "SIERRA CHATA",
+          "production": "241,89 MMm³",
+          "share": "Cuota 8,2%",
+          "width": "8.17498%"
+        }
+      ],
+      "pageOverflow": false
+    },
+    {
+      "lang": "es",
+      "fluid": "gas",
+      "mode": "value",
+      "comparison": "yoy",
+      "items": [
+        {
+          "comparison": "Interanual−1,8%",
+          "exact": "644,13 MMm³",
+          "name": "Tecpetrol",
+          "production": "644,13 MMm³",
+          "share": "Cuota 21,8%",
+          "width": "21.7689%"
+        },
+        {
+          "comparison": "Interanual−2,5%",
+          "exact": "643,18 MMm³",
+          "name": "YPF",
+          "production": "643,18 MMm³",
+          "share": "Cuota 21,7%",
+          "width": "21.7368%"
+        },
+        {
+          "comparison": "Interanual+27,7%",
+          "exact": "507,17 MMm³",
+          "name": "Pluspetrol",
+          "production": "507,17 MMm³",
+          "share": "Cuota 17,1%",
+          "width": "17.1404%"
+        },
+        {
+          "comparison": "Interanual−0,3%",
+          "exact": "346,62 MMm³",
+          "name": "Total Austral",
+          "production": "346,62 MMm³",
+          "share": "Cuota 11,7%",
+          "width": "11.7142%"
+        },
+        {
+          "comparison": "Interanual+8,4%",
+          "exact": "326,04 MMm³",
+          "name": "Pan American Energy",
+          "production": "326,04 MMm³",
+          "share": "Cuota 11,0%",
+          "width": "11.0188%"
+        },
+        {
+          "comparison": "Interanual−1,5%",
+          "exact": "636,48 MMm³",
+          "name": "FORTIN DE PIEDRA ",
+          "production": "636,48 MMm³",
+          "share": "Cuota 21,5%",
+          "width": "21.5104%"
+        },
+        {
+          "comparison": "Interanual+18,3%",
+          "exact": "423,04 MMm³",
+          "name": "LA CALERA",
+          "production": "423,04 MMm³",
+          "share": "Cuota 14,3%",
+          "width": "14.2968%"
+        },
+        {
+          "comparison": "Interanual+2,3%",
+          "exact": "346,56 MMm³",
+          "name": "AGUADA PICHANA ESTE  ",
+          "production": "346,56 MMm³",
+          "share": "Cuota 11,7%",
+          "width": "11.7124%"
+        },
+        {
+          "comparison": "Interanual+10,7%",
+          "exact": "297,25 MMm³",
+          "name": "AGUADA PICHANA OESTE ",
+          "production": "297,25 MMm³",
+          "share": "Cuota 10,0%",
+          "width": "10.0459%"
+        },
+        {
+          "comparison": "Interanual+17,4%",
+          "exact": "241,89 MMm³",
+          "name": "SIERRA CHATA",
+          "production": "241,89 MMm³",
+          "share": "Cuota 8,2%",
+          "width": "8.17498%"
+        }
+      ],
+      "pageOverflow": false
+    },
+    {
+      "lang": "en",
+      "fluid": "oil",
+      "mode": "volume",
+      "comparison": "mom",
+      "items": [
+        {
+          "comparison": "Monthly+6.3%",
+          "exact": "10,353,166 bbl",
+          "name": "YPF",
+          "production": "10.35M bbl",
+          "share": "Share 49.9%",
+          "width": "49.8614%"
+        },
+        {
+          "comparison": "Monthly−0.3%",
+          "exact": "2,527,252 bbl",
+          "name": "Vista",
+          "production": "2.53M bbl",
+          "share": "Share 12.2%",
+          "width": "12.1714%"
+        },
+        {
+          "comparison": "Monthly+1.3%",
+          "exact": "2,427,635 bbl",
+          "name": "Pluspetrol",
+          "production": "2.43M bbl",
+          "share": "Share 11.7%",
+          "width": "11.6916%"
+        },
+        {
+          "comparison": "Monthly−3.7%",
+          "exact": "1,325,629 bbl",
+          "name": "Shell",
+          "production": "1.33M bbl",
+          "share": "Share 6.4%",
+          "width": "6.3843%"
+        },
+        {
+          "comparison": "Monthly+7.5%",
+          "exact": "1,119,426 bbl",
+          "name": "Pan American Energy",
+          "production": "1.12M bbl",
+          "share": "Share 5.4%",
+          "width": "5.39122%"
+        },
+        {
+          "comparison": "Monthly+8.3%",
+          "exact": "2,860,800 bbl",
+          "name": "LOMA CAMPANA",
+          "production": "2.86M bbl",
+          "share": "Share 13.8%",
+          "width": "13.7778%"
+        },
+        {
+          "comparison": "Monthly−3.4%",
+          "exact": "2,509,423 bbl",
+          "name": "LA AMARGA CHICA",
+          "production": "2.51M bbl",
+          "share": "Share 12.1%",
+          "width": "12.0855%"
+        },
+        {
+          "comparison": "Monthly+17.4%",
+          "exact": "2,238,367 bbl",
+          "name": "BANDURRIA SUR",
+          "production": "2.24M bbl",
+          "share": "Share 10.8%",
+          "width": "10.7801%"
+        },
+        {
+          "comparison": "Monthly+2.7%",
+          "exact": "1,820,967 bbl",
+          "name": "BAJADA DEL PALO OESTE",
+          "production": "1.82M bbl",
+          "share": "Share 8.8%",
+          "width": "8.76988%"
+        },
+        {
+          "comparison": "Monthly+2.7%",
+          "exact": "1,444,411 bbl",
+          "name": "BAJO DEL CHOIQUE - LA INVERNADA",
+          "production": "1.44M bbl",
+          "share": "Share 7.0%",
+          "width": "6.95637%"
+        }
+      ],
+      "pageOverflow": false
+    },
+    {
+      "lang": "en",
+      "fluid": "oil",
+      "mode": "volume",
+      "comparison": "yoy",
+      "items": [
+        {
+          "comparison": "Year over year+19.0%",
+          "exact": "10,353,166 bbl",
+          "name": "YPF",
+          "production": "10.35M bbl",
+          "share": "Share 49.9%",
+          "width": "49.8614%"
+        },
+        {
+          "comparison": "Year over year+23.0%",
+          "exact": "2,527,252 bbl",
+          "name": "Vista",
+          "production": "2.53M bbl",
+          "share": "Share 12.2%",
+          "width": "12.1714%"
+        },
+        {
+          "comparison": "Year over year+80.4%",
+          "exact": "2,427,635 bbl",
+          "name": "Pluspetrol",
+          "production": "2.43M bbl",
+          "share": "Share 11.7%",
+          "width": "11.6916%"
+        },
+        {
+          "comparison": "Year over year+43.7%",
+          "exact": "1,325,629 bbl",
+          "name": "Shell",
+          "production": "1.33M bbl",
+          "share": "Share 6.4%",
+          "width": "6.3843%"
+        },
+        {
+          "comparison": "Year over year+17.5%",
+          "exact": "1,119,426 bbl",
+          "name": "Pan American Energy",
+          "production": "1.12M bbl",
+          "share": "Share 5.4%",
+          "width": "5.39122%"
+        },
+        {
+          "comparison": "Year over year+8.7%",
+          "exact": "2,860,800 bbl",
+          "name": "LOMA CAMPANA",
+          "production": "2.86M bbl",
+          "share": "Share 13.8%",
+          "width": "13.7778%"
+        },
+        {
+          "comparison": "Year over year+11.0%",
+          "exact": "2,509,423 bbl",
+          "name": "LA AMARGA CHICA",
+          "production": "2.51M bbl",
+          "share": "Share 12.1%",
+          "width": "12.0855%"
+        },
+        {
+          "comparison": "Year over year+3.2%",
+          "exact": "2,238,367 bbl",
+          "name": "BANDURRIA SUR",
+          "production": "2.24M bbl",
+          "share": "Share 10.8%",
+          "width": "10.7801%"
+        },
+        {
+          "comparison": "Year over year+15.3%",
+          "exact": "1,820,967 bbl",
+          "name": "BAJADA DEL PALO OESTE",
+          "production": "1.82M bbl",
+          "share": "Share 8.8%",
+          "width": "8.76988%"
+        },
+        {
+          "comparison": "Year over year+257.1%",
+          "exact": "1,444,411 bbl",
+          "name": "BAJO DEL CHOIQUE - LA INVERNADA",
+          "production": "1.44M bbl",
+          "share": "Share 7.0%",
+          "width": "6.95637%"
+        }
+      ],
+      "pageOverflow": false
+    },
+    {
+      "lang": "en",
+      "fluid": "oil",
+      "mode": "value",
+      "comparison": "mom",
+      "items": [
+        {
+          "comparison": "Monthly+15.6%",
+          "exact": "942,966,355.62 USD",
+          "name": "YPF",
+          "production": "942.97M USD",
+          "share": "Share 49.9%",
+          "width": "49.8614%"
+        },
+        {
+          "comparison": "Monthly+8.4%",
+          "exact": "230,182,094.91 USD",
+          "name": "Vista",
+          "production": "230.18M USD",
+          "share": "Share 12.2%",
+          "width": "12.1714%"
+        },
+        {
+          "comparison": "Monthly+10.1%",
+          "exact": "221,109,012.56 USD",
+          "name": "Pluspetrol",
+          "production": "221.11M USD",
+          "share": "Share 11.7%",
+          "width": "11.6916%"
+        },
+        {
+          "comparison": "Monthly+4.8%",
+          "exact": "120,738,261.36 USD",
+          "name": "Shell",
+          "production": "120.74M USD",
+          "share": "Share 6.4%",
+          "width": "6.3843%"
+        },
+        {
+          "comparison": "Monthly+16.9%",
+          "exact": "101,957,285.52 USD",
+          "name": "Pan American Energy",
+          "production": "101.96M USD",
+          "share": "Share 5.4%",
+          "width": "5.39122%"
+        },
+        {
+          "comparison": "Monthly+17.8%",
+          "exact": "260,561,679.26 USD",
+          "name": "LOMA CAMPANA",
+          "production": "260.56M USD",
+          "share": "Share 13.8%",
+          "width": "13.7778%"
+        },
+        {
+          "comparison": "Monthly+5.1%",
+          "exact": "228,558,290.02 USD",
+          "name": "LA AMARGA CHICA",
+          "production": "228.56M USD",
+          "share": "Share 12.1%",
+          "width": "12.0855%"
+        },
+        {
+          "comparison": "Monthly+27.7%",
+          "exact": "203,870,463.83 USD",
+          "name": "BANDURRIA SUR",
+          "production": "203.87M USD",
+          "share": "Share 10.8%",
+          "width": "10.7801%"
+        },
+        {
+          "comparison": "Monthly+11.7%",
+          "exact": "165,853,668.34 USD",
+          "name": "BAJADA DEL PALO OESTE",
+          "production": "165.85M USD",
+          "share": "Share 8.8%",
+          "width": "8.76988%"
+        },
+        {
+          "comparison": "Monthly+11.7%",
+          "exact": "131,556,983.86 USD",
+          "name": "BAJO DEL CHOIQUE - LA INVERNADA",
+          "production": "131.56M USD",
+          "share": "Share 7.0%",
+          "width": "6.95637%"
+        }
+      ],
+      "pageOverflow": false
+    },
+    {
+      "lang": "en",
+      "fluid": "oil",
+      "mode": "value",
+      "comparison": "yoy",
+      "items": [
+        {
+          "comparison": "Year over year+59.7%",
+          "exact": "942,966,355.62 USD",
+          "name": "YPF",
+          "production": "942.97M USD",
+          "share": "Share 49.9%",
+          "width": "49.8614%"
+        },
+        {
+          "comparison": "Year over year+65.0%",
+          "exact": "230,182,094.91 USD",
+          "name": "Vista",
+          "production": "230.18M USD",
+          "share": "Share 12.2%",
+          "width": "12.1714%"
+        },
+        {
+          "comparison": "Year over year+142.1%",
+          "exact": "221,109,012.56 USD",
+          "name": "Pluspetrol",
+          "production": "221.11M USD",
+          "share": "Share 11.7%",
+          "width": "11.6916%"
+        },
+        {
+          "comparison": "Year over year+92.9%",
+          "exact": "120,738,261.36 USD",
+          "name": "Shell",
+          "production": "120.74M USD",
+          "share": "Share 6.4%",
+          "width": "6.3843%"
+        },
+        {
+          "comparison": "Year over year+57.7%",
+          "exact": "101,957,285.52 USD",
+          "name": "Pan American Energy",
+          "production": "101.96M USD",
+          "share": "Share 5.4%",
+          "width": "5.39122%"
+        },
+        {
+          "comparison": "Year over year+45.9%",
+          "exact": "260,561,679.26 USD",
+          "name": "LOMA CAMPANA",
+          "production": "260.56M USD",
+          "share": "Share 13.8%",
+          "width": "13.7778%"
+        },
+        {
+          "comparison": "Year over year+49.0%",
+          "exact": "228,558,290.02 USD",
+          "name": "LA AMARGA CHICA",
+          "production": "228.56M USD",
+          "share": "Share 12.1%",
+          "width": "12.0855%"
+        },
+        {
+          "comparison": "Year over year+38.5%",
+          "exact": "203,870,463.83 USD",
+          "name": "BANDURRIA SUR",
+          "production": "203.87M USD",
+          "share": "Share 10.8%",
+          "width": "10.7801%"
+        },
+        {
+          "comparison": "Year over year+54.7%",
+          "exact": "165,853,668.34 USD",
+          "name": "BAJADA DEL PALO OESTE",
+          "production": "165.85M USD",
+          "share": "Share 8.8%",
+          "width": "8.76988%"
+        },
+        {
+          "comparison": "Year over year+379.3%",
+          "exact": "131,556,983.86 USD",
+          "name": "BAJO DEL CHOIQUE - LA INVERNADA",
+          "production": "131.56M USD",
+          "share": "Share 7.0%",
+          "width": "6.95637%"
+        }
+      ],
+      "pageOverflow": false
+    },
+    {
+      "lang": "en",
+      "fluid": "gas",
+      "mode": "volume",
+      "comparison": "mom",
+      "items": [
+        {
+          "comparison": "Monthly−1.3%",
+          "exact": "644.13 MMm³",
+          "name": "Tecpetrol",
+          "production": "644.13 MMm³",
+          "share": "Share 21.8%",
+          "width": "21.7689%"
+        },
+        {
+          "comparison": "Monthly+0.8%",
+          "exact": "643.18 MMm³",
+          "name": "YPF",
+          "production": "643.18 MMm³",
+          "share": "Share 21.7%",
+          "width": "21.7368%"
+        },
+        {
+          "comparison": "Monthly−6.3%",
+          "exact": "507.17 MMm³",
+          "name": "Pluspetrol",
+          "production": "507.17 MMm³",
+          "share": "Share 17.1%",
+          "width": "17.1404%"
+        },
+        {
+          "comparison": "Monthly+0.7%",
+          "exact": "346.62 MMm³",
+          "name": "Total Austral",
+          "production": "346.62 MMm³",
+          "share": "Share 11.7%",
+          "width": "11.7142%"
+        },
+        {
+          "comparison": "Monthly−1.6%",
+          "exact": "326.04 MMm³",
+          "name": "Pan American Energy",
+          "production": "326.04 MMm³",
+          "share": "Share 11.0%",
+          "width": "11.0188%"
+        },
+        {
+          "comparison": "Monthly−1.2%",
+          "exact": "636.48 MMm³",
+          "name": "FORTIN DE PIEDRA ",
+          "production": "636.48 MMm³",
+          "share": "Share 21.5%",
+          "width": "21.5104%"
+        },
+        {
+          "comparison": "Monthly−7.4%",
+          "exact": "423.04 MMm³",
+          "name": "LA CALERA",
+          "production": "423.04 MMm³",
+          "share": "Share 14.3%",
+          "width": "14.2968%"
+        },
+        {
+          "comparison": "Monthly+0.7%",
+          "exact": "346.56 MMm³",
+          "name": "AGUADA PICHANA ESTE  ",
+          "production": "346.56 MMm³",
+          "share": "Share 11.7%",
+          "width": "11.7124%"
+        },
+        {
+          "comparison": "Monthly−1.7%",
+          "exact": "297.25 MMm³",
+          "name": "AGUADA PICHANA OESTE ",
+          "production": "297.25 MMm³",
+          "share": "Share 10.0%",
+          "width": "10.0459%"
+        },
+        {
+          "comparison": "Monthly+0.2%",
+          "exact": "241.89 MMm³",
+          "name": "SIERRA CHATA",
+          "production": "241.89 MMm³",
+          "share": "Share 8.2%",
+          "width": "8.17498%"
+        }
+      ],
+      "pageOverflow": false
+    },
+    {
+      "lang": "en",
+      "fluid": "gas",
+      "mode": "volume",
+      "comparison": "yoy",
+      "items": [
+        {
+          "comparison": "Year over year−1.8%",
+          "exact": "644.13 MMm³",
+          "name": "Tecpetrol",
+          "production": "644.13 MMm³",
+          "share": "Share 21.8%",
+          "width": "21.7689%"
+        },
+        {
+          "comparison": "Year over year−2.5%",
+          "exact": "643.18 MMm³",
+          "name": "YPF",
+          "production": "643.18 MMm³",
+          "share": "Share 21.7%",
+          "width": "21.7368%"
+        },
+        {
+          "comparison": "Year over year+27.7%",
+          "exact": "507.17 MMm³",
+          "name": "Pluspetrol",
+          "production": "507.17 MMm³",
+          "share": "Share 17.1%",
+          "width": "17.1404%"
+        },
+        {
+          "comparison": "Year over year−0.3%",
+          "exact": "346.62 MMm³",
+          "name": "Total Austral",
+          "production": "346.62 MMm³",
+          "share": "Share 11.7%",
+          "width": "11.7142%"
+        },
+        {
+          "comparison": "Year over year+8.4%",
+          "exact": "326.04 MMm³",
+          "name": "Pan American Energy",
+          "production": "326.04 MMm³",
+          "share": "Share 11.0%",
+          "width": "11.0188%"
+        },
+        {
+          "comparison": "Year over year−1.5%",
+          "exact": "636.48 MMm³",
+          "name": "FORTIN DE PIEDRA ",
+          "production": "636.48 MMm³",
+          "share": "Share 21.5%",
+          "width": "21.5104%"
+        },
+        {
+          "comparison": "Year over year+18.3%",
+          "exact": "423.04 MMm³",
+          "name": "LA CALERA",
+          "production": "423.04 MMm³",
+          "share": "Share 14.3%",
+          "width": "14.2968%"
+        },
+        {
+          "comparison": "Year over year+2.3%",
+          "exact": "346.56 MMm³",
+          "name": "AGUADA PICHANA ESTE  ",
+          "production": "346.56 MMm³",
+          "share": "Share 11.7%",
+          "width": "11.7124%"
+        },
+        {
+          "comparison": "Year over year+10.7%",
+          "exact": "297.25 MMm³",
+          "name": "AGUADA PICHANA OESTE ",
+          "production": "297.25 MMm³",
+          "share": "Share 10.0%",
+          "width": "10.0459%"
+        },
+        {
+          "comparison": "Year over year+17.4%",
+          "exact": "241.89 MMm³",
+          "name": "SIERRA CHATA",
+          "production": "241.89 MMm³",
+          "share": "Share 8.2%",
+          "width": "8.17498%"
+        }
+      ],
+      "pageOverflow": false
+    },
+    {
+      "lang": "en",
+      "fluid": "gas",
+      "mode": "value",
+      "comparison": "mom",
+      "items": [
+        {
+          "comparison": "Monthly−1.3%",
+          "exact": "644.13 MMm³",
+          "name": "Tecpetrol",
+          "production": "644.13 MMm³",
+          "share": "Share 21.8%",
+          "width": "21.7689%"
+        },
+        {
+          "comparison": "Monthly+0.8%",
+          "exact": "643.18 MMm³",
+          "name": "YPF",
+          "production": "643.18 MMm³",
+          "share": "Share 21.7%",
+          "width": "21.7368%"
+        },
+        {
+          "comparison": "Monthly−6.3%",
+          "exact": "507.17 MMm³",
+          "name": "Pluspetrol",
+          "production": "507.17 MMm³",
+          "share": "Share 17.1%",
+          "width": "17.1404%"
+        },
+        {
+          "comparison": "Monthly+0.7%",
+          "exact": "346.62 MMm³",
+          "name": "Total Austral",
+          "production": "346.62 MMm³",
+          "share": "Share 11.7%",
+          "width": "11.7142%"
+        },
+        {
+          "comparison": "Monthly−1.6%",
+          "exact": "326.04 MMm³",
+          "name": "Pan American Energy",
+          "production": "326.04 MMm³",
+          "share": "Share 11.0%",
+          "width": "11.0188%"
+        },
+        {
+          "comparison": "Monthly−1.2%",
+          "exact": "636.48 MMm³",
+          "name": "FORTIN DE PIEDRA ",
+          "production": "636.48 MMm³",
+          "share": "Share 21.5%",
+          "width": "21.5104%"
+        },
+        {
+          "comparison": "Monthly−7.4%",
+          "exact": "423.04 MMm³",
+          "name": "LA CALERA",
+          "production": "423.04 MMm³",
+          "share": "Share 14.3%",
+          "width": "14.2968%"
+        },
+        {
+          "comparison": "Monthly+0.7%",
+          "exact": "346.56 MMm³",
+          "name": "AGUADA PICHANA ESTE  ",
+          "production": "346.56 MMm³",
+          "share": "Share 11.7%",
+          "width": "11.7124%"
+        },
+        {
+          "comparison": "Monthly−1.7%",
+          "exact": "297.25 MMm³",
+          "name": "AGUADA PICHANA OESTE ",
+          "production": "297.25 MMm³",
+          "share": "Share 10.0%",
+          "width": "10.0459%"
+        },
+        {
+          "comparison": "Monthly+0.2%",
+          "exact": "241.89 MMm³",
+          "name": "SIERRA CHATA",
+          "production": "241.89 MMm³",
+          "share": "Share 8.2%",
+          "width": "8.17498%"
+        }
+      ],
+      "pageOverflow": false
+    },
+    {
+      "lang": "en",
+      "fluid": "gas",
+      "mode": "value",
+      "comparison": "yoy",
+      "items": [
+        {
+          "comparison": "Year over year−1.8%",
+          "exact": "644.13 MMm³",
+          "name": "Tecpetrol",
+          "production": "644.13 MMm³",
+          "share": "Share 21.8%",
+          "width": "21.7689%"
+        },
+        {
+          "comparison": "Year over year−2.5%",
+          "exact": "643.18 MMm³",
+          "name": "YPF",
+          "production": "643.18 MMm³",
+          "share": "Share 21.7%",
+          "width": "21.7368%"
+        },
+        {
+          "comparison": "Year over year+27.7%",
+          "exact": "507.17 MMm³",
+          "name": "Pluspetrol",
+          "production": "507.17 MMm³",
+          "share": "Share 17.1%",
+          "width": "17.1404%"
+        },
+        {
+          "comparison": "Year over year−0.3%",
+          "exact": "346.62 MMm³",
+          "name": "Total Austral",
+          "production": "346.62 MMm³",
+          "share": "Share 11.7%",
+          "width": "11.7142%"
+        },
+        {
+          "comparison": "Year over year+8.4%",
+          "exact": "326.04 MMm³",
+          "name": "Pan American Energy",
+          "production": "326.04 MMm³",
+          "share": "Share 11.0%",
+          "width": "11.0188%"
+        },
+        {
+          "comparison": "Year over year−1.5%",
+          "exact": "636.48 MMm³",
+          "name": "FORTIN DE PIEDRA ",
+          "production": "636.48 MMm³",
+          "share": "Share 21.5%",
+          "width": "21.5104%"
+        },
+        {
+          "comparison": "Year over year+18.3%",
+          "exact": "423.04 MMm³",
+          "name": "LA CALERA",
+          "production": "423.04 MMm³",
+          "share": "Share 14.3%",
+          "width": "14.2968%"
+        },
+        {
+          "comparison": "Year over year+2.3%",
+          "exact": "346.56 MMm³",
+          "name": "AGUADA PICHANA ESTE  ",
+          "production": "346.56 MMm³",
+          "share": "Share 11.7%",
+          "width": "11.7124%"
+        },
+        {
+          "comparison": "Year over year+10.7%",
+          "exact": "297.25 MMm³",
+          "name": "AGUADA PICHANA OESTE ",
+          "production": "297.25 MMm³",
+          "share": "Share 10.0%",
+          "width": "10.0459%"
+        },
+        {
+          "comparison": "Year over year+17.4%",
+          "exact": "241.89 MMm³",
+          "name": "SIERRA CHATA",
+          "production": "241.89 MMm³",
+          "share": "Share 8.2%",
+          "width": "8.17498%"
+        }
+      ],
+      "pageOverflow": false
+    }
+  ],
+  "mobile": {
+    "cards": [
+      {
+        "left": 16,
+        "width": 358
+      },
+      {
+        "left": 16,
+        "width": 358
+      }
+    ],
+    "pageWidth": 390,
+    "rows": [
+      {
+        "ellipsis": "clip",
+        "name": "YPF",
+        "nameScrollWidth": 26,
+        "nameWidth": 26,
+        "trackHeight": 7
+      },
+      {
+        "ellipsis": "clip",
+        "name": "Vista",
+        "nameScrollWidth": 32,
+        "nameWidth": 32,
+        "trackHeight": 7
+      },
+      {
+        "ellipsis": "clip",
+        "name": "Pluspetrol",
+        "nameScrollWidth": 64,
+        "nameWidth": 64,
+        "trackHeight": 7
+      },
+      {
+        "ellipsis": "clip",
+        "name": "Shell",
+        "nameScrollWidth": 31,
+        "nameWidth": 31,
+        "trackHeight": 7
+      },
+      {
+        "ellipsis": "clip",
+        "name": "Pan American Energy",
+        "nameScrollWidth": 133,
+        "nameWidth": 133,
+        "trackHeight": 7
+      },
+      {
+        "ellipsis": "clip",
+        "name": "LOMA CAMPANA",
+        "nameScrollWidth": 109,
+        "nameWidth": 109,
+        "trackHeight": 7
+      },
+      {
+        "ellipsis": "clip",
+        "name": "LA AMARGA CHICA",
+        "nameScrollWidth": 121,
+        "nameWidth": 121,
+        "trackHeight": 7
+      },
+      {
+        "ellipsis": "clip",
+        "name": "BANDURRIA SUR",
+        "nameScrollWidth": 107,
+        "nameWidth": 107,
+        "trackHeight": 7
+      },
+      {
+        "ellipsis": "clip",
+        "name": "BAJADA DEL PALO OESTE",
+        "nameScrollWidth": 164,
+        "nameWidth": 164,
+        "trackHeight": 7
+      },
+      {
+        "ellipsis": "clip",
+        "name": "BAJO DEL CHOIQUE - LA INVERNADA",
+        "nameScrollWidth": 189,
+        "nameWidth": 189,
+        "trackHeight": 7
+      }
+    ],
+    "width": 390
+  },
+  "narrowMobile": {
+    "items": [
+      {
+        "comparison": "Year over year+59.7%",
+        "name": "YPF",
+        "nameHeight": 17.546875,
+        "nameScrollWidth": 26,
+        "nameWidth": 26,
+        "production": "942.97M USD",
+        "rowHeight": 69.3984375
+      },
+      {
+        "comparison": "Year over year+65.0%",
+        "name": "Vista",
+        "nameHeight": 17.546875,
+        "nameScrollWidth": 32,
+        "nameWidth": 32,
+        "production": "230.18M USD",
+        "rowHeight": 69.3984375
+      },
+      {
+        "comparison": "Year over year+142.1%",
+        "name": "Pluspetrol",
+        "nameHeight": 17.546875,
+        "nameScrollWidth": 64,
+        "nameWidth": 64,
+        "production": "221.11M USD",
+        "rowHeight": 86.796875
+      },
+      {
+        "comparison": "Year over year+92.9%",
+        "name": "Shell",
+        "nameHeight": 17.546875,
+        "nameScrollWidth": 31,
+        "nameWidth": 31,
+        "production": "120.74M USD",
+        "rowHeight": 69.3984375
+      },
+      {
+        "comparison": "Year over year+57.7%",
+        "name": "Pan American Energy",
+        "nameHeight": 35.09375,
+        "nameScrollWidth": 119,
+        "nameWidth": 119,
+        "production": "101.96M USD",
+        "rowHeight": 72.4921875
+      },
+      {
+        "comparison": "Year over year+45.9%",
+        "name": "LOMA CAMPANA",
+        "nameHeight": 17.546875,
+        "nameScrollWidth": 109,
+        "nameWidth": 109,
+        "production": "260.56M USD",
+        "rowHeight": 69.3984375
+      },
+      {
+        "comparison": "Year over year+49.0%",
+        "name": "LA AMARGA CHICA",
+        "nameHeight": 17.546875,
+        "nameScrollWidth": 121,
+        "nameWidth": 121,
+        "production": "228.56M USD",
+        "rowHeight": 69.3984375
+      },
+      {
+        "comparison": "Year over year+38.5%",
+        "name": "BANDURRIA SUR",
+        "nameHeight": 17.546875,
+        "nameScrollWidth": 107,
+        "nameWidth": 107,
+        "production": "203.87M USD",
+        "rowHeight": 69.3984375
+      },
+      {
+        "comparison": "Year over year+54.7%",
+        "name": "BAJADA DEL PALO OESTE",
+        "nameHeight": 35.09375,
+        "nameScrollWidth": 159,
+        "nameWidth": 159,
+        "production": "165.85M USD",
+        "rowHeight": 72.4921875
+      },
+      {
+        "comparison": "Year over year+379.3%",
+        "name": "BAJO DEL CHOIQUE - LA INVERNADA",
+        "nameHeight": 35.09375,
+        "nameScrollWidth": 159,
+        "nameWidth": 159,
+        "production": "131.56M USD",
+        "rowHeight": 89.890625
+      }
+    ],
+    "pageWidth": 320,
+    "width": 320
+  },
+  "tablet": {
+    "width": 768,
+    "pageWidth": 768
+  },
+  "scaleTolerancePP": 0.0001,
+  "logos": {
+    "width": 32,
+    "height": 32,
+    "fit": "contain"
+  },
+  "barHeight": 7,
+  "keyboardNavigation": "Enter preserves filters to Operators; return to Overview"
+}
